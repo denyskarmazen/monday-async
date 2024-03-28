@@ -22,6 +22,7 @@ class AsyncGraphQLClient:
                                                    request which is not optimal.
         headers (dict): Additional headers to send with each request.
     """
+
     def __init__(self, endpoint):
         """
          Initializes a new instance of the GraphQLClient.
@@ -173,26 +174,33 @@ class AsyncGraphQLClient:
 
             if 'errors' in response:
                 for err in response['errors']:
-                    error_message += f"\n{err['message']}\n"
-                    if 'locations' in err:
-                        for location in err['locations']:
-                            line_index = int(location['line'])
-                            column_index = int(location['column'])
-                            prev_line = f'{line_index - 1}) {query_by_lines[line_index - 2]}' if line_index > 1 else ""
-                            current_line = f'{line_index}) {query_by_lines[line_index - 1]}'
-                            next_line = f'{line_index + 1}) {query_by_lines[line_index]}' if line_index < len(
-                                query_by_lines) else ""
+                    if isinstance(err, dict):
+                        error_message += f"\n{err['message']}\n"
 
-                            error_message += f'Location: Line {line_index}, Column {column_index}\n'
-                            error_message += '\n'.join([prev_line, current_line, next_line]) + '\n'
+                        if 'locations' in err:
+                            for location in err['locations']:
+                                line_index = int(location['line'])
+                                column_index = int(location['column'])
+                                prev_line = f'{line_index - 1}) {query_by_lines[line_index - 2]}' if line_index > 1 \
+                                    else ""
+                                current_line = f'{line_index}) {query_by_lines[line_index - 1]}'
+                                next_line = f'{line_index + 1}) {query_by_lines[line_index]}' if line_index < len(
+                                    query_by_lines) else ""
 
-                    if 'stack' in err:
-                        error_message += f'Stack: {err['stack']}'
+                                error_message += f'Location: Line {line_index}, Column {column_index}\n'
+                                error_message += '\n'.join([prev_line, current_line, next_line]) + '\n'
+
+                        if 'stack' in err:
+                            error_message += f'Stack: {err['stack']}'
+                    else:
+                        error_message += err
 
             elif 'error_code' in response:
                 error_message = f"\n{response['error_message']}\n"
-                error_message += f"  - Status Code: {response['status_code']}\n"
-                error_message += f"  - Error Code: {response['error_code']}\n"
+                if 'status_code' in response:
+                    error_message += f"  - Status Code: {response['status_code']}\n"
+                if 'error_code' in response:
+                    error_message += f"  - Error Code: {response['error_code']}\n"
                 if 'error_data' in response:
                     error_message += f"  - Error Data: {response['error_data']}\n"
 
