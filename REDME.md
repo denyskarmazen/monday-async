@@ -1,4 +1,4 @@
-# monday_adsync
+# monday_async
 An asynchronous Python client library for monday.com
 
 Check out monday.com api [here](https://developer.monday.com/api-reference/).
