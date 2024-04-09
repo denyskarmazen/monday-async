@@ -1,6 +1,6 @@
 from unittest import TestCase
 from monday_async.utils.queries import (get_webhooks_by_board_id_query, create_webhook_query, delete_webhook_query)
-from monday_async.utils.types import WebhookEventType
+from monday_async.types import WebhookEventType
 from monday_async.utils.utils import monday_json_stringify, graphql_parse
 
 

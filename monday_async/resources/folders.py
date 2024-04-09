@@ -4,7 +4,7 @@ from monday_async.utils.queries import (
     get_folders_query, create_folder_query, update_folder_query,
     delete_folder_query
 )
-from monday_async.utils.types import FolderColor
+from monday_async.types import FolderColor
 
 
 ID = Union[int, str]

@@ -10,7 +10,7 @@ from monday_async.utils.queries import (
     upload_file_to_column_query, get_item_updates_query, clear_item_updates_query,
     move_item_to_group_query
 )
-from monday_async.utils.types import QueryParams, ItemByColumnValuesParam
+from monday_async.types import QueryParams, ItemByColumnValuesParam
 
 ID = Union[int, str]
 

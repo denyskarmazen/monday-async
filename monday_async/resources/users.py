@@ -2,7 +2,7 @@ from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
 from monday_async.utils.queries import (get_me_query, get_users_query, get_users_by_email_query, get_teams_query,
                                         add_users_to_team_query, remove_users_from_team_query)
-from monday_async.utils.types import UserKind
+from monday_async.types import UserKind
 
 
 class UsersResource(AsyncBaseResource):

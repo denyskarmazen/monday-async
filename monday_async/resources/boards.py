@@ -7,8 +7,8 @@ from monday_async.utils.queries import (
     add_teams_to_board_query, delete_teams_from_board_query,
     get_board_views_query
 )
-from monday_async.utils.types import (BoardKind, State, SubscriberKind, BoardAttributes, DuplicateBoardType,
-                                      BoardsOrderBy)
+from monday_async.types import (BoardKind, State, SubscriberKind, BoardAttributes, DuplicateBoardType,
+                                BoardsOrderBy)
 
 ID = Union[int, str]
 

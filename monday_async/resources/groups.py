@@ -4,7 +4,7 @@ from monday_async.utils.queries import (
     get_groups_by_board_query, create_group_query, update_group_query,
     duplicate_group_query, archive_group_query, delete_group_query, GroupColors
 )
-from monday_async.utils.types import PositionRelative, GroupAttributes, GroupUpdateColors
+from monday_async.types import PositionRelative, GroupAttributes, GroupUpdateColors
 
 
 ID = Union[int, str]

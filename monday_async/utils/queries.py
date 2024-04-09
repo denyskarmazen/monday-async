@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List, Union, Optional, Any
-from monday_async.utils.types import (WebhookEventType, TargetType, UserKind, WorkspaceKind, State,
-                                      FolderColor, SubscriberKind, BoardKind, BoardAttributes, GroupUpdateColors,
-                                      DuplicateBoardType, PositionRelative, ColumnType, QueryParams,
-                                      ItemByColumnValuesParam, BoardsOrderBy, GroupAttributes, GroupColors)
+from monday_async.types import (WebhookEventType, TargetType, UserKind, WorkspaceKind, State,
+                                FolderColor, SubscriberKind, BoardKind, BoardAttributes, GroupUpdateColors,
+                                DuplicateBoardType, PositionRelative, ColumnType, QueryParams,
+                                ItemByColumnValuesParam, BoardsOrderBy, GroupAttributes, GroupColors)
 from monday_async.utils.utils import (monday_json_stringify, format_param_value, graphql_parse, gather_params,
                                       format_dict_value)
 

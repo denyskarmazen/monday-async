@@ -1,5 +1,5 @@
 from unittest import TestCase
-from monday_async.utils.types import TargetType
+from monday_async.types import TargetType
 from monday_async.utils.queries import create_notification_query
 from monday_async.utils.utils import graphql_parse
 

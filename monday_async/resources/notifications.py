@@ -1,7 +1,7 @@
 from monday_async.resources.base_resource import AsyncBaseResource
 from typing import Union
 from monday_async.utils.queries import create_notification_query
-from monday_async.utils.types import TargetType
+from monday_async.types import TargetType
 
 
 class NotificationResource(AsyncBaseResource):

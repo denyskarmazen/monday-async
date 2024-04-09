@@ -5,7 +5,7 @@ from monday_async.utils.queries import (
     change_column_title_query, change_column_description_query,
     delete_column_query
 )
-from monday_async.utils.types import ColumnType
+from monday_async.types import ColumnType
 
 
 ID = Union[int, str]

@@ -1,7 +1,7 @@
 from monday_async.resources.base_resource import AsyncBaseResource
 from typing import Union, Optional
 from monday_async.utils.queries import get_webhooks_by_board_id_query, create_webhook_query, delete_webhook_query
-from monday_async.utils.types import WebhookEventType
+from monday_async.types import WebhookEventType
 
 
 class WebhooksResource(AsyncBaseResource):
