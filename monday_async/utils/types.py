@@ -140,7 +140,7 @@ class GroupAttributes(Enum):
     RELATIVE_POSITION_BEFORE = "relative_position_before"
 
 
-class GroupColor(Enum):
+class GroupUpdateColors(Enum):
     DARK_GREEN = "dark-green"
     ORANGE = "orange"
     BLUE = "blue"
@@ -159,6 +159,27 @@ class GroupColor(Enum):
     DARK_PINK = "dark-pik"
     TURQUOISE = "turquoise"
     LIGHT_PINK = "light-pink"
+
+
+class GroupColors(Enum):
+    DARK_GREEN = "#037f4c"
+    ORANGE = "#fdab3d"
+    BLUE = "#579bfc"
+    RED = "#e2445c"
+    GREEN = "#00c875"
+    GREY = "#c4c4c4"
+    TROLLEY_GREY = "#808080"
+    DARK_BLUE = "#0086c0"
+    LIME_GREEN = "#9cd326"
+    YELLOW = "#ffcb00"
+    PURPLE = "#a25ddc"
+    DARK_PURPLE = "#784bdl"
+    BROWN = "#7f5347"
+    DARK_RED = "#bb3354"
+    DARK_ORANGE = "#ff642e"
+    DARK_PINK = "#ff158a"
+    TURQUOISE = "#66ccff"
+    LIGHT_PINK = "#ff5ac4"
 
 
 class BoardsOrderBy(Enum):

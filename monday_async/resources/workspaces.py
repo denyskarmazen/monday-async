@@ -3,9 +3,12 @@ from typing import List, Union, Optional
 from monday_async.utils.queries import (
     get_workspaces_query, create_workspace_query, update_workspace_query,
     delete_workspace_query, add_users_to_workspace_query, delete_users_from_workspace_query,
-    add_teams_to_workspace_query, delete_teams_from_workspace_query, ID
+    add_teams_to_workspace_query, delete_teams_from_workspace_query,
 )
 from monday_async.utils.types import WorkspaceKind, State, SubscriberKind
+
+
+ID = Union[int, str]
 
 
 class WorkspaceResource(AsyncBaseResource):

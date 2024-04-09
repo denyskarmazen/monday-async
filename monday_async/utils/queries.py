@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List, Union, Optional, Any
 from monday_async.utils.types import (WebhookEventType, TargetType, UserKind, WorkspaceKind, State,
-                                      FolderColor, SubscriberKind, BoardKind, BoardAttributes, GroupColor,
+                                      FolderColor, SubscriberKind, BoardKind, BoardAttributes, GroupUpdateColors,
                                       DuplicateBoardType, PositionRelative, ColumnType, QueryParams,
-                                      ItemByColumnValuesParam, BoardsOrderBy, GroupAttributes)
+                                      ItemByColumnValuesParam, BoardsOrderBy, GroupAttributes, GroupColors)
 from monday_async.utils.utils import (monday_json_stringify, format_param_value, graphql_parse, gather_params,
                                       format_dict_value)
 
@@ -87,7 +87,7 @@ def add_subitems() -> str:
     subitems {{
         id
         name
-        relative_link
+        url
         state
     }}
     """
@@ -129,6 +129,7 @@ def get_current_api_version_query(with_complexity: bool = False) -> str:
     query = f"""
     query {{{add_complexity() if with_complexity else ""}
         version {{
+            display_name
             kind
             value
         }}
@@ -148,6 +149,7 @@ def get_all_api_versions_query(with_complexity: bool = False) -> str:
     query = f"""
     query {{{add_complexity() if with_complexity else ""}
         versions {{
+            fdisplay_name
             kind
             value
         }}
@@ -1571,8 +1573,8 @@ def get_groups_by_board_query(board_id: ID, ids: Union[str, List[str]] = None,
     return graphql_parse(query)
 
 
-def create_group_query(board_id: ID, group_name: str, relative_to: Optional[str] = None,
-                       position_relative_method: Optional[PositionRelative] = None,
+def create_group_query(board_id: ID, group_name: str, group_color: Optional[Union[GroupColors, str]] = None,
+                       relative_to: Optional[str] = None, position_relative_method: Optional[PositionRelative] = None,
                        with_complexity: bool = False) -> str:
     """
     This query creates a new group on a specific board with a specified name and positioning relative to other groups.
@@ -1582,6 +1584,9 @@ def create_group_query(board_id: ID, group_name: str, relative_to: Optional[str]
         board_id (ID): The ID of the board to create the group on.
 
         group_name (str): The name of the new group.
+
+        group_color (Optional[Union[GroupColors, str]]): The group's color. Pass as a HEX value when passing as a string
+            For some reason currently not all colors work.
 
         relative_to (str): (Optional) The ID of the group to position the new group relative to.
 
@@ -1596,24 +1601,27 @@ def create_group_query(board_id: ID, group_name: str, relative_to: Optional[str]
     else:
         position_relative_method_value = "null"
 
+    group_color_value = group_color.value if isinstance(group_color, GroupColors) else group_color
     query = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_group (
             board_id: {format_param_value(board_id)},
             group_name: {format_param_value(group_name)},
+            group_color: {format_param_value(group_color_value)},
             relative_to: {format_param_value(relative_to)},
             position_relative_method: {position_relative_method_value}
         ) {{
             id
             title
+            color
         }}
     }}
     """
     return graphql_parse(query)
 
 
-def update_group_query(board_id: ID, group_id: str, group_attribute: GroupAttributes, new_value: Union[Any, GroupColor],
-                       with_complexity: bool = False) -> str:
+def update_group_query(board_id: ID, group_id: str, group_attribute: GroupAttributes,
+                       new_value: Union[Any, GroupUpdateColors], with_complexity: bool = False) -> str:
     """
     This query modifies an existing group's title, color, or position on the board.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#update-a-group
@@ -1782,7 +1790,7 @@ def get_items_by_id_query(ids: Union[ID, List[ID]], newest_first: Optional[bool]
             {add_updates() if with_updates else ""}
             {add_column_values() if with_column_values else ""}
             {add_subitems() if with_subitems else ""}
-            relative_link
+            url
             group {{
                 id
                 title
@@ -1851,7 +1859,7 @@ def get_items_by_board_query(board_ids: Union[ID, List[ID]], query_params: Optio
                     {add_updates() if with_updates else ""}
                     {add_column_values() if with_column_values else ""}
                     {add_subitems() if with_subitems else ""}
-                    relative_link
+                    url
                     group {{
                         id
                         title
@@ -1927,7 +1935,7 @@ def get_items_by_group_query(board_id: ID, group_id: ID, query_params: Optional[
                         {add_updates() if with_updates else ""}
                         {add_column_values() if with_column_values else ""}
                         {add_subitems() if with_subitems else ""}
-                        relative_link
+                        url
                     }}
                 }}
             }}
@@ -1992,7 +2000,7 @@ def get_items_by_column_value_query(board_id: ID, column_id: str, column_values:
                 {add_updates() if with_updates else ""}
                 {add_column_values() if with_column_values else ""}
                 {add_subitems() if with_subitems else ""}
-                relative_link
+                url
             }}
         }}
     }}
@@ -2070,7 +2078,7 @@ def get_items_by_multiple_column_values_query(board_id: ID, columns: Union[ItemB
                 {add_updates() if with_updates else ""}
                 {add_column_values() if with_column_values else ""}
                 {add_subitems() if with_subitems else ""}
-                relative_link
+                url
             }}
         }}
     }}
@@ -2114,7 +2122,7 @@ def next_items_page_query(cursor: str, limit: int = 500, with_complexity: bool =
                 {add_updates() if with_updates else ""}
                 {add_column_values() if with_column_values else ""}
                 {add_subitems() if with_subitems else ""}
-                relative_link
+                url
             }}
         }}
     }}
@@ -2254,7 +2262,7 @@ def get_subitems_by_parent_item_query(parent_item_id: ID, with_column_values: bo
                 name
                 state
                 {add_column_values() if with_column_values else ""}
-                relative_link
+                url
             }}
         }}
     }}
