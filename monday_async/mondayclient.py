@@ -2,7 +2,7 @@ from aiohttp import ClientSession
 from monday_async._version import __version__
 from monday_async.resources import (
     APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource,
-    FolderResource, BoardResource, TagResource, ColumnResource, GroupResource
+    FolderResource, BoardResource, TagResource, ColumnResource, GroupResource, ItemResource
 )
 
 
@@ -33,6 +33,7 @@ class AsyncMondayClient:
         self.tags = TagResource(token=token, headers=headers, session=session)
         self.columns = ColumnResource(token=token, headers=headers, session=session)
         self.groups = GroupResource(token=token, headers=headers, session=session)
+        self.items = ItemResource(token=token, headers=headers, session=session)
 
     def __str__(self):
         return f'AsyncMondayClient {__version__}'

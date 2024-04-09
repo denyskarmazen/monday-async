@@ -9,3 +9,4 @@ from monday_async.resources.boards import BoardResource
 from monday_async.resources.tags import TagResource
 from monday_async.resources.columns import ColumnResource
 from monday_async.resources.groups import GroupResource
+from monday_async.resources.items import ItemResource
