@@ -7,3 +7,4 @@ from monday_async.resources.workspaces import WorkspaceResource
 from monday_async.resources.folders import FolderResource
 from monday_async.resources.boards import BoardResource
 from monday_async.resources.tags import TagResource
+from monday_async.resources.columns import ColumnResource
