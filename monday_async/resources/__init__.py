@@ -8,3 +8,4 @@ from monday_async.resources.folders import FolderResource
 from monday_async.resources.boards import BoardResource
 from monday_async.resources.tags import TagResource
 from monday_async.resources.columns import ColumnResource
+from monday_async.resources.groups import GroupResource
