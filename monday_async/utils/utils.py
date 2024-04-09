@@ -41,12 +41,12 @@ def graphql_parse(query: str):
 
 def gather_params(params: Iterable[Tuple[str, Any]], excluded_params: Optional[List[str]] = None,
                   exclude_none: bool = True) -> str:
-    valid_params = [f"{param}: {format_param_value(value)}" for param, value in params
+    valid_params = [f"{param}: {format_param_value(value)}" for param,  value in params
                     if not ((excluded_params and param in excluded_params) or (value is None and exclude_none))]
     return ', '.join(valid_params)
 
 
-def format_param_value(value: Any):
+def format_param_value(value: Any) -> str:
     if value is None:
         return 'null'
     if isinstance(value, str):
@@ -60,3 +60,8 @@ def format_param_value(value: Any):
     return str(value)
 
 
+def format_dict_value(dictionary: dict) -> str:
+    output = [f"{key}: {format_param_value(value)}" for key, value in dictionary.items()]
+    if output:
+        return f"{{{', '.join(output)}}}"
+    return "{}"

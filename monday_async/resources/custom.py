@@ -3,10 +3,23 @@ from monday_async.utils.utils import graphql_parse
 
 
 class CustomResource(AsyncBaseResource):
-    async def execute_custom_query(self, custom_query):
+    async def execute_custom_query(self, custom_query: str):
+        """
+        Execute a custom GraphGL query
+
+        Parameters:
+            custom_query
+        """
         parsed_query = graphql_parse(custom_query)
         return await self.client.execute(parsed_query)
 
-    async def execute_custom_file_query(self, custom_query):
+    async def execute_custom_file_upload_query(self, custom_query: str):
+        """
+        Execute a custom GraphGL file upload query. For more information, visit
+        https://developer.monday.com/api-reference/reference/assets-1#files-endpoint
+
+        Parameters:
+            custom_query
+        """
         parsed_query = graphql_parse(custom_query)
         return await self.file_upload_client.execute(parsed_query)
