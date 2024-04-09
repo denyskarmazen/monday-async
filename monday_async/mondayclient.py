@@ -1,6 +1,8 @@
 from aiohttp import ClientSession
 from monday_async._version import __version__
-from monday_async.resources import APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource
+from monday_async.resources import (
+    APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource
+)
 
 
 _DEFAULT_HEADERS = {
@@ -24,6 +26,7 @@ class AsyncMondayClient:
         self.webhooks = WebhooksResource(token=token, headers=headers, session=session)
         self.notifications = NotificationResource(token=token, headers=headers, session=session)
         self.users = UsersResource(token=token, headers=headers, session=session)
+        self.workspaces = WorkspaceResource(token=token, headers=headers, session=session)
 
     def __str__(self):
         return f'AsyncMondayClient {__version__}'
