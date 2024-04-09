@@ -2,7 +2,7 @@ from aiohttp import ClientSession
 from monday_async._version import __version__
 from monday_async.resources import (
     APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource,
-    FolderResource
+    FolderResource, BoardResource
 )
 
 
@@ -29,6 +29,8 @@ class AsyncMondayClient:
         self.users = UsersResource(token=token, headers=headers, session=session)
         self.workspaces = WorkspaceResource(token=token, headers=headers, session=session)
         self.folders = FolderResource(token=token, headers=headers, session=session)
+        self.boards = BoardResource(token=token, headers=headers, session=session)
+
 
     def __str__(self):
         return f'AsyncMondayClient {__version__}'
