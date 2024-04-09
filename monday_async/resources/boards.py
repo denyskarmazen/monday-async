@@ -223,6 +223,5 @@ class BoardResource(AsyncBaseResource):
             view_type (str): (Optional) The type of views to retrieve.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = get_board_views_query(board_id=board_id, ids=ids, view_type=view_type,
-                                      with_complexity=with_complexity)
+        query = get_board_views_query(board_id=board_id, ids=ids, view_type=view_type, with_complexity=with_complexity)
         return await self.client.execute(query)
