@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def read_version_info():
@@ -25,6 +25,7 @@ setup(
     description='An asynchronous Python client library for monday.com',
     long_description=long_description,
     long_description_content_type='text/markdown',
+    packages=find_packages(exclude=["monday_async.tests", "monday_async.tests.*"]),
     install_requires=requirements,
     python_requires=">=3.10"
 )

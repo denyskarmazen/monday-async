@@ -917,7 +917,8 @@ def get_boards_query(ids: Union[ID, List[ID]] = None, board_kind: Optional[Board
 
         state (State): (Optional) The state of the boards: all, active, archived, or deleted. Defaults to active.
 
-        workspace_ids (List[ID]): (Optional) A list of workspace IDs to filter boards by specific workspaces.
+        workspace_ids (Union[ID, List[ID]]): (Optional) A list of workspace IDs or a single
+            workspace ID to filter boards by specific workspaces.
 
         order_by (BoardsOrderBy): (Optional) The property to order the results by: created_at or used_at.
 
@@ -958,6 +959,16 @@ def get_boards_query(ids: Union[ID, List[ID]] = None, board_kind: Optional[Board
             board_kind
             state
             workspace_id
+            groups {{
+                id
+                title
+                color
+            }}
+            columns {{
+                id
+                title
+                type
+            }}
             item_terminology
                 subscribers {{
                 name
