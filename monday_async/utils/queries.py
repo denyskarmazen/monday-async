@@ -2127,6 +2127,7 @@ def next_items_page_query(cursor: str, limit: int = 500, with_complexity: bool =
             cursor: {format_param_value(cursor)},
             limit: {limit}
         ) {{
+            cursor
             items {{
                 id
                 name
