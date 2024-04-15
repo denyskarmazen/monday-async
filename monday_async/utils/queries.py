@@ -52,12 +52,6 @@ def add_column_values() -> str:
             date
             time
         }}
-        ... on DropdownValue {{
-            values {{
-                id
-                label
-            }}
-        }}
         ... on LocationValue {{
             lat
             lng

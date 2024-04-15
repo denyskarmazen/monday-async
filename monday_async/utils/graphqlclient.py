@@ -169,7 +169,7 @@ class AsyncGraphQLClient:
         """
         error_message = ""
         query_by_lines = query.split("\n")
-        if isinstance(response, dict) and (
+        if isinstance(response, dict) and 'data' not in response and (
                 'errors' in response or 'error_message' in response or 'error_code' in response):
 
             if 'errors' in response:
