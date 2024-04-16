@@ -2,7 +2,8 @@ from aiohttp import ClientSession
 from ._version import __version__
 from .resources import (
     APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource,
-    FolderResource, BoardResource, TagResource, ColumnResource, GroupResource, ItemResource, UpdateResource
+    FolderResource, BoardResource, TagResource, ColumnResource, GroupResource, ItemResource, UpdateResource,
+    ComplexityResource
 )
 
 
@@ -22,6 +23,7 @@ class AsyncMondayClient:
         if not headers:
             headers = _DEFAULT_HEADERS.copy()
 
+        self.complexity = ComplexityResource(token=token, headers=headers, session=session)
         self.custom = CustomResource(token=token, headers=headers, session=session)
         self.api = APIResource(token=token, headers=headers, session=session)
         self.webhooks = WebhooksResource(token=token, headers=headers, session=session)

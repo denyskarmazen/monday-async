@@ -11,7 +11,6 @@ from monday_async.query_params import QueryParams, ItemByColumnValuesParam
 ID = Union[int, str]
 
 
-# ### COMPLEXITY RESOURCE QUERIES ### #
 def add_complexity() -> str:
     """This can be added to any query to return its complexity with it"""
     query = f"""
@@ -110,6 +109,17 @@ def add_updates() -> str:
     }}
     """
     return updates
+
+
+# ### COMPLEXITY RESOURCE QUERIES ### #
+def get_complexity_query() -> str:
+    """
+    Construct a query to get the current complexity points. For more information visit
+    https://developer.monday.com/api-reference/reference/complexity
+    """
+
+    query = f"""query {{{add_complexity()}}}"""
+    return graphql_parse(query)
 
 
 # ### API RESOURCE QUERIES ### #

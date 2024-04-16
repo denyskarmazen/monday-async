@@ -11,3 +11,4 @@ from .columns import ColumnResource
 from .groups import GroupResource
 from .items import ItemResource
 from .updates import UpdateResource
+from .complexity import ComplexityResource
