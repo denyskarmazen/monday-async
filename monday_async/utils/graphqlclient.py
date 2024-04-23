@@ -136,24 +136,22 @@ class AsyncGraphQLClient:
 
                 payload = json.dumps({'query': query, 'variables': variables}).encode('utf-8')
 
-        try:
-            # A session for this request will be created if no external session was provided
-            if not self.session:
+        if not self.session:
+            try:
                 async with aiohttp.ClientSession() as session:
                     async with session.post(self.endpoint, headers=headers, data=payload) as response:
                         response_data = await response.json()
                         self._throw_on_error(response_data, query)
                         return response_data
-            else:
-                async with self.session.post(self.endpoint, headers=headers, data=payload) as response:
-                    response_data = await response.json()
-                    self._throw_on_error(response_data, query)
-                    return response_data
-
-        except (aiohttp.ClientError, json.JSONDecodeError, MondayQueryError) as e:
-            if self.session:
-                await self.close_session()
-            raise e
+            except (aiohttp.ClientError, json.JSONDecodeError, MondayQueryError) as e:
+                if self.session:
+                    await self.close_session()
+                raise e
+        else:
+            async with self.session.post(self.endpoint, headers=headers, data=payload) as response:
+                response_data = await response.json()
+                self._throw_on_error(response_data, query)
+                return response_data
 
     @staticmethod
     def _throw_on_error(response, query: str):
