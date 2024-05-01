@@ -2017,6 +2017,11 @@ def get_items_by_column_value_query(board_id: ID, column_id: str, column_values:
                 {add_column_values() if with_column_values else ""}
                 {add_subitems() if with_subitems else ""}
                 url
+                group {{
+                    id
+                    title
+                    color
+                }}
             }}
         }}
     }}
@@ -2095,6 +2100,11 @@ def get_items_by_multiple_column_values_query(board_id: ID, columns: Union[ItemB
                 {add_column_values() if with_column_values else ""}
                 {add_subitems() if with_subitems else ""}
                 url
+                group {{
+                    id
+                    title
+                    color
+                }}
             }}
         }}
     }}
@@ -2140,6 +2150,11 @@ def next_items_page_query(cursor: str, limit: int = 500, with_complexity: bool =
                 {add_column_values() if with_column_values else ""}
                 {add_subitems() if with_subitems else ""}
                 url
+                group {{
+                    id
+                    title
+                    color
+                }}                
             }}
         }}
     }}
