@@ -8,6 +8,7 @@ from monday_async.utils.utils import (monday_json_stringify, format_param_value,
                                       format_dict_value)
 from monday_async.query_params import QueryParams, ItemByColumnValuesParam
 
+
 ID = Union[int, str]
 
 
@@ -154,7 +155,7 @@ def get_all_api_versions_query(with_complexity: bool = False) -> str:
     query = f"""
     query {{{add_complexity() if with_complexity else ""}
         versions {{
-            fdisplay_name
+            display_name
             kind
             value
         }}
@@ -1855,7 +1856,8 @@ def get_items_by_board_query(board_ids: Union[ID, List[ID]], query_params: Optio
         query_params = None
 
     if query_params:
-        query_params_value = f"query_params: {str(query_params.value).replace("'", "")}"
+        qp = str(query_params.value).replace("'", "")
+        query_params_value = f"query_params: {qp}"
     else:
         query_params_value = ""
 
@@ -1930,7 +1932,8 @@ def get_items_by_group_query(board_id: ID, group_id: ID, query_params: Optional[
         query_params = None
 
     if query_params:
-        query_params_value = f"query_params: {str(query_params.value).replace("'", "")}"
+        qp = str(query_params.value).replace("'", "")
+        query_params_value = f"query_params: {qp}"
     else:
         query_params_value = ""
 
