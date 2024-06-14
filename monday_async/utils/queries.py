@@ -1856,8 +1856,7 @@ def get_items_by_board_query(board_ids: Union[ID, List[ID]], query_params: Optio
         query_params = None
 
     if query_params:
-        qp = str(query_params.value).replace("'", "")
-        query_params_value = f"query_params: {qp}"
+        query_params_value = f"query_params: {query_params}"
     else:
         query_params_value = ""
 
@@ -1932,8 +1931,7 @@ def get_items_by_group_query(board_id: ID, group_id: ID, query_params: Optional[
         query_params = None
 
     if query_params:
-        qp = str(query_params.value).replace("'", "")
-        query_params_value = f"query_params: {qp}"
+        query_params_value = f"query_params: {query_params}"
     else:
         query_params_value = ""
 

@@ -5,7 +5,7 @@ from monday_async.types import ItemsQueryOperator, ID, ItemsQueryRuleOperator
 
 class QueryParams:
     """
-    A class to create a ItemsQuery type that can be used as an argument for the items_page object
+    A class to create an ItemsQuery type that can be used as an argument for the items_page object
     and contains a set of parameters to filter, sort, and control the scope of the boards query.
 
     Args:
@@ -16,45 +16,42 @@ class QueryParams:
         order_by (Optional[Dict]): The attributes to sort results by. For more information visit
             https://developer.monday.com/api-reference/reference/other-types#itemsqueryorderby
     """
+
     def __init__(self, ids: Optional[Union[ID, List[ID]]] = None,
                  operator: ItemsQueryOperator = ItemsQueryOperator.AND.value, order_by: Optional[Dict] = None):
         self._ids = ids
         self._operator = operator
         self._order_by = order_by
         self._rules = []
-        self.value = {'rules': self._rules, 'operator': self._operator}
+        self._value = {'rules': "[]", 'operator': self._operator}
         if self._order_by:
             if self._order_by.get('column_id'):
                 self._order_by['column_id'] = format_param_value(self._order_by.get('column_id'))
-                self.value['order_by'] = order_by
+                self._value['order_by'] = str(self._order_by).replace("'", "")
 
     def __str__(self):
-        return str(self.value)
+        return self.format_value()
 
+    def format_value(self):
+        items = [f"{key}: {value}" for key, value in self._value.items()]
+        return "{" + ", ".join(items) + "}"
 
     def add_rule(self, column_id: str, compare_value: Union[str, int, List[int]],
-                 operator: ItemsQueryRuleOperator = ItemsQueryRuleOperator.ANY_OF.value):
+                 operator: ItemsQueryRuleOperator = ItemsQueryRuleOperator.ANY_OF):
         """
-        Parameters:
+        Adds a rule to the query parameters.
+
+        Args:
             column_id (str): The unique identifier of the column to filter by.
-
-            compare_value (str): The column value to filter by. This can be a string or index value depending
-                on the column type.
-
-            operator (ItemsQueryRuleOperator): The condition for value comparison. The default is any_of.
+            compare_value (str or int or List[int]): The column value to filter by.
+                This can be a string or index value depending on the column type.
+            operator (ItemsQueryRuleOperator, optional): The condition for value comparison. Default is any_of.
         """
-        if isinstance(operator, ItemsQueryRuleOperator):
-            operator_value = operator.value
-        else:
-            operator_value = operator
-
-        rule = {
-            'column_id': format_param_value(column_id),
-            'compare_value': format_param_value(compare_value),
-            'operator': operator_value
-        }
-
+        rule = f"{{column_id: {format_param_value(column_id)}"
+        rule += f", compare_value: {format_param_value(compare_value)}"
+        rule += f", operator: {operator.value if isinstance(operator, ItemsQueryRuleOperator) else operator}}}"
         self._rules.append(rule)
+        self._value['rules'] = '[' + ', '.join(self._rules) + ']'
 
 
 class ItemByColumnValuesParam:
