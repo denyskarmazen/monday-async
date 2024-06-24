@@ -8,6 +8,7 @@ class APIQueriesTestCase(TestCase):
         expected_return = """
         query {     
             version {
+                display_name
                 kind
                 value
             }
@@ -26,6 +27,7 @@ class APIQueriesTestCase(TestCase):
             }    
 
             version {
+                display_name
                 kind
                 value
             }
@@ -39,6 +41,7 @@ class APIQueriesTestCase(TestCase):
         expected_return = """
         query {    
             versions {
+                display_name
                 kind
                 value
             }
@@ -57,6 +60,7 @@ class APIQueriesTestCase(TestCase):
             }    
 
             versions {
+                display_name
                 kind
                 value
             }
