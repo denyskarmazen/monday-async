@@ -1409,6 +1409,8 @@ def get_columns_by_board_query(board_id: ID, ids: Union[ID, List[ID]] = None,
     query = f"""
     query {{{add_complexity() if with_complexity else ""}
         boards (ids: {format_param_value(board_id)}) {{
+            id
+            name
             columns (ids: {format_param_value(ids if ids else None)}, types: {format_param_value(types)}) {{
                 id
                 title
