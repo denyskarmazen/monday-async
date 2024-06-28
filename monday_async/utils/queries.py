@@ -965,6 +965,7 @@ def get_boards_query(ids: Union[ID, List[ID]] = None, board_kind: Optional[Board
             board_kind
             state
             workspace_id
+            description
             groups {{
                 id
                 title
