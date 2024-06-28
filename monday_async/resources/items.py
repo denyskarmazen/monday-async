@@ -328,7 +328,7 @@ class ItemResource(AsyncBaseResource):
                                                          with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def change_item_column_json_value(self, item_id: ID, column_id: str, board_id: ID, value: dict,
+    async def change_item_column_json_value(self, item_id: ID, board_id: ID, column_id: str,  value: dict,
                                             create_labels_if_missing: bool = False,
                                             with_complexity: bool = False) -> str:
         """
@@ -338,8 +338,8 @@ class ItemResource(AsyncBaseResource):
 
         Parameters:
             item_id (ID): (Optional) The ID of the item to update.
-            column_id (str): The unique identifier of the column to update.
             board_id (ID): The ID of the board containing the item.
+            column_id (str): The unique identifier of the column to update.
             value (dict): The new value for the column as a dictionary.
             create_labels_if_missing (bool): (Optional) Whether to create missing labels for Status or Dropdown columns.
                 Requires permission to change board structure.
@@ -350,7 +350,7 @@ class ItemResource(AsyncBaseResource):
                                                     with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def change_item_column_simple_value(self, item_id: ID, column_id: str, board_id: ID, value: str,
+    async def change_item_column_simple_value(self, item_id: ID, board_id: ID, column_id: str, value: str,
                                               create_labels_if_missing: bool = False,
                                               with_complexity: bool = False) -> str:
         """
@@ -361,8 +361,8 @@ class ItemResource(AsyncBaseResource):
 
         Parameters:
             item_id (ID): (Optional) The ID of the item to update.
-            column_id (str): The unique identifier of the column to update.
             board_id (ID): The ID of the board containing the item.
+            column_id (str): The unique identifier of the column to update.
             value (str): The new simple string value for the column. Use null to clear the column value.
             create_labels_if_missing (bool): (Optional) Whether to create missing labels for Status or Dropdown columns.
                 Requires permission to change board structure.
