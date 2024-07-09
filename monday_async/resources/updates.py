@@ -1,9 +1,8 @@
 from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
 from monday_async.utils.queries import (
-    get_updates_query, create_update_query, like_update_query, delete_update_query
+    get_updates_query, create_update_query, like_update_query, delete_update_query, add_file_to_update
 )
-
 
 ID = Union[int, str]
 
@@ -66,3 +65,16 @@ class UpdateResource(AsyncBaseResource):
         """
         query = delete_update_query(update_id=update_id, with_complexity=with_complexity)
         return await self.client.execute(query)
+
+    async def add_file_to_update(self, update_id: ID, file: str, with_complexity: bool = False) -> dict:
+        """
+        Execute a query to add a file to an update.
+        https://developer.monday.com/api-reference/reference/assets-1#add-a-file-to-an-update
+
+        Parameters:
+            update_id (ID): The unique identifier of the update to delete.
+            file (str): The filepath to the file.
+            with_complexity (bool): Set to True to return the query's complexity along with the results.
+        """
+        query = add_file_to_update(update_id=update_id, with_complexity=with_complexity)
+        return await self.file_upload_client.execute(query, variables={"file": file})

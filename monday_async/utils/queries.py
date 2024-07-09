@@ -8,7 +8,6 @@ from monday_async.utils.utils import (monday_json_stringify, format_param_value,
                                       format_dict_value)
 from monday_async.query_params import QueryParams, ItemByColumnValuesParam
 
-
 ID = Union[int, str]
 
 
@@ -811,7 +810,7 @@ def get_folders_query(ids: Union[ID, List[ID]] = None, workspace_ids: Union[ID, 
                 id
                 name
             }}
-            
+
         }}
     }}
     """
@@ -2680,6 +2679,27 @@ def delete_update_query(update_id: ID, with_complexity: bool = False) -> str:
     query = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_update (id: {format_param_value(update_id)}) {{
+            id
+        }}
+    }}
+    """
+    return graphql_parse(query)
+
+
+def add_file_to_update(update_id: ID, with_complexity: bool = False):
+    """
+    This query adds a file to an update.
+    https://developer.monday.com/api-reference/reference/assets-1#add-a-file-to-an-update
+
+    Parameters:
+        update_id (ID): The unique identifier of the update to delete.
+
+        with_complexity (bool): Set to True to return the query's complexity along with the results.
+    """
+
+    query = f"""
+    mutation ($file: File!){{{add_complexity() if with_complexity else ""}
+        add_file_to_update (update_id: {format_param_value(update_id)}, file: $file) {{
             id
         }}
     }}
