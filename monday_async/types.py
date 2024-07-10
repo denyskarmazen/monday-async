@@ -101,29 +101,35 @@ class PositionRelative(Enum):
 
 class ColumnType(Enum):
     AUTO_NUMBER = "auto_number"  # Number items according to their order in the group/board
+    BUTTON = "button"  # Trigger actions directly from your board
     CHECKBOX = "checkbox"  # Check off items and see what's done at a glance
-    COUNTRY = "country"  # Choose a country
     COLOR_PICKER = "color_picker"  # Manage a design system using a color palette
+    CONNECT_BOARDS = "board_relation"  # Link items to other boards
+    COUNTRY = "country"  # Choose a country
     CREATION_LOG = "creation_log"  # Add the item's creator and creation date automatically
     DATE = "date"  # Add dates like deadlines to ensure you never drop the ball
     DEPENDENCY = "dependency"  # Set up dependencies between items in the board
     DROPDOWN = "dropdown"  # Create a dropdown list of options
     EMAIL = "email"  # Email team members and clients directly from your board
     FILE = "file"  # Add files & docs to your item
+    FORMULA = "formula"  # Calculate values using other column data
     HOUR = "hour"  # Add times to manage and schedule tasks, shifts and more
     ITEM_ID = "item_id"  # Show a unique ID for each item
     LAST_UPDATED = "last_updated"  # Add the person that last updated the item and the date
     LINK = "link"  # Simply hyperlink to any website
     LOCATION = "location"  # Place multiple locations on a geographic map
     LONG_TEXT = "long_text"  # Add large amounts of text without changing column width
+    MIRROR = "mirror"  # Reflect information from connected boards
+    MONDAY_DOC = "doc"  # Embed monday.com docs directly in your board
+    NAME = "name"  # The name of the item
     NUMBERS = "numbers"  # Add revenue, costs, time estimations and more
     PEOPLE = "people"  # Assign people to improve team work
     PHONE = "phone"  # Call your contacts directly from monday.com
     PROGRESS = "progress"  # Show progress by combining status columns in a battery
     RATING = "rating"  # Rate or rank anything visually
     STATUS = "status"  # Get an instant overview of where things stand
-    TEAM = "team"  # Assign a full team to an item
     TAGS = "tags"  # Add tags to categorize items across multiple boards
+    TEAM = "team"  # Assign a full team to an item
     TEXT = "text"  # Add textual information e.g. addresses, names or keywords
     TIMELINE = "timeline"  # Visually see a breakdown of your team's workload by time
     TIME_TRACKING = "time_tracking"  # Easily track time spent on each item, group, and board
