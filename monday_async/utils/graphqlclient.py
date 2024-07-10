@@ -189,7 +189,7 @@ class AsyncGraphQLClient:
                                 error_message += '\n'.join([prev_line, current_line, next_line]) + '\n'
 
                         if 'stack' in err:
-                            error_message += f'Stack: {err['stack']}'
+                            error_message += f"Stack: {err['stack']}"
                     else:
                         error_message += err
 
