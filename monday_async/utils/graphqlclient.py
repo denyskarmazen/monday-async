@@ -2,7 +2,7 @@ import os
 import json
 import aiohttp
 import aiofiles
-from monday_async.exceptions import MondayQueryError
+from monday_async.exceptions import *
 
 TOKEN_HEADER = 'Authorization'
 
@@ -165,6 +165,33 @@ class AsyncGraphQLClient:
         Raises:
             MondayQueryError: If the GraphQL server returns errors.
         """
+        error_codes = {
+            'INTERNAL_SERVER_ERROR': InternalServerError,
+            'MaxConcurrencyExceeded': ConcurrencyLimitExceededError,
+            'RateLimitExceeded': RateLimitExceededError,
+            'IpRestricted': IpRestrictedError,
+            'Unauthorized': UnauthorizedError,
+            'BadRequest': BadRequestError,
+            'missingRequiredPermissions': MissingRequiredPermissionsError,
+            'ParseError': ParseError,
+            'ColumnValueException': ColumnValueError,
+            'ComplexityException': ComplexityError,
+            'CorrectedValueException': CorrectedValueError,
+            'CreateBoardException': CreateBoardError,
+            'DeleteLastGroupException': DeleteLastGroupError,
+            'InvalidArgumentException': InvalidArgumentError,
+            'InvalidBoardIdException': InvalidBoardIdError,
+            'InvalidColumnIdException': InvalidColumnIdError,
+            'InvalidUserIdException': InvalidUserIdError,
+            'InvalidVersionException': InvalidVersionError,
+            'ItemNameTooLongException': ItemNameTooLongError,
+            'ItemsLimitationException': ItemsLimitationError,
+            'JsonParseException': JsonParseError,
+            'RecordValidException': RecordValidError,
+            'ResourceNotFoundException': ResourceNotFoundError,
+            'UserUnauthorizedException': UserUnauthorizedError,
+        }
+        error_class = MondayQueryError
         error_message = ""
         query_by_lines = query.split("\n")
         if (isinstance(response, dict) and
@@ -194,11 +221,14 @@ class AsyncGraphQLClient:
                         error_message += err
 
             elif 'error_code' in response:
+                error_code = response['error_code']
+                error_class = error_codes.get(error_code, MondayQueryError)
+
                 error_message = f"\n{response['error_message']}\n"
+                error_message += f"  - Error Code: {error_code}\n"
                 if 'status_code' in response:
                     error_message += f"  - Status Code: {response['status_code']}\n"
-                if 'error_code' in response:
-                    error_message += f"  - Error Code: {response['error_code']}\n"
+
                 if 'error_data' in response:
                     error_message += f"  - Error Data: {response['error_data']}\n"
 
@@ -207,5 +237,8 @@ class AsyncGraphQLClient:
                 if 'status_code' in response:
                     error_message += f"  - Status Code: {response['status_code']}\n"
 
+                elif "Rate Limit Exceeded" in response['error_message']:
+                    error_class = RateLimitExceededError
+
         if error_message:
-            raise MondayQueryError(error_message)
+            raise error_class(error_message)

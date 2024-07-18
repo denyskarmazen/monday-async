@@ -2579,7 +2579,7 @@ def move_item_to_group_query(item_id: ID, group_id: str, with_complexity: bool =
 def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: int = 1,
                       with_complexity: bool = False) -> str:
     """
-    This query retrieves updates, allowing pagination and filtering by update IDs.
+    This query retrieves updates, allowing pagination and filtering by update IDs. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#queries
 
     Parameters:
@@ -2619,7 +2619,7 @@ def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: in
 
 def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, with_complexity: bool = False) -> str:
     """
-    This query creates a new update on a specific item or as a reply to another update.
+    This query creates a new update on a specific item or as a reply to another update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#create-an-update
 
     Parameters:
@@ -2648,7 +2648,7 @@ def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, 
 
 def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query adds a like to a specific update.
+    This query adds a like to a specific update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#like-an-update
 
     Parameters:
@@ -2668,7 +2668,7 @@ def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
 
 def delete_update_query(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query removes an update.
+    This query removes an update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#delete-an-update
 
     Parameters:
@@ -2688,7 +2688,7 @@ def delete_update_query(update_id: ID, with_complexity: bool = False) -> str:
 
 def add_file_to_update(update_id: ID, with_complexity: bool = False):
     """
-    This query adds a file to an update.
+    This query adds a file to an update. For more information, visit
     https://developer.monday.com/api-reference/reference/assets-1#add-a-file-to-an-update
 
     Parameters:
