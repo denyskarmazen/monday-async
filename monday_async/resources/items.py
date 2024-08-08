@@ -19,7 +19,7 @@ class ItemResource(AsyncBaseResource):
     async def get_items_by_id(self, ids: Union[ID, List[ID]], newest_first: Optional[bool] = None,
                               exclude_nonactive: Optional[bool] = None, limit: int = 25, page: int = 1,
                               with_complexity: bool = False, with_column_values: bool = True,
-                              with_subitems: bool = False, with_updates: bool = False) -> str:
+                              with_subitems: bool = False, with_updates: bool = False) -> dict:
         """
         Execute a query to retrieve items, allowing filtering by IDs, sorting, and excluding inactive items.
 
@@ -48,7 +48,7 @@ class ItemResource(AsyncBaseResource):
                                  query_params: Optional[QueryParams] = None, limit: int = 25,
                                  cursor: str = None, with_complexity: bool = False,
                                  with_column_values: bool = True, with_subitems: bool = False,
-                                 with_updates: bool = False) -> str:
+                                 with_updates: bool = False) -> dict:
         """
         Execute a query to retrieve items from a specific board, allowing filtering by IDs, sorting,
         and excluding inactive items.
@@ -81,7 +81,7 @@ class ItemResource(AsyncBaseResource):
                                  query_params: Optional[QueryParams] = None, limit: int = 25,
                                  cursor: str = None, with_complexity: bool = False,
                                  with_column_values: bool = True, with_subitems: bool = False,
-                                 with_updates: bool = False) -> str:
+                                 with_updates: bool = False) -> dict:
         """
         Execute a query to retrieve items from a specific group within a board, allowing filtering by IDs, sorting,
         and excluding inactive items.
@@ -115,7 +115,7 @@ class ItemResource(AsyncBaseResource):
                                         column_values: Union[str, List[str]],
                                         limit: int = 25, cursor: str = None, with_complexity: bool = False,
                                         with_column_values: bool = True, with_subitems: bool = False,
-                                        with_updates: bool = False) -> str:
+                                        with_updates: bool = False) -> dict:
         """
         Execute a query to retrieve items based on the value of a specific column.
 
@@ -146,7 +146,7 @@ class ItemResource(AsyncBaseResource):
                                                   columns: Union[ItemByColumnValuesParam, dict, List[dict]],
                                                   limit: int = 25, cursor: str = None,
                                                   with_complexity: bool = False, with_column_values: bool = True,
-                                                  with_subitems: bool = False, with_updates: bool = False) -> str:
+                                                  with_subitems: bool = False, with_updates: bool = False) -> dict:
         """
         Execute a query to retrieve items based on the values of multiple columns.
 
@@ -176,7 +176,7 @@ class ItemResource(AsyncBaseResource):
 
     async def next_items_page(self, cursor: str, limit: int = 500, with_complexity: bool = False,
                               with_column_values: bool = True, with_subitems: bool = False,
-                              with_updates: bool = False) -> str:
+                              with_updates: bool = False) -> dict:
         """
         Execute a query to return the next set of items that correspond with the provided cursor.
 
@@ -201,7 +201,7 @@ class ItemResource(AsyncBaseResource):
 
     async def create_item(self, item_name: str, board_id: ID, group_id: Optional[str] = None,
                           column_values: Optional[dict] = None, create_labels_if_missing: bool = False,
-                          with_complexity: bool = False) -> str:
+                          with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new item on a specified board and group with a given name and optional column values.
 
@@ -222,7 +222,7 @@ class ItemResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def duplicate_item(self, board_id: ID, item_id: ID, with_updates: Optional[bool] = None,
-                             with_complexity: bool = False) -> str:
+                             with_complexity: bool = False) -> dict:
         """
         Execute a query to create a copy of an item on the same board, with the option to include updates.
 
@@ -238,7 +238,7 @@ class ItemResource(AsyncBaseResource):
                                      with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def archive_item(self, item_id: ID, with_complexity: bool = False) -> str:
+    async def archive_item(self, item_id: ID, with_complexity: bool = False) -> dict:
         """
         Execute a query to archive an item, making it no longer visible in the active item list.
 
@@ -251,7 +251,7 @@ class ItemResource(AsyncBaseResource):
         query = archive_item_query(item_id=item_id, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def delete_item(self, item_id: ID, with_complexity: bool = False) -> str:
+    async def delete_item(self, item_id: ID, with_complexity: bool = False) -> dict:
         """
         Execute a query to permanently remove an item from a board.
 
@@ -266,7 +266,7 @@ class ItemResource(AsyncBaseResource):
 
     async def get_subitems_by_parent_item(self, parent_item_id: ID,
                                           with_column_values: bool = True,
-                                          with_complexity: bool = False) -> str:
+                                          with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve subitems of a specific item.
 
@@ -286,7 +286,7 @@ class ItemResource(AsyncBaseResource):
     async def create_subitem(self, parent_item_id: ID, subitem_name: str,
                              column_values: Optional[dict] = None,
                              create_labels_if_missing: bool = False,
-                             with_complexity: bool = False) -> str:
+                             with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new subitem under a specific parent item with a given name and optional column values.
 
@@ -307,7 +307,7 @@ class ItemResource(AsyncBaseResource):
 
     async def change_multiple_item_column_values(self, item_id: ID, board_id: ID, column_values: dict,
                                                  create_labels_if_missing: bool = False,
-                                                 with_complexity: bool = False) -> str:
+                                                 with_complexity: bool = False) -> dict:
         """
         Execute a query to update the values of multiple columns for a specific item.
 
@@ -330,7 +330,7 @@ class ItemResource(AsyncBaseResource):
 
     async def change_item_column_json_value(self, item_id: ID, board_id: ID, column_id: str,  value: dict,
                                             create_labels_if_missing: bool = False,
-                                            with_complexity: bool = False) -> str:
+                                            with_complexity: bool = False) -> dict:
         """
         Execute a query to update the value of a specific column for an item using a JSON value.
 
@@ -352,7 +352,7 @@ class ItemResource(AsyncBaseResource):
 
     async def change_item_column_simple_value(self, item_id: ID, board_id: ID, column_id: str, value: str,
                                               create_labels_if_missing: bool = False,
-                                              with_complexity: bool = False) -> str:
+                                              with_complexity: bool = False) -> dict:
         """
         Execute a query to update the value of a specific column for an item using a simple string value.
 
@@ -373,7 +373,8 @@ class ItemResource(AsyncBaseResource):
                                                       with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def upload_file_to_column(self, item_id: ID, column_id: str, file: str, with_complexity: bool = False) -> str:
+    async def upload_file_to_column(self, item_id: ID, column_id: str, file: str,
+                                    with_complexity: bool = False) -> dict:
         """
         Execute a query to upload a file and add it to a specific column of an item.
 
@@ -390,7 +391,7 @@ class ItemResource(AsyncBaseResource):
         return await self.file_upload_client.execute(query, variables={"file": file})
 
     async def get_item_updates(self, item_id: ID, ids: Union[ID, List[ID]] = None,
-                               limit: int = 25, page: int = 1, with_complexity: bool = False) -> str:
+                               limit: int = 25, page: int = 1, with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve updates associated with a specific item, allowing pagination and filtering by update IDs.
 
@@ -405,7 +406,7 @@ class ItemResource(AsyncBaseResource):
                                        with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def clear_item_updates(self, item_id: ID, with_complexity: bool = False) -> str:
+    async def clear_item_updates(self, item_id: ID, with_complexity: bool = False) -> dict:
         """
         Execute a query to remove all updates associated with a specific item.
 
@@ -418,7 +419,7 @@ class ItemResource(AsyncBaseResource):
         query = clear_item_updates_query(item_id=item_id, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def move_item_to_group(self, item_id: ID, group_id: str, with_complexity: bool = False) -> str:
+    async def move_item_to_group(self, item_id: ID, group_id: str, with_complexity: bool = False) -> dict:
         """
         Execute a query to move an item to a different group within the same board.
 

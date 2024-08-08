@@ -12,7 +12,7 @@ class UsersResource(AsyncBaseResource):
 
     async def get_users(self, user_ids: Union[int, str, List[Union[int, str]]] = None, limit: int = 50,
                         user_kind: UserKind = UserKind.ALL, newest_first: bool = False,
-                        page: int = 1, with_complexity: bool = False):
+                        page: int = 1, with_complexity: bool = False) -> dict:
         """
         Get all users or get users by ids if provided. For more information, visit
         https://developer.monday.com/api-reference/reference/users#queries
@@ -35,7 +35,7 @@ class UsersResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def get_users_by_email(self, user_emails: Union[str, List[str]], user_kind: Optional[UserKind] = UserKind.ALL,
-                                 newest_first: bool = False, with_complexity: bool = False):
+                                 newest_first: bool = False, with_complexity: bool = False) -> dict:
         """
         Get users by emails. For more information, visit
         https://developer.monday.com/api-reference/reference/users#queries
@@ -54,9 +54,9 @@ class UsersResource(AsyncBaseResource):
 
         return await self.client.execute(query)
 
-    async def get_teams(self, team_ids: Union[int, str, List[Union[int, str]]] = None, with_complexity: bool = False):
+    async def get_teams(self, team_ids: Union[int, str, List[Union[int, str]]] = None, with_complexity: bool = False) -> dict:
         """
-        Get all teams or get teams by ids if provided. For more information, visitff
+        Get all teams or get teams by ids if provided. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#queries
 
         Parameters:
@@ -68,7 +68,7 @@ class UsersResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def add_users_to_team(self, team_id: Union[int, str], user_ids: Union[int, str, List[Union[int, str]]],
-                                with_complexity: bool = False):
+                                with_complexity: bool = False) -> dict:
         """
         Add users to a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#add-users-to-a-team
@@ -84,7 +84,7 @@ class UsersResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def remove_users_from_team(self, team_id: Union[int, str], user_ids: Union[int, str, List[Union[int, str]]],
-                                     with_complexity: bool = False):
+                                     with_complexity: bool = False) -> dict:
         """
         Remove users from a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#remove-users-from-a-team

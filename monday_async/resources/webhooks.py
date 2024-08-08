@@ -5,13 +5,14 @@ from monday_async.types import WebhookEventType
 
 
 class WebhooksResource(AsyncBaseResource):
-    async def get_webhooks_by_board_id(self, board_id: Union[int, str], with_complexity: bool = False):
+    async def get_webhooks_by_board_id(self, board_id: Union[int, str], with_complexity: bool = False) -> dict:
         """
         Get all webhooks for a board. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#queries
 
         Parameters:
-            board_id (Union[int, str]): a unique identifier of a board, can be an integer or a string containing integers.
+            board_id (Union[int, str]): a unique identifier of a board, can be an integer or a string containing
+            integers.
 
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
@@ -19,7 +20,7 @@ class WebhooksResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def create_webhook(self, board_id: Union[int, str], url: str, event: WebhookEventType,
-                             config: Optional[dict] = None, with_complexity: bool = False):
+                             config: Optional[dict] = None, with_complexity: bool = False) -> dict:
         """
         Create a webhook. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#create-a-webhook
@@ -32,7 +33,8 @@ class WebhooksResource(AsyncBaseResource):
 
             event (WebhookEventType): the event type to listen to.
 
-            config (dict): the webhook configuration, check https://developer.monday.com/api-reference/reference/webhooks
+            config (dict): the webhook configuration,
+                check https://developer.monday.com/api-reference/reference/webhooks
             for more info.
 
             with_complexity (bool): returns the complexity of the query with the query if set to True.
@@ -41,7 +43,7 @@ class WebhooksResource(AsyncBaseResource):
                                      with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def delete_webhook(self, webhook_id: Union[int, str], with_complexity: bool = False):
+    async def delete_webhook(self, webhook_id: Union[int, str], with_complexity: bool = False) -> dict:
         """
         Delete a webhook connection. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#delete-a-webhook

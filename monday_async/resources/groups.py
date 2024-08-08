@@ -12,7 +12,7 @@ ID = Union[int, str]
 
 class GroupResource(AsyncBaseResource):
     async def get_groups_by_board(self, board_id: ID, ids: Union[str, List[str]] = None,
-                                  with_complexity: bool = False) -> str:
+                                  with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve groups associated with a specific board, with the option to filter by group IDs.
 
@@ -29,7 +29,7 @@ class GroupResource(AsyncBaseResource):
     async def create_group(self, board_id: ID, group_name: str, group_color: Optional[Union[GroupColors, str]] = None,
                            relative_to: Optional[str] = None,
                            position_relative_method: Optional[PositionRelative] = None,
-                           with_complexity: bool = False) -> str:
+                           with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new group on a specific board with a specified name and positioning relative to other groups.
 
@@ -53,7 +53,7 @@ class GroupResource(AsyncBaseResource):
     async def update_group(self, board_id: ID, group_id: str,
                            group_attribute: GroupAttributes,
                            new_value: Union[Any, GroupUpdateColors],
-                           with_complexity: bool = False) -> str:
+                           with_complexity: bool = False) -> dict:
         """
         Execute a query to modify an existing group's title, color, or position on the board.
 
@@ -73,7 +73,7 @@ class GroupResource(AsyncBaseResource):
 
     async def duplicate_group(self, board_id: ID, group_id: str,
                               add_to_top: Optional[bool] = None, group_title: Optional[str] = None,
-                              with_complexity: bool = False) -> str:
+                              with_complexity: bool = False) -> dict:
         """
         Execute a query to create a copy of a group within the same board,
         with options to position the new group and set its title.
@@ -92,7 +92,7 @@ class GroupResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def archive_group(self, board_id: ID, group_id: str,
-                            with_complexity: bool = False) -> str:
+                            with_complexity: bool = False) -> dict:
         """
         Execute a query to archive a group on a specific board, removing it from the active view.
 
@@ -107,7 +107,7 @@ class GroupResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def delete_group(self, board_id: ID, group_id: str,
-                           with_complexity: bool = False) -> str:
+                           with_complexity: bool = False) -> dict:
         """
         Execute a query to permanently remove a group from a board.
 

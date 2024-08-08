@@ -1,3 +1,6 @@
+from monday_async.utils.utils import graphql_parse
+
+
 class MondayQueryError(Exception):
     """
     Base class for all Monday query errors.
@@ -299,3 +302,138 @@ class UserUnauthorizedError(MondayQueryError):
 
     def __init__(self, message="User unauthorized", original_errors=None):
         super().__init__(message, original_errors)
+
+
+class ErrorInfo:
+    def __init__(self, response, query):
+        self.error_message = response.get('error_message', '')
+        self.error_code = response.get('error_code', None)
+        self.status_code = response.get('status_code', None)
+        self.errors = []
+        self.query_by_lines = graphql_parse(query).split("\n")
+        self.process_errors(response)
+        self.formatted_message = self.format_errors()
+
+    def process_errors(self, response):
+        if 'errors' in response:
+            for err in response['errors']:
+                if isinstance(err, str):
+                    self.add_error(err)
+
+                elif isinstance(err, dict):
+                    message = err.get('message', '')
+                    locations = []
+                    if 'locations' in err:
+                        for location in err['locations']:
+                            line_index = int(location['line'])
+                            column_index = int(location['column'])
+                            prev_line = f'{line_index - 1}) {self.query_by_lines[line_index - 2]}' \
+                                if line_index > 1 and line_index - 2 < len(self.query_by_lines) else ""
+                            error_line = f'{line_index}) {self.query_by_lines[line_index - 1]}' if line_index - 1 < len(
+                                self.query_by_lines) else ""
+                            next_line = f'{line_index + 1}) {self.query_by_lines[line_index]}' if line_index < len(
+                                self.query_by_lines) else ""
+                            locations.append({
+                                'line': line_index,
+                                'column': column_index,
+                                'prev_line': prev_line,
+                                'error_line': error_line,
+                                'next_line': next_line
+                            })
+
+                    error_code = err['extensions'].get('code', '') if 'extensions' in err else None
+                    status_code = err['extensions'].get('status_code', None) if 'extensions' in err else None
+                    self.add_error(message, error_code, status_code, locations)
+
+    def add_error(self, message: str, error_code: str = None, status_code: int = None, locations: list = None):
+        error_detail = {
+            "message": message,
+            "locations": locations if locations else [],
+            "error_code": error_code,
+            "status_code": status_code
+        }
+        self.errors.append(error_detail)
+
+    def format_errors(self) -> str:
+        if not self.errors:
+            formatted_message = f"{self.error_message}\n" if self.error_message else "An error occurred\n"
+            formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
+            formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
+
+        elif len(self.errors) == 1:
+            error = self.errors[0]
+
+            if not self.error_message:
+                self.error_message = error['message']
+
+            if error['message'] == self.error_message:
+                formatted_message = f"{self.error_message}\n" if self.error_message else "An error occurred\n"
+                for location in error['locations']:
+                    formatted_message += f"Location: Line {location['line']}, Column {location['column']}\n"
+                    if location.get('prev_line'):
+                        formatted_message += f"       {location['prev_line']}\n"
+                    formatted_message += f"       {location['error_line']}\n"
+                    if location.get('next_line'):
+                        formatted_message += f"       {location['next_line']}\n"
+                if not self.error_code:
+                    self.error_code = error.get('error_code')
+                if not self.status_code:
+                    self.status_code = error.get('status_code')
+
+                formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
+                formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
+
+            else:
+                formatted_message = f"{self.error_message}\n" if self.error_message else "An error occurred\n"
+
+                formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
+                formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
+                formatted_message += f"\nOther errors: {error['message']}\n"
+
+                for location in error['locations']:
+                    formatted_message += f" - Location: Line {location['line']}, Column {location['column']}\n"
+                    if location.get('prev_line'):
+                        formatted_message += f"       {location['prev_line']}\n"
+                    if location.get('error_line'):
+                        formatted_message += f"       {location['error_line']}\n"
+                    if location.get('next_line'):
+                        formatted_message += f"       {location['next_line']}\n"
+
+                formatted_message += f" - Error Code: {error['error_code']}\n" if error.get('error_code') else ''
+                formatted_message += f" - Status Code: {error.get('status_code')}\n" if error.get('status_code') else ''
+        else:
+            if self.error_message:
+                formatted_message = f"{self.error_message}\n"
+
+                formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
+                formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
+                formatted_message += f"\nOther errors:\n"
+
+                for error in self.errors:
+                    formatted_message += f"\n{error['message']}\n"
+                    for location in error['locations']:
+                        formatted_message += f" - Location: Line {location['line']}, Column {location['column']}\n"
+                        if location.get('prev_line'):
+                            formatted_message += f"       {location['prev_line']}\n"
+                        if location.get('error_line'):
+                            formatted_message += f"       {location['error_line']}\n"
+                        if location.get('next_line'):
+                            formatted_message += f"       {location['next_line']}\n"
+                    formatted_message += f" - Error Code: {error['error_code']}\n"
+                    formatted_message += f" - Status Code: {error['status_code']}\n"
+            else:
+                formatted_message = "\nMultiple errors occurred:"
+                for error in self.errors:
+                    formatted_message += f"\n{error['message']}\n"
+                    for location in error['locations']:
+                        formatted_message += f" - Location: Line {location['line']}, Column {location['column']}\n"
+                        if location.get('prev_line'):
+                            formatted_message += f"       {location['prev_line']}\n"
+                        if location.get('error_line'):
+                            formatted_message += f"       {location['error_line']}\n"
+                        if location.get('next_line'):
+                            formatted_message += f"       {location['next_line']}\n"
+                    formatted_message += f" - Error Code: {error['error_code']}\n"
+                    formatted_message += f" - Status Code: {error['status_code']}\n"
+
+        return formatted_message

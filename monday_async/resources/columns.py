@@ -14,7 +14,7 @@ ID = Union[int, str]
 class ColumnResource(AsyncBaseResource):
     async def get_columns_by_board(self, board_id: ID, ids: Union[ID, List[ID]] = None,
                                    types: Union[ColumnType, List[ColumnType]] = None,
-                                   with_complexity: bool = False) -> str:
+                                   with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve columns associated with a specific board, allowing filtering by column IDs and types.
 
@@ -32,7 +32,7 @@ class ColumnResource(AsyncBaseResource):
     async def create_column(self, board_id: ID, title: str, column_type: ColumnType,
                             description: Optional[str] = None, defaults: Optional[dict] = None,
                             column_id: Optional[str] = None, after_column_id: Optional[ID] = None,
-                            with_complexity: bool = False) -> str:
+                            with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new column on a specific board with a specified title, type,
         and optional description, defaults, user-specified ID, and positioning.
@@ -60,7 +60,7 @@ class ColumnResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def change_column_title(self, board_id: ID, column_id: str, title: str,
-                                  with_complexity: bool = False) -> str:
+                                  with_complexity: bool = False) -> dict:
         """
         Execute a query to update the title of an existing column on a specific board.
 
@@ -77,7 +77,7 @@ class ColumnResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def change_column_description(self, board_id: ID, column_id: str, description: str,
-                                        with_complexity: bool = False) -> str:
+                                        with_complexity: bool = False) -> dict:
         """
         Execute a query to update the description of an existing column on a specific board.
 
@@ -94,7 +94,7 @@ class ColumnResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def delete_column(self, board_id: ID, column_id: str,
-                            with_complexity: bool = False) -> str:
+                            with_complexity: bool = False) -> dict:
         """
         Execute a query to remove a column from a specific board.
 

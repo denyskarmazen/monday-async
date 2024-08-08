@@ -9,7 +9,7 @@ ID = Union[int, str]
 
 class TagResource(AsyncBaseResource):
     async def get_tags(self, ids: Union[ID, List[ID]] = None,
-                       with_complexity: bool = False) -> str:
+                       with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve tags, allowing you to specify individual tags or retrieve all tags.
 
@@ -22,7 +22,7 @@ class TagResource(AsyncBaseResource):
         query = get_tags_query(ids=ids, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def get_tags_by_board(self, board_id: ID, with_complexity: bool = False) -> str:
+    async def get_tags_by_board(self, board_id: ID, with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve tags associated with a specific board.
 
@@ -36,7 +36,7 @@ class TagResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def create_or_get_tag(self, tag_name: str, board_id: Optional[ID] = None,
-                                with_complexity: bool = False) -> str:
+                                with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new tag with the specified name or retrieve the existing tag if it already exists.
 

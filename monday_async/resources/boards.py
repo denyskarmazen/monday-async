@@ -20,7 +20,7 @@ class BoardResource(AsyncBaseResource):
                          workspace_ids: Union[ID, List[ID]] = None,
                          order_by: Optional[BoardsOrderBy] = None,
                          limit: int = 25, page: int = 1,
-                         with_complexity: bool = False) -> str:
+                         with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve boards, offering filtering by IDs, board kind, state, workspace, and ordering options.
 
@@ -46,7 +46,7 @@ class BoardResource(AsyncBaseResource):
                            template_id: Optional[ID] = None, board_owner_ids: List[ID] = None,
                            board_owner_team_ids: List[ID] = None, board_subscriber_ids: List[ID] = None,
                            board_subscriber_teams_ids: List[ID] = None, empty: bool = False,
-                           with_complexity: bool = False) -> str:
+                           with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new board with specified name, kind, and optional description, folder, workspace, template,
         and subscribers/owners.
@@ -78,7 +78,7 @@ class BoardResource(AsyncBaseResource):
     async def duplicate_board(self, board_id: ID, duplicate_type: DuplicateBoardType,
                               board_name: Optional[str] = None, workspace_id: Optional[ID] = None,
                               folder_id: Optional[ID] = None, keep_subscribers: bool = False,
-                              with_complexity: bool = False) -> str:
+                              with_complexity: bool = False) -> dict:
         """
         Execute a query to duplicate a board with options to include structure, items, updates, and subscribers.
 
@@ -104,7 +104,7 @@ class BoardResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def update_board(self, board_id: ID, board_attribute: BoardAttributes, new_value: str,
-                           with_complexity: bool = False) -> str:
+                           with_complexity: bool = False) -> dict:
         """
         Execute a query to update a board attribute.
 
@@ -120,7 +120,7 @@ class BoardResource(AsyncBaseResource):
                                    with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def archive_board(self, board_id: ID, with_complexity: bool = False) -> str:
+    async def archive_board(self, board_id: ID, with_complexity: bool = False) -> dict:
         """
         Execute a query to archive a board, making it no longer visible in the active board list.
 
@@ -133,7 +133,7 @@ class BoardResource(AsyncBaseResource):
         query = archive_board_query(board_id=board_id, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def delete_board(self, board_id: ID, with_complexity: bool = False) -> str:
+    async def delete_board(self, board_id: ID, with_complexity: bool = False) -> dict:
         """
         Execute a query to permanently delete a board.
 
@@ -164,7 +164,7 @@ class BoardResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def remove_users_from_board(self, board_id: ID, user_ids: Union[ID, List[ID]],
-                                      with_complexity: bool = False) -> str:
+                                      with_complexity: bool = False) -> dict:
         """
         Execute a query to remove users from a board's subscribers or owners.
 
@@ -179,7 +179,7 @@ class BoardResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def add_teams_to_board(self, board_id: ID, team_ids: Union[ID, List[ID]],
-                                 kind: SubscriberKind, with_complexity: bool = False) -> str:
+                                 kind: SubscriberKind, with_complexity: bool = False) -> dict:
         """
         Execute a query to add teams as subscribers or owners to a board.
 
@@ -196,7 +196,7 @@ class BoardResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def delete_teams_from_board(self, board_id: ID, team_ids: Union[ID, List[ID]],
-                                      with_complexity: bool = False) -> str:
+                                      with_complexity: bool = False) -> dict:
         """
         Execute a query to remove teams from a board's subscribers or owners.
 
@@ -211,7 +211,7 @@ class BoardResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def get_board_views(self, board_id: ID, ids: Union[ID, List[ID]] = None,
-                              view_type: Optional[str] = None, with_complexity: bool = False) -> str:
+                              view_type: Optional[str] = None, with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve the views associated with a specific board.
 

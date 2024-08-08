@@ -6,7 +6,7 @@ from monday_async.types import TargetType
 
 class NotificationResource(AsyncBaseResource):
     async def create_notification(self, user_id: Union[int, str], target_id: Union[int, str], text: str,
-                                  target_type: TargetType, with_complexity: bool = False):
+                                  target_type: TargetType, with_complexity: bool = False) -> dict:
         """
         Create a notification. For more information, visit
         https://developer.monday.com/api-reference/reference/notification

@@ -14,7 +14,7 @@ class FolderResource(AsyncBaseResource):
     async def get_folders(self, ids: Union[ID, List[ID]] = None,
                           workspace_ids: Union[ID, List[ID]] = None,
                           limit: int = 25, page: int = 1,
-                          with_complexity: bool = False) -> str:
+                          with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve folders, allowing you to specify specific folders,
             workspaces, limits, and pagination.
@@ -36,7 +36,7 @@ class FolderResource(AsyncBaseResource):
     async def create_folder(self, workspace_id: ID, name: str,
                             color: Optional[FolderColor] = FolderColor.NULL,
                             parent_folder_id: Optional[ID] = None,
-                            with_complexity: bool = False) -> str:
+                            with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new folder within a specified workspace and parent folder (optional).
 
@@ -56,7 +56,7 @@ class FolderResource(AsyncBaseResource):
     async def update_folder(self, folder_id: ID, name: Optional[str] = None,
                             color: Optional[FolderColor] = None,
                             parent_folder_id: Optional[ID] = None,
-                            with_complexity: bool = False) -> str:
+                            with_complexity: bool = False) -> dict:
         """
         Execute a query to modify an existing folder's name, color, or parent folder.
 
@@ -71,7 +71,7 @@ class FolderResource(AsyncBaseResource):
                                     parent_folder_id=parent_folder_id, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def delete_folder(self, folder_id: ID, with_complexity: bool = False) -> str:
+    async def delete_folder(self, folder_id: ID, with_complexity: bool = False) -> dict:
         """
         Execute a query to permanently remove a folder from a workspace.
 

@@ -191,54 +191,11 @@ class AsyncGraphQLClient:
             'ResourceNotFoundException': ResourceNotFoundError,
             'UserUnauthorizedException': UserUnauthorizedError,
         }
-        error_class = MondayQueryError
-        error_message = ""
-        query_by_lines = query.split("\n")
+
         if (isinstance(response, dict) and
                 ('errors' in response or 'error_message' in response or 'error_code' in response)):
+            error_info = ErrorInfo(response, query)
+            error_class = error_codes.get(error_info.error_code, MondayQueryError)
 
-            if 'errors' in response:
-                for err in response['errors']:
-                    if isinstance(err, dict):
-                        error_message += f"\n{err['message']}\n"
-
-                        if 'locations' in err:
-                            for location in err['locations']:
-                                line_index = int(location['line'])
-                                column_index = int(location['column'])
-                                prev_line = f'{line_index - 1}) {query_by_lines[line_index - 2]}' if line_index > 1 \
-                                    else ""
-                                current_line = f'{line_index}) {query_by_lines[line_index - 1]}'
-                                next_line = f'{line_index + 1}) {query_by_lines[line_index]}' if line_index < len(
-                                    query_by_lines) else ""
-
-                                error_message += f'Location: Line {line_index}, Column {column_index}\n'
-                                error_message += '\n'.join([prev_line, current_line, next_line]) + '\n'
-
-                        if 'stack' in err:
-                            error_message += f"Stack: {err['stack']}"
-                    else:
-                        error_message += err
-
-            elif 'error_code' in response:
-                error_code = response['error_code']
-                error_class = error_codes.get(error_code, MondayQueryError)
-
-                error_message = f"\n{response['error_message']}\n"
-                error_message += f"  - Error Code: {error_code}\n"
-                if 'status_code' in response:
-                    error_message += f"  - Status Code: {response['status_code']}\n"
-
-                if 'error_data' in response:
-                    error_message += f"  - Error Data: {response['error_data']}\n"
-
-            elif 'error_message' in response:
-                error_message = f"\n{response['error_message']}\n"
-                if 'status_code' in response:
-                    error_message += f"  - Status Code: {response['status_code']}\n"
-
-                elif "Rate Limit Exceeded" in response['error_message']:
-                    error_class = RateLimitExceededError
-
-        if error_message:
-            raise error_class(error_message)
+            if error_info.errors or error_info.error_message:
+                raise error_class(error_info.formatted_message)
