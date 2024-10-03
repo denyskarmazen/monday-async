@@ -141,9 +141,22 @@ class ComplexityError(MondayQueryError):
     This indicates that you have reached the complexity limit for your query.
     To resolve, add limits to your queries and only request the information you need.
     For more information, visit https://developer.monday.com/api-reference/docs/errors#complexityexception
+
+    Attributes:
+        remaining_complexity (int or None): The remaining budget if available.
+        reset_in (int or None): The time in seconds until the budget resets.
     """
 
     def __init__(self, message="Complexity limit exceeded", original_errors=None):
+        import re
+        pattern = r"budget remaining (\d+) out of \d+ reset in (\d+) seconds"
+        match = re.search(pattern, message)
+        if match:
+            self.remaining_complexity = int(match.group(1))
+            self.reset_in = int(match.group(2))
+        else:
+            self.remaining_complexity = None
+            self.reset_in = None
         super().__init__(message, original_errors)
 
 
