@@ -1,12 +1,13 @@
 from enum import Enum
 from typing import List, Union, Optional, Any
+
+from monday_async.query_params import QueryParams, ItemByColumnValuesParam
 from monday_async.types import (WebhookEventType, TargetType, UserKind, WorkspaceKind, State,
                                 FolderColor, SubscriberKind, BoardKind, BoardAttributes, GroupUpdateColors,
                                 DuplicateBoardType, PositionRelative, ColumnType, BoardsOrderBy, GroupAttributes,
                                 GroupColors)
 from monday_async.utils.utils import (monday_json_stringify, format_param_value, graphql_parse, gather_params,
                                       format_dict_value)
-from monday_async.query_params import QueryParams, ItemByColumnValuesParam
 
 ID = Union[int, str]
 
@@ -128,7 +129,7 @@ def get_current_api_version_query(with_complexity: bool = False) -> str:
     Construct a query to get the api version used to make the request. For more information, visit
     https://developer.monday.com/api-reference/reference/version
 
-    Parameters:
+    Args:
         with_complexity (bool): returns the complexity of the query with the query if set to True.
     """
     query = f"""
@@ -148,7 +149,7 @@ def get_all_api_versions_query(with_complexity: bool = False) -> str:
     Construct a query to get all the monday.com api versions available. For more information, visit
     https://developer.monday.com/api-reference/reference/versions
 
-    Parameters:
+    Args:
         with_complexity (bool): returns the complexity of the query with the query if set to True.
     """
     query = f"""
@@ -169,7 +170,7 @@ def get_webhooks_by_board_id_query(board_id: ID, with_complexity: bool = False) 
     Construct a query to get all webhooks for a board. For more information, visit
     https://developer.monday.com/api-reference/reference/webhooks#queries
 
-    Parameters:
+    Args:
         board_id (Union[int, str]): a unique identifier of a board, can be an integer or
                                     a string containing integers.
 
@@ -194,7 +195,7 @@ def create_webhook_query(board_id: ID, url: str, event: WebhookEventType, config
     Construct a query to create a webhook. For more information, visit
     https://developer.monday.com/api-reference/reference/webhooks#create-a-webhook
 
-    Parameters:
+    Args:
         board_id (Union[int, str]): a unique identifier of a board, can be an integer or
                                     a string containing integers.
 
@@ -231,7 +232,7 @@ def delete_webhook_query(webhook_id: ID, with_complexity: bool = False) -> str:
     Construct a query to delete a webhook connection. For more information, visit
     https://developer.monday.com/api-reference/reference/webhooks#delete-a-webhook
 
-    Parameters:
+    Args:
         webhook_id (Union[int, str]): a unique identifier of a webhook, can be an integer or
                                     a string containing integers.
 
@@ -255,7 +256,7 @@ def create_notification_query(user_id: ID, target_id: ID, text: str, target_type
     Construct a query to create a notification. For more information, visit
     https://developer.monday.com/api-reference/reference/notification
 
-    Parameters:
+    Args:
         user_id (ID): the user's unique identifier.
         target_id (ID): the target's unique identifier. The value depends on the target_type:
             - Project: the relevant item or board ID
@@ -291,7 +292,7 @@ def get_me_query(with_complexity: bool = False) -> str:
     Construct a query to get data about the user connected to the API key that is used. For more information, visit
     https://developer.monday.com/api-reference/reference/me#queries
 
-    Parameters:
+    Args:
         with_complexity (bool): returns the complexity of the query with the query if set to True.
     """
     query = f"""
@@ -322,7 +323,7 @@ def get_users_query(user_ids: Union[ID, List[ID]] = None, limit: int = 50, user_
     """
     Construct a query to get all users or get users by ids if provided. For more information, visit
     https://developer.monday.com/api-reference/reference/users#queries
-    Parameters:
+    Args:
         user_ids (Union[ID, List[ID]): A single user ID, a list of user IDs, or None to get all users.
 
         limit (int): The number of users to return, 50 by default.
@@ -374,7 +375,7 @@ def get_users_by_email_query(user_emails: Union[str, List[str]], user_kind: User
     """
     Construct a query to get users by emails. For more information, visit
     https://developer.monday.com/api-reference/reference/users#queries
-    Parameters:
+    Args:
         user_emails (Union[str, List[str]]): A single email of a user or a list of user emails.
 
         user_kind (UserKind): The kind of users you want to search by: all, non_guests, guests, or non_pending.
@@ -423,7 +424,7 @@ def get_teams_query(team_ids: Union[ID, List[ID]] = None, with_complexity: bool 
     Construct a query to get all teams or get teams by ids if provided. For more information, visit
     https://developer.monday.com/api-reference/reference/teams#queries
 
-    Parameters:
+    Args:
         team_ids (Union[int, str, List[Union[int, str]]]):
             A single team ID, a list of team IDs, or None to get all teams.
 
@@ -450,7 +451,7 @@ def add_users_to_team_query(team_id: ID, user_ids: Union[ID, List[ID]], with_com
     Construct a query to add users to a team. For more information, visit
     https://developer.monday.com/api-reference/reference/teams#add-users-to-a-team
 
-    Parameters:
+    Args:
         team_id (Union[int, str]): The unique identifier of the team to add users to.
 
         user_ids (Union[int, str, List[Union[int, str]]]): A single user ID of a user or a list of user IDs.
@@ -482,7 +483,7 @@ def remove_users_from_team_query(team_id: ID, user_ids: Union[ID, List[ID]], wit
     Construct a query to remove users from a team. For more information, visit
     https://developer.monday.com/api-reference/reference/teams#remove-users-from-a-team
 
-    Parameters:
+    Args:
         team_id (Union[int, str]): The unique identifier of the team to remove users from.
 
         user_ids (Union[int, str, List[Union[int, str]]]): A single user ID of a user or a list of user IDs.
@@ -517,7 +518,7 @@ def get_workspaces_query(workspace_ids: Union[ID, List[ID]] = None, limit: int =
     Construct a query to get workspaces. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#queries
 
-    Parameters:
+    Args:
         workspace_ids (Union[int, str, List[Union[int, str]]]): A single workspace ID, a list of workspace IDs, or
             None to get all workspaces.
 
@@ -565,7 +566,7 @@ def create_workspace_query(name: str, kind: WorkspaceKind, description: Optional
     Construct a query to create a workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#create-a-workspace
 
-    Parameters:
+    Args:
         name (str): The new workspace name.
 
         kind (WorkspaceKind): The new workspace kind: open or closed.
@@ -598,7 +599,7 @@ def update_workspace_query(workspace_id: ID, name: Optional[str] = None, kind: O
     Construct a query to update a workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#update-a-workspace
 
-    Parameters:
+    Args:
         workspace_id (Union[int, str]): The unique identifier of the workspace to update.
 
         name (str): The updated workspace name.
@@ -632,7 +633,7 @@ def delete_workspace_query(workspace_id: Union[int, str], with_complexity: bool 
     Construct a query to delete a workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#delete-a-workspace
 
-    Parameters:
+    Args:
         workspace_id (Union[int, str]): The unique identifier of the workspace to delete.
 
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
@@ -653,7 +654,7 @@ def add_users_to_workspace_query(workspace_id: ID, user_ids: Union[ID, List[ID]]
     This query adds users as subscribers or owners to a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#add-users-to-a-workspace
 
-    Parameters:
+    Args:
         workspace_id (ID): The unique identifier of the target workspace.
 
         user_ids (Union[ID, List[ID]]): A single user ID or a list of user IDs to add to the workspace.
@@ -685,7 +686,7 @@ def delete_users_from_workspace_query(workspace_id: ID, user_ids: Union[ID, List
     This query removes users from a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#delete-users-from-a-workspace
 
-    Parameters:
+    Args:
         workspace_id (ID): The unique identifier of the target workspace.
 
         user_ids (Union[ID, List[ID]]): A single user ID or a list of user IDs to remove from the workspace.
@@ -713,7 +714,7 @@ def add_teams_to_workspace_query(workspace_id: ID, team_ids: Union[ID, List[ID]]
     This query adds teams as subscribers or owners to a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#add-teams-to-a-workspace
 
-    Parameters:
+    Args:
         workspace_id (ID): The unique identifier of the target workspace.
 
         team_ids (Union[ID, List[ID]]): A single team ID or a list of team IDs to add to the workspace.
@@ -745,7 +746,7 @@ def delete_teams_from_workspace_query(workspace_id: ID, team_ids: Union[ID, List
     This query removes teams from a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#delete-teams-from-a-workspace
 
-    Parameters:
+    Args:
         workspace_id (ID): The unique identifier of the target workspace.
 
         team_ids (Union[ID, List[ID]]): A single team ID or a list of team IDs to remove from the workspace.
@@ -772,7 +773,7 @@ def get_folders_query(ids: Union[ID, List[ID]] = None, workspace_ids: Union[ID, 
     """
     This query retrieves folders, allowing you to specify specific folders, workspaces, limits, and pagination.
     For more information, visit https://developer.monday.com/api-reference/reference/folders#queries
-    Parameters:
+    Args:
         ids (Union[ID, List[ID]]): (Optional) A single folder ID or a list of IDs to retrieve specific folders.
 
         workspace_ids (Union[ID, List[ID]]): (Optional) A single workspace ID or a list of IDs to filter folders
@@ -823,7 +824,7 @@ def create_folder_query(workspace_id: ID, name: str, color: Optional[FolderColor
     This query creates a new folder within a specified workspace and parent folder (optional).
     For more information, visit https://developer.monday.com/api-reference/reference/folders#create-a-folder
 
-    Parameters:
+    Args:
         workspace_id (ID): The unique identifier of the workspace where the folder will be created.
 
         name (str): The name of the new folder.
@@ -858,7 +859,7 @@ def update_folder_query(folder_id: ID, name: Optional[str] = None, color: Option
     """
     This query modifies an existing folder's name, color, or parent folder.
 
-    Parameters:
+    Args:
         folder_id (ID): The unique identifier of the folder to update.
 
         name (str): (Optional) The new name for the folder.
@@ -891,7 +892,7 @@ def delete_folder_query(folder_id: ID, with_complexity: bool = False) -> str:
     """
     This query permanently removes a folder from a workspace.
 
-    Parameters:
+    Args:
         folder_id (ID): The unique identifier of the folder to delete.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -915,7 +916,7 @@ def get_boards_query(ids: Union[ID, List[ID]] = None, board_kind: Optional[Board
     This query retrieves boards, offering filtering by IDs, board kind, state, workspace, and ordering options.
     For more information, visit https://developer.monday.com/api-reference/reference/boards#queries
 
-    Parameters:
+    Args:
         ids (List[ID]): (Optional) A list of board IDs to retrieve specific boards.
 
         board_kind (BoardKind): (Optional) The kind of boards to retrieve: public, private, or share.
@@ -997,7 +998,7 @@ def create_board_query(board_name: str, board_kind: BoardKind, description: Opti
     and subscribers/owners.
     For more information, visit https://developer.monday.com/api-reference/reference/boards#create-a-board
 
-    Parameters:
+    Args:
         board_name (str): The name of the new board.
 
         board_kind (BoardKind): The kind of board to create: public, private, or share.
@@ -1055,7 +1056,7 @@ def duplicate_board_query(board_id: ID, duplicate_type: DuplicateBoardType,
     This query duplicates a board with options to include structure, items, updates, and subscribers.
     For more information, visit https://developer.monday.com/api-reference/reference/boards#duplicate-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to duplicate.
 
         duplicate_type (DuplicateBoardType): The type of duplication: duplicate_board_with_structure,
@@ -1103,7 +1104,7 @@ def update_board_query(board_id: ID, board_attribute: BoardAttributes, new_value
     This query updates a board attribute. For more information, visit
     https://developer.monday.com/api-reference/reference/boards#update-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of a board to update
 
         board_attribute (BoardAttributes): The board's attribute to update: name, description, or communication.
@@ -1130,7 +1131,7 @@ def archive_board_query(board_id: ID, with_complexity: bool = False) -> str:
     This query archives a board, making it no longer visible in the active board list. For more information, visit
     https://developer.monday.com/api-reference/reference/boards#archive-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to archive.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -1150,7 +1151,7 @@ def delete_board_query(board_id: ID, with_complexity: bool = False) -> str:
     This query permanently deletes a board. For more information, visit
     https://developer.monday.com/api-reference/reference/boards#delete-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to delete.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -1171,7 +1172,7 @@ def add_users_to_board_query(board_id: ID, user_ids: Union[ID, List[ID]], kind: 
     This query adds users as subscribers or owners to a board. For more information, visit
     https://developer.monday.com/api-reference/reference/users#add-users-to-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to add users to.
 
         user_ids (Union[ID, List[ID]]): A list of user IDs to add as subscribers or owners.
@@ -1204,7 +1205,7 @@ def remove_users_from_board_query(board_id: ID, user_ids: Union[ID, List[ID]],
     This query removes users from a board's subscribers or owners. For more information, visit
     https://developer.monday.com/api-reference/reference/users#delete-subscribers-from-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to remove users from.
 
         user_ids (Union[ID, List[ID]]): A list of user IDs to remove from the board.
@@ -1232,7 +1233,7 @@ def add_teams_to_board_query(board_id: ID, team_ids: Union[ID, List[ID]], kind: 
     This query adds teams as subscribers or owners to a board. For more information, visit
     https://developer.monday.com/api-reference/reference/teams#add-teams-to-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to add teams to.
 
         team_ids (Union[ID, List[ID]]): A list of team IDs to add as subscribers or owners.
@@ -1263,7 +1264,7 @@ def delete_teams_from_board_query(board_id: ID, team_ids: Union[ID, List[ID]],
     This query removes teams from a board's subscribers or owners. For more information, visit
     https://developer.monday.com/api-reference/reference/teams#delete-teams-from-a-board
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to remove teams from.
 
         team_ids (Union[ID, List[ID]]): A list of team IDs to remove from the board.
@@ -1290,7 +1291,7 @@ def get_board_views_query(board_id: ID, ids: Union[ID, List[ID]] = None, view_ty
     This query retrieves the views associated with a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/board-views#queries
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to retrieve views from.
 
         ids (Union[ID, List[ID]]): (Optional) A list of view IDs to retrieve specific views.
@@ -1321,7 +1322,7 @@ def get_tags_query(ids: Union[ID, List[ID]] = None, with_complexity: bool = Fals
     This query retrieves tags, allowing you to specify individual tags or retrieve all tags. For more information, visit
     https://developer.monday.com/api-reference/reference/tags-1#queries
 
-    Parameters:
+    Args:
         ids (Union[ID, List[ID]]): (Optional) A list of tag IDs to retrieve specific tags.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -1343,7 +1344,7 @@ def get_tags_by_board_query(board_id: ID, with_complexity: bool = False) -> str:
     This query retrieves tags associated with a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/tags-1#queries
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to retrieve tags from.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -1368,7 +1369,7 @@ def create_or_get_tag_query(tag_name: str, board_id: Optional[ID] = None,
     This query creates a new tag with the specified name or retrieves the existing tag if it already exists.
     For more information, visit https://developer.monday.com/api-reference/reference/tags-1#create-or-get-a-tag
 
-    Parameters:
+    Args:
         tag_name (str): The name of the tag to create or retrieve.
 
         board_id (ID): (Optional) The ID of the private board to create the tag in. Not needed for public boards.
@@ -1397,7 +1398,7 @@ def get_columns_by_board_query(board_id: ID, ids: Union[ID, List[ID]] = None,
     This query retrieves columns associated with a specific board, allowing filtering by column IDs and types.
     For more information, visit https://developer.monday.com/api-reference/reference/columns#queries
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to retrieve columns from.
 
         ids (Union[ID, List[ID]]): (Optional) A list of column IDs to retrieve specific columns.
@@ -1432,7 +1433,7 @@ def create_column_query(board_id: ID, title: str, column_type: ColumnType, descr
     defaults, user-specified ID, and positioning.
     For more information, visit https://developer.monday.com/api-reference/reference/columns#create-a-column
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to create the column on.
 
         title (str): The title of the new column.
@@ -1483,7 +1484,7 @@ def change_column_title_query(board_id: ID, column_id: str, title: str,
     This query updates the title of an existing column on a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#change-a-column-title
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the column.
 
         column_id (str): The unique identifier of the column to update.
@@ -1513,7 +1514,7 @@ def change_column_description_query(board_id: ID, column_id: str, description: s
     This query updates the description of an existing column on a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#change-column-metadata
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the column.
 
         column_id (str): The unique identifier of the column to update.
@@ -1543,7 +1544,7 @@ def delete_column_query(board_id: ID, column_id: str, with_complexity: bool = Fa
     This query removes a column from a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#delete-a-column
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the column.
 
         column_id (str): The unique identifier of the column to delete.
@@ -1570,7 +1571,7 @@ def get_groups_by_board_query(board_id: ID, ids: Union[str, List[str]] = None,
     This query retrieves groups associated with a specific board, with the option to filter by group IDs.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#queries
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to retrieve groups from.
 
         ids (Union[ID, List[ID]]): (Optional) A list of group IDs to retrieve specific groups.
@@ -1599,7 +1600,7 @@ def create_group_query(board_id: ID, group_name: str, group_color: Optional[Unio
     This query creates a new group on a specific board with a specified name and positioning relative to other groups.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#create-a-group
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to create the group on.
 
         group_name (str): The name of the new group.
@@ -1645,7 +1646,7 @@ def update_group_query(board_id: ID, group_id: str, group_attribute: GroupAttrib
     This query modifies an existing group's title, color, or position on the board.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#update-a-group
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the group.
 
         group_id (str): The unique identifier of the group to update.
@@ -1684,7 +1685,7 @@ def duplicate_group_query(board_id: ID, group_id: str, add_to_top: Optional[bool
         with options to position the new group and set its title.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#duplicate-group
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the group to duplicate.
 
         group_id (str): The unique identifier of the group to duplicate.
@@ -1716,7 +1717,7 @@ def archive_group_query(board_id: ID, group_id: str, with_complexity: bool = Fal
     This query archives a group on a specific board, removing it from the active view. For more information, visit
     https://developer.monday.com/api-reference/reference/groups#archive-a-group
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the group.
 
         group_id (str): The unique identifier of the group to archive.
@@ -1741,7 +1742,7 @@ def delete_group_query(board_id: ID, group_id: str, with_complexity: bool = Fals
     This query permanently removes a group from a board. For more information, visit
     https://developer.monday.com/api-reference/reference/groups#delete-a-group
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the group.
 
         group_id (str): The unique identifier of the group to delete.
@@ -1770,7 +1771,7 @@ def get_items_by_id_query(ids: Union[ID, List[ID]], newest_first: Optional[bool]
     This query retrieves items, allowing filtering by IDs, sorting, and excluding inactive items.
     For more information, visit https://developer.monday.com/api-reference/reference/items#queries
 
-    Parameters:
+    Args:
         ids (Union[ID, List[ID]]):  A list of item IDs to retrieve specific items.
 
         newest_first (bool): (Optional) Set to True to order results with the most recently created items first.
@@ -1829,7 +1830,7 @@ def get_items_by_board_query(board_ids: Union[ID, List[ID]], query_params: Optio
     This query retrieves items from a specific board, allowing filtering by IDs, sorting, and excluding inactive items.
     For more information, visit https://developer.monday.com/api-reference/reference/items-page#queries
 
-    Parameters:
+    Args:
         board_ids (ID): The ID of the board to retrieve items from.
 
         query_params (QueryParams): (Optional) A set of parameters to filter, sort,
@@ -1901,7 +1902,7 @@ def get_items_by_group_query(board_id: ID, group_id: ID, query_params: Optional[
     and excluding inactive items.
     For more information, visit https://developer.monday.com/api-reference/reference/items-page#queries
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board to retrieve items from.
 
         group_id (ID): The ID of the group to get the items by
@@ -1972,7 +1973,7 @@ def get_items_by_column_value_query(board_id: ID, column_id: str, column_values:
     This query retrieves items based on the value of a specific column. For more information, visit
     https://developer.monday.com/api-reference/reference/items-page-by-column-values#queries
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the items.
 
         column_id (str): The unique identifier of the column to filter by.
@@ -2040,7 +2041,7 @@ def get_items_by_multiple_column_values_query(board_id: ID, columns: Union[ItemB
     This query retrieves items based on the value of a specific column. For more information, visit
     https://developer.monday.com/api-reference/reference/items-page-by-column-values#queries
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the items.
 
         columns (Union[ItemByColumnValuesParam, dict]): The column values to filter by can be ItemByColumnValuesParam
@@ -2121,7 +2122,7 @@ def next_items_page_query(cursor: str, limit: int = 500, with_complexity: bool =
     This query returns the next set of items that correspond with the provided cursor. For more information, visit
     https://developer.monday.com/api-reference/reference/items-page#cursor-based-pagination-using-next_items_page
 
-    Parameters:
+    Args:
         cursor (str): An opaque cursor that represents the position in the list after the last returned item.
             Use this cursor for pagination to fetch the next set of items.
             If the cursor is null, there are no more items to fetch.
@@ -2172,7 +2173,7 @@ def create_item_query(item_name: str, board_id: ID, group_id: Optional[str] = No
     This query creates a new item on a specified board and group with a given name and optional column values.
     For more information, visit https://developer.monday.com/api-reference/reference/items#create-an-item
 
-    Parameters:
+    Args:
         item_name (str): The name of the new item.
 
         board_id (ID): The ID of the board to create the item on.
@@ -2209,7 +2210,7 @@ def duplicate_item_query(board_id: ID, item_id: ID, with_updates: Optional[bool]
     This query creates a copy of an item on the same board, with the option to include updates.
     For more information, visit https://developer.monday.com/api-reference/reference/items#duplicate-an-item
 
-    Parameters:
+    Args:
         board_id (ID): The ID of the board containing the item to duplicate.
 
         with_updates (bool): (Optional) Whether to include the item's updates in the duplication.
@@ -2237,7 +2238,7 @@ def archive_item_query(item_id: ID, with_complexity: bool = False) -> str:
     """
     This query archives an item, making it no longer visible in the active item list.
     For more information, visit https://developer.monday.com/api-reference/reference/items#archive-an-item
-    Parameters:
+    Args:
 
         item_id (ID): The ID of the item to archive.
 
@@ -2259,7 +2260,7 @@ def delete_item_query(item_id: ID, with_complexity: bool = False) -> str:
     This query permanently removes an item from a board.
     For more information, visit https://developer.monday.com/api-reference/reference/items#delete-an-item
 
-    Parameters:
+    Args:
         item_id (ID): The ID of the item to delete.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -2281,7 +2282,7 @@ def get_subitems_by_parent_item_query(parent_item_id: ID, with_column_values: bo
     This query retrieves subitems of a specific item.
     For more information, visit https://developer.monday.com/api-reference/reference/subitems#queries
 
-    Parameters:
+    Args:
         parent_item_id (ID): The ID of the parent item to retrieve subitems from.
 
         with_column_values (bool): Set to True to return the items column values along with the results.
@@ -2311,7 +2312,7 @@ def create_subitem_query(parent_item_id: ID, subitem_name: str, column_values: O
     This query creates a new subitem under a specific parent item with a given name and optional column values.
     For more information, visit https://developer.monday.com/api-reference/reference/subitems#create-a-subitem
 
-    Parameters:
+    Args:
         parent_item_id (ID): The ID of the parent item.
 
         subitem_name (str): The name of the new subitem.
@@ -2346,7 +2347,7 @@ def change_multiple_item_column_values_query(item_id: ID, board_id: ID, column_v
     This query updates the values of multiple columns for a specific item. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#change-multiple-column-values
 
-    Parameters:
+    Args:
         item_id (ID): The ID of the item to update.
 
         board_id (ID): The ID of the board containing the item.
@@ -2381,7 +2382,7 @@ def change_item_column_json_value_query(item_id: ID, column_id: str, board_id: I
     This query updates the value of a specific column for an item using a JSON value. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#change-a-column-value
 
-    Parameters:
+    Args:
         item_id (ID): (Optional) The ID of the item to update.
 
         column_id (str): The unique identifier of the column to update.
@@ -2420,7 +2421,7 @@ def change_item_column_simple_value_query(item_id: ID, column_id: str, board_id:
     For more information, visit
     https://developer.monday.com/api-reference/reference/columns#change-a-simple-column-value
 
-    Parameters:
+    Args:
         item_id (ID): (Optional) The ID of the item to update.
 
         column_id (str): The unique identifier of the column to update.
@@ -2456,7 +2457,7 @@ def upload_file_to_column_query(item_id: ID, column_id: str, with_complexity: bo
     This query uploads a file and adds it to a specific column of an item. For more information, visit
     https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column
 
-    Parameters:
+    Args:
         item_id (ID): The ID of the item to add the file to.
 
         column_id (str): The unique identifier of the column to add the file to.
@@ -2484,7 +2485,7 @@ def get_item_updates_query(item_id: ID, ids: Union[ID, List[ID]] = None,
     """
     This query retrieves updates associated with a specific item, allowing pagination and filtering by update IDs.
 
-    Parameters:
+    Args:
         item_id (ID): The ID of the item to retrieve updates from.
 
         ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
@@ -2528,7 +2529,7 @@ def clear_item_updates_query(item_id: ID, with_complexity: bool = False) -> str:
     This query removes all updates associated with a specific item. For more information, visit
     https://developer.monday.com/api-reference/reference/items#clear-an-items-updates
 
-    Parameters:
+    Args:
         item_id (ID): The ID of the item to clear updates from.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -2549,7 +2550,7 @@ def move_item_to_group_query(item_id: ID, group_id: str, with_complexity: bool =
     This query moves an item to a different group within the same board. For more information, visit
     https://developer.monday.com/api-reference/reference/items#move-item-to-group
 
-    Parameters:
+    Args:
         item_id (ID): The ID of the item to move.
 
         group_id (str): The ID of the target group within the board.
@@ -2582,7 +2583,7 @@ def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: in
     This query retrieves updates, allowing pagination and filtering by update IDs. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#queries
 
-    Parameters:
+    Args:
         ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
 
         limit (int): (Optional) The maximum number of updates to return. Defaults to 25.
@@ -2622,7 +2623,7 @@ def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, 
     This query creates a new update on a specific item or as a reply to another update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#create-an-update
 
-    Parameters:
+    Args:
         body (str): The text content of the update as a string or in HTML format.
 
         item_id (ID): The ID of the item to create the update on.
@@ -2651,7 +2652,7 @@ def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
     This query adds a like to a specific update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#like-an-update
 
-    Parameters:
+    Args:
         update_id (ID): The ID of the update to like.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -2671,7 +2672,7 @@ def delete_update_query(update_id: ID, with_complexity: bool = False) -> str:
     This query removes an update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#delete-an-update
 
-    Parameters:
+    Args:
         update_id (ID): The unique identifier of the update to delete.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -2686,12 +2687,12 @@ def delete_update_query(update_id: ID, with_complexity: bool = False) -> str:
     return graphql_parse(query)
 
 
-def add_file_to_update(update_id: ID, with_complexity: bool = False):
+def add_file_to_update(update_id: ID, with_complexity: bool = False) -> str:
     """
     This query adds a file to an update. For more information, visit
     https://developer.monday.com/api-reference/reference/assets-1#add-a-file-to-an-update
 
-    Parameters:
+    Args:
         update_id (ID): The unique identifier of the update to delete.
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.

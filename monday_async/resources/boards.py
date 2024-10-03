@@ -1,5 +1,8 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
+
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import (BoardKind, State, SubscriberKind, BoardAttributes, DuplicateBoardType,
+                                BoardsOrderBy)
 from monday_async.utils.queries import (
     get_boards_query, create_board_query, duplicate_board_query,
     update_board_query, archive_board_query, delete_board_query,
@@ -7,8 +10,6 @@ from monday_async.utils.queries import (
     add_teams_to_board_query, delete_teams_from_board_query,
     get_board_views_query
 )
-from monday_async.types import (BoardKind, State, SubscriberKind, BoardAttributes, DuplicateBoardType,
-                                BoardsOrderBy)
 
 ID = Union[int, str]
 
@@ -22,11 +23,12 @@ class BoardResource(AsyncBaseResource):
                          limit: int = 25, page: int = 1,
                          with_complexity: bool = False) -> dict:
         """
-        Execute a query to retrieve boards, offering filtering by IDs, board kind, state, workspace, and ordering options.
+        Execute a query to retrieve boards, offering filtering by IDs, board kind, state, workspace,
+         and ordering options.
 
         For more information, visit https://developer.monday.com/api-reference/reference/boards#queries
 
-        Parameters:
+        Args:
             ids (List[ID]): (Optional) A list of board IDs to retrieve specific boards.
             board_kind (BoardKind): (Optional) The kind of boards to retrieve: public, private, or share.
             state (State): (Optional) The state of the boards: all, active, archived, or deleted. Defaults to active.
@@ -48,12 +50,12 @@ class BoardResource(AsyncBaseResource):
                            board_subscriber_teams_ids: List[ID] = None, empty: bool = False,
                            with_complexity: bool = False) -> dict:
         """
-        Execute a query to create a new board with specified name, kind, and optional description, folder, workspace, template,
-        and subscribers/owners.
+        Execute a query to create a new board with specified name, kind, and optional description, folder, workspace,
+         template, and subscribers/owners.
 
         For more information, visit https://developer.monday.com/api-reference/reference/boards#create-a-board
 
-        Parameters:
+        Args:
             board_name (str): The name of the new board.
             board_kind (BoardKind): The kind of board to create: public, private, or share.
             description (str): (Optional) A description for the new board.
@@ -84,7 +86,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/boards#duplicate-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to duplicate.
             duplicate_type (DuplicateBoardType): The type of duplication: duplicate_board_with_structure,
             duplicate_board_with_pulses, or duplicate_board_with_pulses_and_updates.
@@ -110,7 +112,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/boards#update-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of a board to update
             board_attribute (BoardAttributes): The board's attribute to update: name, description, or communication.
             new_value (str): The new attribute value
@@ -126,7 +128,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/boards#archive-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to archive.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
@@ -139,7 +141,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/boards#delete-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
@@ -153,7 +155,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/users#add-users-to-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to add users to.
             user_ids (Union[ID, List[ID]]): A list of user IDs to add as subscribers or owners.
             kind (SubscriberKind): The type of subscription to grant: subscriber or owner.
@@ -168,9 +170,10 @@ class BoardResource(AsyncBaseResource):
         """
         Execute a query to remove users from a board's subscribers or owners.
 
-        For more information, visit https://developer.monday.com/api-reference/reference/users#delete-subscribers-from-a-board
+        For more information, visit
+         https://developer.monday.com/api-reference/reference/users#delete-subscribers-from-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to remove users from.
             user_ids (Union[ID, List[ID]]): A list of user IDs to remove from the board.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -185,7 +188,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/teams#add-teams-to-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to add teams to.
             team_ids (Union[ID, List[ID]]): A list of team IDs to add as subscribers or owners.
             kind (SubscriberKind): The type of subscription to grant: subscriber or owner.
@@ -202,7 +205,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/teams#delete-teams-from-a-board
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to remove teams from.
             team_ids (Union[ID, List[ID]]): A list of team IDs to remove from the board.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -217,7 +220,7 @@ class BoardResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/board-views#queries
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to retrieve views from.
             ids (Union[ID, List[ID]]): (Optional) A list of view IDs to retrieve specific views.
             view_type (str): (Optional) The type of views to retrieve.

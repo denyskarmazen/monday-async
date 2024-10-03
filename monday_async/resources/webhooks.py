@@ -1,7 +1,8 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import Union, Optional
-from monday_async.utils.queries import get_webhooks_by_board_id_query, create_webhook_query, delete_webhook_query
+
+from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.types import WebhookEventType
+from monday_async.utils.queries import get_webhooks_by_board_id_query, create_webhook_query, delete_webhook_query
 
 
 class WebhooksResource(AsyncBaseResource):
@@ -10,10 +11,9 @@ class WebhooksResource(AsyncBaseResource):
         Get all webhooks for a board. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#queries
 
-        Parameters:
+        Args:
             board_id (Union[int, str]): a unique identifier of a board, can be an integer or a string containing
             integers.
-
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
         query = get_webhooks_by_board_id_query(board_id=board_id, with_complexity=with_complexity)
@@ -25,18 +25,14 @@ class WebhooksResource(AsyncBaseResource):
         Create a webhook. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#create-a-webhook
 
-        Parameters:
+        Args:
             board_id (Union[int, str]): a unique identifier of a board, can be an integer or
                                         a string containing integers.
-
             url (str): the webhook URL.
-
             event (WebhookEventType): the event type to listen to.
-
             config (dict): the webhook configuration,
                 check https://developer.monday.com/api-reference/reference/webhooks
             for more info.
-
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
         query = create_webhook_query(board_id=board_id, url=url, event=event, config=config,
@@ -48,10 +44,9 @@ class WebhooksResource(AsyncBaseResource):
         Delete a webhook connection. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#delete-a-webhook
 
-        Parameters:
+        Args:
             webhook_id (Union[int, str]): a unique identifier of a webhook, can be an integer or
                                         a string containing integers.
-
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
 

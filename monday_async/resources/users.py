@@ -1,8 +1,9 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
+
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import UserKind
 from monday_async.utils.queries import (get_me_query, get_users_query, get_users_by_email_query, get_teams_query,
                                         add_users_to_team_query, remove_users_from_team_query)
-from monday_async.types import UserKind
 
 
 class UsersResource(AsyncBaseResource):
@@ -17,8 +18,9 @@ class UsersResource(AsyncBaseResource):
         Get all users or get users by ids if provided. For more information, visit
         https://developer.monday.com/api-reference/reference/users#queries
 
-        Parameters:
-            user_ids (Union[int, str, List[Union[int, str]]]): A single user ID, a list of user IDs, or None to get all users.
+        Args:
+            user_ids (Union[int, str, List[Union[int, str]]]): A single user ID, a list of user IDs, or
+                None to get all users.
 
             limit (int): The number of users to return, 50 by default.
 
@@ -40,7 +42,7 @@ class UsersResource(AsyncBaseResource):
         Get users by emails. For more information, visit
         https://developer.monday.com/api-reference/reference/users#queries
 
-        Parameters:
+        Args:
             user_emails (Union[str, List[str]]): A single email of a user or a list of user emails.
 
             user_kind (UserKind): The kind of users you want to search by: all, non_guests, guests, or non_pending.
@@ -54,14 +56,15 @@ class UsersResource(AsyncBaseResource):
 
         return await self.client.execute(query)
 
-    async def get_teams(self, team_ids: Union[int, str, List[Union[int, str]]] = None, with_complexity: bool = False) -> dict:
+    async def get_teams(self, team_ids: Union[int, str, List[Union[int, str]]] = None,
+                        with_complexity: bool = False) -> dict:
         """
         Get all teams or get teams by ids if provided. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#queries
 
-        Parameters:
-            team_ids (Union[int, str, List[Union[int, str]]]): A single team ID, a list of team IDs, or None to get all teams.
-
+        Args:
+            team_ids (Union[int, str, List[Union[int, str]]]): A single team ID, a list of team IDs, or
+                None to get all teams.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
         query = get_teams_query(team_ids=team_ids, with_complexity=with_complexity)
@@ -73,11 +76,9 @@ class UsersResource(AsyncBaseResource):
         Add users to a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#add-users-to-a-team
 
-        Parameters:
+        Args:
             team_id (Union[int, str]): The unique identifier of the team to add users to.
-
             user_ids (Union[int, str, List[Union[int, str]]]): A single user ID of a user or a list of user IDs.
-
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
         query = add_users_to_team_query(team_id=team_id, user_ids=user_ids, with_complexity=with_complexity)
@@ -89,11 +90,9 @@ class UsersResource(AsyncBaseResource):
         Remove users from a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#remove-users-from-a-team
 
-        Parameters:
+        Args:
             team_id (Union[int, str]): The unique identifier of the team to remove users from.
-
             user_ids (Union[int, str, List[Union[int, str]]]): A single user ID of a user or a list of user IDs.
-
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
         query = remove_users_from_team_query(team_id=team_id, user_ids=user_ids, with_complexity=with_complexity)

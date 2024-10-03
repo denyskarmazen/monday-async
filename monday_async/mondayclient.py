@@ -1,4 +1,7 @@
+from typing import Optional
+
 from aiohttp import ClientSession
+
 from ._version import __version__
 from .resources import (
     APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource,
@@ -6,18 +9,37 @@ from .resources import (
     ComplexityResource
 )
 
-
 _DEFAULT_HEADERS = {
     "API-Version": "2024-07"
 }
 
 
 class AsyncMondayClient:
-    def __init__(self, token: str, session: ClientSession = None, headers=None):
+    """
+    Attributes:
+        complexity (ComplexityResource):
+        custom (CustomResource):
+        api (APIResource):
+        webhooks (WebhooksResource):
+        notifications (NotificationResource):
+        users (UsersResource):
+        workspaces (WorkspaceResource):
+        folders (FolderResource):
+        boards (BoardResource):
+        tags (TagResource):
+        columns (ColumnResource):
+        groups (GroupResource):
+        items (ItemResource):
+        updates (UpdateResource):
+    """
+
+    def __init__(self, token: str, session: Optional[ClientSession] = None, headers: dict = None):
         """
-        :param token:
-        :param session:
-        :param headers:
+        Args:
+            token (str): Your monday.com API access token.
+            session (ClientSession): Optional, externally managed aiohttp session. Recommended to use the same session
+                for all the requests.
+            headers (dict): Additional headers to send with each request.
         """
 
         if not headers:

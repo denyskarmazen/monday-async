@@ -1,6 +1,7 @@
-from typing import List, Union, Optional, Dict
-from monday_async.utils.utils import format_param_value
+from typing import List, Union, Optional, Dict, Any
+
 from monday_async.types import ItemsQueryOperator, ID, ItemsQueryRuleOperator
+from monday_async.utils.utils import format_param_value
 
 
 class QueryParams:
@@ -36,14 +37,14 @@ class QueryParams:
         items = [f"{key}: {value}" for key, value in self._value.items()]
         return "{" + ", ".join(items) + "}"
 
-    def add_rule(self, column_id: str, compare_value: Union[str, int, List[int]],
+    def add_rule(self, column_id: str, compare_value: Any,
                  operator: ItemsQueryRuleOperator = ItemsQueryRuleOperator.ANY_OF):
         """
         Adds a rule to the query parameters.
 
         Args:
             column_id (str): The unique identifier of the column to filter by.
-            compare_value (str or int or List[int]): The column value to filter by.
+            compare_value (Any): The column value to filter by.
                 This can be a string or index value depending on the column type.
             operator (ItemsQueryRuleOperator, optional): The condition for value comparison. Default is any_of.
         """

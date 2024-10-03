@@ -1,11 +1,11 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
+
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import FolderColor
 from monday_async.utils.queries import (
     get_folders_query, create_folder_query, update_folder_query,
     delete_folder_query
 )
-from monday_async.types import FolderColor
-
 
 ID = Union[int, str]
 
@@ -17,11 +17,11 @@ class FolderResource(AsyncBaseResource):
                           with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve folders, allowing you to specify specific folders,
-            workspaces, limits, and pagination.
+         workspaces, limits, and pagination.
 
         For more information, visit https://developer.monday.com/api-reference/reference/folders#queries
 
-        Parameters:
+        Args:
             ids (Union[ID, List[ID]]): (Optional) A single folder ID or a list of IDs to retrieve specific folders.
             workspace_ids (Union[ID, List[ID]]): (Optional) A single workspace ID or a list of IDs to filter folders
                 by workspace. Use null to include the Main Workspace.
@@ -42,7 +42,7 @@ class FolderResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/folders#create-a-folder
 
-        Parameters:
+        Args:
             workspace_id (ID): The unique identifier of the workspace where the folder will be created.
             name (str): The name of the new folder.
             color (FolderColor): (Optional) The color of the new folder, chosen from the FolderColor enum.
@@ -60,7 +60,7 @@ class FolderResource(AsyncBaseResource):
         """
         Execute a query to modify an existing folder's name, color, or parent folder.
 
-        Parameters:
+        Args:
             folder_id (ID): The unique identifier of the folder to update.
             name (str): (Optional) The new name for the folder.
             color (FolderColor): (Optional) The new color for the folder, chosen from the FolderColor enum.
@@ -75,7 +75,7 @@ class FolderResource(AsyncBaseResource):
         """
         Execute a query to permanently remove a folder from a workspace.
 
-        Parameters:
+        Args:
             folder_id (ID): The unique identifier of the folder to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """

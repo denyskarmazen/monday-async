@@ -1,5 +1,6 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
+
+from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.utils.queries import (
     get_tags_query, get_tags_by_board_query, create_or_get_tag_query
 )
@@ -15,7 +16,7 @@ class TagResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/tags-1#queries
 
-        Parameters:
+        Args:
             ids (Union[ID, List[ID]]): (Optional) A list of tag IDs to retrieve specific tags.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
@@ -28,7 +29,7 @@ class TagResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/tags-1#queries
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to retrieve tags from.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
@@ -42,7 +43,7 @@ class TagResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/tags-1#create-or-get-a-tag
 
-        Parameters:
+        Args:
             tag_name (str): The name of the tag to create or retrieve.
             board_id (ID): (Optional) The ID of the private board to create the tag in. Not needed for public boards.
             with_complexity (bool): Set to True to return the query's complexity along with the results.

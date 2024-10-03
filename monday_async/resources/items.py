@@ -1,5 +1,7 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
+
+from monday_async.query_params import QueryParams, ItemByColumnValuesParam
+from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.utils.queries import (
     get_items_by_id_query, get_items_by_board_query, get_items_by_group_query,
     get_items_by_column_value_query, get_items_by_multiple_column_values_query,
@@ -10,7 +12,6 @@ from monday_async.utils.queries import (
     upload_file_to_column_query, get_item_updates_query, clear_item_updates_query,
     move_item_to_group_query
 )
-from monday_async.query_params import QueryParams, ItemByColumnValuesParam
 
 ID = Union[int, str]
 
@@ -25,7 +26,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#queries
 
-        Parameters:
+        Args:
             ids (Union[ID, List[ID]]): A list of item IDs to retrieve specific items.
             newest_first (bool): (Optional) Set to True to order results with the most recently created items first.
             exclude_nonactive (bool): (Optional) Set to True to exclude inactive, deleted,
@@ -55,7 +56,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items-page#queries
 
-        Parameters:
+        Args:
             board_ids (ID): The ID of the board to retrieve items from.
             query_params (QueryParams): (Optional) A set of parameters to filter, sort,
                 and control the scope of the boards query. Use this to customize the results based on specific criteria.
@@ -88,7 +89,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items-page#queries
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to retrieve items from.
             group_id (ID): The ID of the group to get the items by
             query_params (QueryParams): (Optional) A set of parameters to filter, sort,
@@ -122,7 +123,7 @@ class ItemResource(AsyncBaseResource):
         For more information, visit
         https://developer.monday.com/api-reference/reference/items-page-by-column-values#queries
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the items.
             column_id (str): The unique identifier of the column to filter by.
             column_values (Union[str, List[str]]): The column value to search for.
@@ -153,7 +154,7 @@ class ItemResource(AsyncBaseResource):
         For more information, visit
         https://developer.monday.com/api-reference/reference/items-page-by-column-values#queries
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the items.
             columns (Union[ItemByColumnValuesParam, dict]): The column values to filter by can be ItemByColumnValuesParam
                 instance or a list consisting of dictionaries of this format:
@@ -183,7 +184,7 @@ class ItemResource(AsyncBaseResource):
         For more information, visit
         https://developer.monday.com/api-reference/reference/items-page#cursor-based-pagination-using-next_items_page
 
-        Parameters:
+        Args:
             cursor (str): An opaque cursor that represents the position in the list after the last returned item.
                 Use this cursor for pagination to fetch the next set of items.
                 If the cursor is null, there are no more items to fetch.
@@ -207,7 +208,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#create-an-item
 
-        Parameters:
+        Args:
             item_name (str): The name of the new item.
             board_id (ID): The ID of the board to create the item on.
             group_id (str): (Optional) The ID of the group to create the item in.
@@ -228,7 +229,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#duplicate-an-item
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the item to duplicate.
             with_updates (bool): (Optional) Whether to include the item's updates in the duplication.
             item_id (ID): The ID of the item to duplicate.
@@ -244,7 +245,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#archive-an-item
 
-        Parameters:
+        Args:
             item_id (ID): The ID of the item to archive.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
@@ -257,7 +258,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#delete-an-item
 
-        Parameters:
+        Args:
             item_id (ID): The ID of the item to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
@@ -272,7 +273,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/subitems#queries
 
-        Parameters:
+        Args:
             parent_item_id (ID): The ID of the parent item to retrieve subitems from.
             with_column_values (bool): Set to True to return the items column values along with the results.
                 True by default.
@@ -292,7 +293,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/subitems#create-a-subitem
 
-        Parameters:
+        Args:
             parent_item_id (ID): The ID of the parent item.
             subitem_name (str): The name of the new subitem.
             column_values (dict): (Optional) The column values for the new subitem in JSON format.
@@ -314,7 +315,7 @@ class ItemResource(AsyncBaseResource):
         For more information, visit
         https://developer.monday.com/api-reference/reference/columns#change-multiple-column-values
 
-        Parameters:
+        Args:
             item_id (ID): The ID of the item to update.
             board_id (ID): The ID of the board containing the item.
             column_values (dict): The updated column values as a dictionary in a {column_id: column_value, ...} format.
@@ -328,7 +329,7 @@ class ItemResource(AsyncBaseResource):
                                                          with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def change_item_column_json_value(self, item_id: ID, board_id: ID, column_id: str,  value: dict,
+    async def change_item_column_json_value(self, item_id: ID, board_id: ID, column_id: str, value: dict,
                                             create_labels_if_missing: bool = False,
                                             with_complexity: bool = False) -> dict:
         """
@@ -336,7 +337,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/columns#change-a-column-value
 
-        Parameters:
+        Args:
             item_id (ID): (Optional) The ID of the item to update.
             board_id (ID): The ID of the board containing the item.
             column_id (str): The unique identifier of the column to update.
@@ -359,7 +360,7 @@ class ItemResource(AsyncBaseResource):
         For more information, visit
         https://developer.monday.com/api-reference/reference/columns#change-a-simple-column-value
 
-        Parameters:
+        Args:
             item_id (ID): (Optional) The ID of the item to update.
             board_id (ID): The ID of the board containing the item.
             column_id (str): The unique identifier of the column to update.
@@ -381,7 +382,7 @@ class ItemResource(AsyncBaseResource):
         For more information, visit
         https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column
 
-        Parameters:
+        Args:
             item_id (ID): The ID of the item to add the file to.
             column_id (str): The unique identifier of the column to add the file to.
             file (str): The filepath to the file.
@@ -393,9 +394,10 @@ class ItemResource(AsyncBaseResource):
     async def get_item_updates(self, item_id: ID, ids: Union[ID, List[ID]] = None,
                                limit: int = 25, page: int = 1, with_complexity: bool = False) -> dict:
         """
-        Execute a query to retrieve updates associated with a specific item, allowing pagination and filtering by update IDs.
+        Execute a query to retrieve updates associated with a specific item,
+         allowing pagination and filtering by update IDs.
 
-        Parameters:
+        Args:
             item_id (ID): The ID of the item to retrieve updates from.
             ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
             limit (int): (Optional) The maximum number of updates to return. Defaults to 25.
@@ -412,7 +414,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#clear-an-items-updates
 
-        Parameters:
+        Args:
             item_id (ID): The ID of the item to clear updates from.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
@@ -425,7 +427,7 @@ class ItemResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#move-item-to-group
 
-        Parameters:
+        Args:
             item_id (ID): The ID of the item to move.
             group_id (str): The ID of the target group within the board.
             with_complexity (bool): Set to True to return the query's complexity along with the results.

@@ -1,12 +1,12 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional
+
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import ColumnType
 from monday_async.utils.queries import (
     get_columns_by_board_query, create_column_query,
     change_column_title_query, change_column_description_query,
     delete_column_query
 )
-from monday_async.types import ColumnType
-
 
 ID = Union[int, str]
 
@@ -20,7 +20,7 @@ class ColumnResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/columns#queries
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to retrieve columns from.
             ids (Union[ID, List[ID]]): (Optional) A list of column IDs to retrieve specific columns.
             types (List[ColumnType]): (Optional) A list of column types to filter by.
@@ -39,7 +39,7 @@ class ColumnResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/columns#create-a-column
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to create the column on.
             title (str): The title of the new column.
             column_type (ColumnType): The type of column to create, chosen from the ColumnType enum.
@@ -66,7 +66,7 @@ class ColumnResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/columns#change-a-column-title
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the column.
             column_id (str): The unique identifier of the column to update.
             title (str): The new title for the column.
@@ -83,7 +83,7 @@ class ColumnResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/columns#change-column-metadata
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the column.
             column_id (str): The unique identifier of the column to update.
             description (str): The new description for the column.
@@ -100,7 +100,7 @@ class ColumnResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/columns#delete-a-column
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the column.
             column_id (str): The unique identifier of the column to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.

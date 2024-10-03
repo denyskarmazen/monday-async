@@ -1,22 +1,23 @@
 import json
-from graphql import parse, print_ast
 from enum import Enum
 from typing import List, Iterable, Tuple, Any, Optional
 
+from graphql import parse, print_ast
 
-def monday_json_stringify(value):
+
+def monday_json_stringify(value: dict) -> str:
     """
     Double-encodes a Python object to a JSON string as required by some APIs (e.g., Monday.com).
 
     Example:
-    Input: {"label": "Done"}
-    Output: "{\"label\":\"Done\"}"  # This is a double-encoded JSON string.
+        Input: {"label": "Done"}
+        Output: "{\"label\":\"Done\"}"  # This is a double-encoded JSON string.
 
-    Parameters:
-    - value: A Python object to be double-encoded into a JSON string.
+    Args:
+        value: A Python object to be double-encoded into a JSON string.
 
     Returns:
-    A double-encoded JSON string.
+        A double-encoded JSON string.
     """
     if value:
         return json.dumps(json.dumps(value))
@@ -24,16 +25,16 @@ def monday_json_stringify(value):
     return json.dumps(value)
 
 
-def graphql_parse(query: str):
+def graphql_parse(query: str) -> str:
     """
     Parses a GraphQL query string and returns a formatted string representation of the parsed query.
     Catches any GraphGL syntax errors.
 
-    Parameters:
-    - query (str): The GraphQL query string to be parsed.
+    Args:
+        query (str): The GraphQL query string to be parsed.
 
     Returns:
-    - str: A formatted string representation of the parsed GraphQL query.
+        str: A formatted string representation of the parsed GraphQL query.
     """
     parsed = parse(query)
     return print_ast(parsed)
@@ -41,7 +42,7 @@ def graphql_parse(query: str):
 
 def gather_params(params: Iterable[Tuple[str, Any]], excluded_params: Optional[List[str]] = None,
                   exclude_none: bool = True) -> str:
-    valid_params = [f"{param}: {format_param_value(value)}" for param,  value in params
+    valid_params = [f"{param}: {format_param_value(value)}" for param, value in params
                     if not ((excluded_params and param in excluded_params) or (value is None and exclude_none))]
     return ', '.join(valid_params)
 

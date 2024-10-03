@@ -1,7 +1,9 @@
-import os
 import json
-import aiohttp
+import os
+
 import aiofiles
+import aiohttp
+
 from monday_async.exceptions import *
 
 TOKEN_HEADER = 'Authorization'
@@ -16,18 +18,18 @@ class AsyncGraphQLClient:
     Attributes:
         endpoint (str): The URL of the monday.com API endpoint.
         token (str, optional): The bearer token for authentication. Default is None.
-        session (aiohttp.ClientSession, optional): Optional, externally managed aiohttp session. Recommended to use
+        session (Optional[aiohttp.ClientSession]): Optional, externally managed aiohttp session. Recommended to use
                                                    the same session for all the requests.
                                                    If not provided, the client will create a new session for each
                                                    request which is not optimal.
         headers (dict): Additional headers to send with each request.
     """
 
-    def __init__(self, endpoint):
+    def __init__(self, endpoint: str):
         """
          Initializes a new instance of the GraphQLClient.
 
-         Parameters:
+         Args:
              endpoint (str): The URL of the GraphQL endpoint.
          """
         self.endpoint = endpoint
@@ -35,11 +37,11 @@ class AsyncGraphQLClient:
         self.session = None
         self.headers = {}
 
-    async def execute(self, query, variables=None):
+    async def execute(self, query: str, variables=None):
         """
         Executes a GraphQL query or mutation.
 
-        Parameters:
+        Args:
             query (str): The GraphQL query or mutation.
             variables (dict, optional): A dictionary of variables for the query. Default is None.
 
@@ -48,20 +50,20 @@ class AsyncGraphQLClient:
         """
         return await self._send(query, variables)
 
-    def inject_token(self, token):
+    def inject_token(self, token: str):
         """
         Injects an authentication token to be used for all requests.
 
-        Parameters:
+        Args:
             token (str): The bearer token for authentication.
         """
         self.token = token
 
-    def inject_headers(self, headers):
+    def inject_headers(self, headers: dict):
         """
         Injects additional headers to be used for all requests.
 
-        Parameters:
+        Args:
             headers (dict): A dictionary of headers to add to the request.
         """
         self.headers = headers
@@ -72,7 +74,7 @@ class AsyncGraphQLClient:
 
         This allows for external management of the session's lifecycle.
 
-        Parameters:
+        Args:
             session (aiohttp.ClientSession): An externally managed aiohttp session.
         """
         self.session = session
@@ -90,14 +92,14 @@ class AsyncGraphQLClient:
             await self.session.close()
             self.session = None
 
-    async def _send(self, query, variables):
+    async def _send(self, query: str, variables):
         """
         Sends the GraphQL query or mutation to the server.
 
         This method constructs the appropriate HTTP request based on the presence of variables
         and/or files and handles the response.
 
-        Parameters:
+        Args:
             query (str): The GraphQL query or mutation.
             variables (dict, optional): A dictionary of variables for the query.
 
@@ -158,7 +160,7 @@ class AsyncGraphQLClient:
         """
         Analyzes the response from the GraphQL server and raises an exception if there are errors.
 
-        Parameters:
+        Args:
             response (dict): The JSON response from the server.
             query (str): The GraphQL query or mutation that was sent.
 
@@ -176,9 +178,11 @@ class AsyncGraphQLClient:
             'ParseError': ParseError,
             'ColumnValueException': ColumnValueError,
             'ComplexityException': ComplexityError,
+            'maxComplexityExceeded': MaxComplexityExceededError,
             'CorrectedValueException': CorrectedValueError,
             'CreateBoardException': CreateBoardError,
             'DeleteLastGroupException': DeleteLastGroupError,
+            'FIELD_LIMIT_EXCEEDED': FieldLimitExceededError,
             'InvalidArgumentException': InvalidArgumentError,
             'InvalidBoardIdException': InvalidBoardIdError,
             'InvalidColumnIdException': InvalidColumnIdError,

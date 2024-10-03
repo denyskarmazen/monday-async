@@ -17,6 +17,16 @@ class GraphQLError(Exception):
         self.original_errors = original_errors or []
 
 
+class FieldLimitExceededError(MondayQueryError):
+    """
+    Raised when there are too many requests running concurrently.
+    For more information, visit https://developer.monday.com/api-reference/docs/errors#field-limit-exceeded
+    """
+
+    def __init__(self, message="Field limit exceeded", original_errors=None):
+        super().__init__(message, original_errors)
+
+
 class InternalServerError(MondayQueryError):
     """
     Raised when an internal server error occurs (HTTP 500). This is a general error indicating something went wrong.
@@ -134,6 +144,15 @@ class ComplexityError(MondayQueryError):
     """
 
     def __init__(self, message="Complexity limit exceeded", original_errors=None):
+        super().__init__(message, original_errors)
+
+
+class MaxComplexityExceededError(MondayQueryError):
+    """
+    Raised when a single query exceeds the maximum complexity limit (HTTP 200).
+    """
+
+    def __init__(self, message="Max complexity exceeded", original_errors=None):
         super().__init__(message, original_errors)
 
 

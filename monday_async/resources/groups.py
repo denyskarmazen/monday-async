@@ -1,11 +1,11 @@
-from monday_async.resources.base_resource import AsyncBaseResource
 from typing import List, Union, Optional, Any
+
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import PositionRelative, GroupAttributes, GroupUpdateColors
 from monday_async.utils.queries import (
     get_groups_by_board_query, create_group_query, update_group_query,
     duplicate_group_query, archive_group_query, delete_group_query, GroupColors
 )
-from monday_async.types import PositionRelative, GroupAttributes, GroupUpdateColors
-
 
 ID = Union[int, str]
 
@@ -18,7 +18,7 @@ class GroupResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#queries
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to retrieve groups from.
             ids (Union[ID, List[ID]]): (Optional) A list of group IDs to retrieve specific groups.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -31,15 +31,16 @@ class GroupResource(AsyncBaseResource):
                            position_relative_method: Optional[PositionRelative] = None,
                            with_complexity: bool = False) -> dict:
         """
-        Execute a query to create a new group on a specific board with a specified name and positioning relative to other groups.
+        Execute a query to create a new group on a specific board with a specified name and positioning
+         relative to other groups.
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#create-a-group
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board to create the group on.
             group_name (str): The name of the new group.
-            group_color (Optional[Union[GroupColors, str]]): The group's color. Pass as a HEX value when passing as a string
-                For some reason currently not all colors work.
+            group_color (Optional[Union[GroupColors, str]]): The group's color.
+                Pass as a HEX value when passing as a string
             relative_to (str): (Optional) The ID of the group to position the new group relative to.
             position_relative_method (PositionRelative): (Optional) The method for positioning the new group:
                 before_at or after_at.
@@ -59,7 +60,7 @@ class GroupResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#update-a-group
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the group.
             group_id (str): The unique identifier of the group to update.
             group_attribute (GroupAttributes): The attribute of the group to update: title, color,
@@ -76,11 +77,11 @@ class GroupResource(AsyncBaseResource):
                               with_complexity: bool = False) -> dict:
         """
         Execute a query to create a copy of a group within the same board,
-        with options to position the new group and set its title.
+         with options to position the new group and set its title.
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#duplicate-group
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the group to duplicate.
             group_id (str): The unique identifier of the group to duplicate.
             add_to_top (bool): (Optional) Whether to add the new group to the top of the board.
@@ -98,7 +99,7 @@ class GroupResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#archive-a-group
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the group.
             group_id (str): The unique identifier of the group to archive.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
@@ -113,7 +114,7 @@ class GroupResource(AsyncBaseResource):
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#delete-a-group
 
-        Parameters:
+        Args:
             board_id (ID): The ID of the board containing the group.
             group_id (str): The unique identifier of the group to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
