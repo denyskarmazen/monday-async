@@ -10,7 +10,7 @@ from .resources import (
 )
 
 _DEFAULT_HEADERS = {
-    "API-Version": "2024-07"
+    "API-Version": "2024-10"
 }
 
 
