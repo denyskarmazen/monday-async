@@ -169,6 +169,7 @@ class AsyncGraphQLClient:
         """
         error_codes = {
             'INTERNAL_SERVER_ERROR': InternalServerError,
+            'GRAPHQL_VALIDATION_FAILED': GraphQLValidationError,
             'MaxConcurrencyExceeded': ConcurrencyLimitExceededError,
             'RateLimitExceeded': RateLimitExceededError,
             'IpRestricted': IpRestrictedError,

@@ -23,6 +23,18 @@ class GraphQLError(Exception):
         super().__init__(message)
 
 
+class GraphQLValidationError(MondayQueryError):
+    """
+    Raised when a GraphQL query is invalid (HTTP 400).
+    This indicates that the query you are attempting to send is not valid.
+    To resolve, ensure your query is properly formatted and does not contain any syntax errors.
+    """
+
+    def __init__(self, message="GraphQL query is invalid", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
+
+
 class InternalServerError(MondayQueryError):
     """
     Raised when an internal server error occurs (HTTP 500). This is a general error indicating something went wrong.
@@ -394,6 +406,8 @@ class ErrorInfo:
             path = err.get('path', [])
             extensions = err.get('extensions', {})
             self.add_error(message, error_code, status_code, locations, error_data)
+            if not self.error_code:
+                self.error_code = error_code
             if error_code == self.error_code:
                 self.extensions = extensions
                 self.path = path
