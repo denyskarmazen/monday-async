@@ -455,12 +455,13 @@ class ErrorInfo:
         formatted_message = (
             f"Location: Line {location['line']}, Column {location['column']}\n"
         )
-        if location.get('prev_line'):
-            formatted_message += f"       {location['prev_line']}\n"
-        formatted_message += f"       {location['error_line']}\n"
-        formatted_message += f"       {caret_line}\n"
-        if location.get('next_line'):
-            formatted_message += f"       {location['next_line']}\n"
+        if location['error_line']:
+            if location.get('prev_line'):
+                formatted_message += f"       {location['prev_line']}\n"
+            formatted_message += f"       {location['error_line']}\n"
+            formatted_message += f"       {caret_line}\n"
+            if location.get('next_line'):
+                formatted_message += f"       {location['next_line']}\n"
         return formatted_message
 
     def format_multiple_errors(self) -> str:

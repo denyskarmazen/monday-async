@@ -76,6 +76,7 @@ class TestGraphQlClient(unittest.TestCase):
                             "Location: Line 3, Column 3\n"
                             "       2)   boards(ids: string) {\n"
                             "       3)     items_page(limit: 500) {\n"
+                            "            ^\n"
                             "       4)       cursor\n"
                             "Error Code: argumentLiteralsIncompatible")
 
@@ -182,18 +183,17 @@ class TestGraphQlClient(unittest.TestCase):
 
         actual_message = str(err_info.exception).strip()
 
-        expected_message = ("Multiple errors occurred\n"
-                            "Status Code: 500\n"
-                            "\nOther errors:\n"
+        expected_message = ("Multiple errors occurred:\n"
                             "\nUser unauthorized to perform action\n"
-                            " - Location: Line 2, Column 3\n"
+                            "Location: Line 2, Column 3\n"
                             "       1) {\n"
                             "       2)   boards(ids: \"string\") {\n"
+                            "            ^\n"
                             "       3)     items_page(limit: 500) {\n"
                             " - Error Code: UserUnauthorizedException\n"
                             " - Status Code: 403\n"
                             "\nParse error on \")\" (RPAREN) at [59, 15]\n"
-                            " - Location: Line 59, Column 15\n"
+                            "Location: Line 59, Column 15\n"
                             " - Error Code: ParseError\n"
                             " - Status Code: 400\n")
 
@@ -252,15 +252,17 @@ class TestGraphQlClient(unittest.TestCase):
         actual_message = str(err_info.exception).strip()
 
         expected_message = ("Multiple errors occurred:\n"
+                            "\n"
                             "User unauthorized to perform action\n"
-                            " - Location: Line 2, Column 3\n"
+                            "Location: Line 2, Column 3\n"
                             "       1) {\n"
                             "       2)   boards(ids: \"string\") {\n"
+                            "            ^\n"
                             "       3)     items_page(limit: 500) {\n"
                             " - Error Code: UserUnauthorizedException\n"
                             " - Status Code: 403\n"
                             "\nParse error on \")\" (RPAREN) at [59, 15]\n"
-                            " - Location: Line 59, Column 15\n"
+                            "Location: Line 59, Column 15\n"
                             " - Error Code: ParseError\n"
                             " - Status Code: 400\n")
 
