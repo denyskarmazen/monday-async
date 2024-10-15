@@ -1,3 +1,5 @@
+import re
+
 from monday_async.utils.utils import graphql_parse
 
 
@@ -6,25 +8,19 @@ class MondayQueryError(Exception):
     Base class for all Monday query errors.
     """
 
-    def __init__(self, message, original_errors=None):
+    def __init__(self, message: str, error_code: str = None, status_code: int = None, error_data: dict = None,
+                 extensions: dict = None, path: dict = None):
         super().__init__(message)
-        self.original_errors = original_errors or []
+        self.error_code: str = error_code
+        self.status_code: int = status_code
+        self.error_data: dict = error_data if error_data is not None else {}
+        self.extensions: dict = extensions if extensions is not None else {}
+        self.path: dict = path if path is not None else {}
 
 
 class GraphQLError(Exception):
-    def __init__(self, message, original_errors=None):
+    def __init__(self, message):
         super().__init__(message)
-        self.original_errors = original_errors or []
-
-
-class FieldLimitExceededError(MondayQueryError):
-    """
-    Raised when there are too many requests running concurrently.
-    For more information, visit https://developer.monday.com/api-reference/docs/errors#field-limit-exceeded
-    """
-
-    def __init__(self, message="Field limit exceeded", original_errors=None):
-        super().__init__(message, original_errors)
 
 
 class InternalServerError(MondayQueryError):
@@ -34,8 +30,9 @@ class InternalServerError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#internal-server-error
     """
 
-    def __init__(self, message="Internal server error occurred", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message: str = "Internal server error occurred", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ConcurrencyLimitExceededError(MondayQueryError):
@@ -46,8 +43,20 @@ class ConcurrencyLimitExceededError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#concurrency-limit-exceeded
     """
 
-    def __init__(self, message="Concurrency limit exceeded", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message: str = "Concurrency limit exceeded", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
+
+
+class FieldLimitExceededError(MondayQueryError):
+    """
+    Raised when there are too many requests running concurrently.
+    For more information, visit https://developer.monday.com/api-reference/docs/errors#field-limit-exceeded
+    """
+
+    def __init__(self, message="Field limit exceeded", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class RateLimitExceededError(MondayQueryError):
@@ -58,8 +67,9 @@ class RateLimitExceededError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#rate-limit-exceeded
     """
 
-    def __init__(self, message="Rate limit exceeded", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Rate limit exceeded", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class IpRestrictedError(MondayQueryError):
@@ -70,8 +80,9 @@ class IpRestrictedError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#your-ip-is-restricted
     """
 
-    def __init__(self, message="Your IP is restricted", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Your IP is restricted", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class UnauthorizedError(MondayQueryError):
@@ -82,8 +93,9 @@ class UnauthorizedError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#unauthorized
     """
 
-    def __init__(self, message="Unauthorized access", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Unauthorized access", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class BadRequestError(MondayQueryError):
@@ -95,8 +107,9 @@ class BadRequestError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#bad-request
     """
 
-    def __init__(self, message="Bad request", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Bad request", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class MissingRequiredPermissionsError(MondayQueryError):
@@ -107,8 +120,9 @@ class MissingRequiredPermissionsError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#missing-required-permissions
     """
 
-    def __init__(self, message="Missing required permissions", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Missing required permissions", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ParseError(MondayQueryError):
@@ -119,8 +133,9 @@ class ParseError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#parse-error-on
     """
 
-    def __init__(self, message="Parse error in the query", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Parse error in the query", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ColumnValueError(MondayQueryError):
@@ -131,8 +146,9 @@ class ColumnValueError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#columnvalueexception
     """
 
-    def __init__(self, message="Column value formatting error", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Column value formatting error", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ComplexityError(MondayQueryError):
@@ -147,8 +163,8 @@ class ComplexityError(MondayQueryError):
         reset_in (int or None): The time in seconds until the budget resets.
     """
 
-    def __init__(self, message="Complexity limit exceeded", original_errors=None):
-        import re
+    def __init__(self, message="Complexity limit exceeded", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
         pattern = r"budget remaining (\d+) out of \d+ reset in (\d+) seconds"
         match = re.search(pattern, message)
         if match:
@@ -157,7 +173,7 @@ class ComplexityError(MondayQueryError):
         else:
             self.remaining_complexity = None
             self.reset_in = None
-        super().__init__(message, original_errors)
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class MaxComplexityExceededError(MondayQueryError):
@@ -165,8 +181,9 @@ class MaxComplexityExceededError(MondayQueryError):
     Raised when a single query exceeds the maximum complexity limit (HTTP 200).
     """
 
-    def __init__(self, message="Max complexity exceeded", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Max complexity exceeded", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class CorrectedValueError(MondayQueryError):
@@ -177,8 +194,9 @@ class CorrectedValueError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#correctedvalueexception
     """
 
-    def __init__(self, message="Incorrect value type", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Incorrect value type", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class CreateBoardError(MondayQueryError):
@@ -188,8 +206,9 @@ class CreateBoardError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#createboardexception
     """
 
-    def __init__(self, message="Error creating board", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Error creating board", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class DeleteLastGroupError(MondayQueryError):
@@ -200,8 +219,9 @@ class DeleteLastGroupError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#deletelastgroupexception
     """
 
-    def __init__(self, message="Cannot delete the last group on the board", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Cannot delete the last group on the board", error_code=None, status_code=None,
+                 error_data=None):
+        super().__init__(message, error_code, status_code, error_data)
 
 
 class InvalidArgumentError(MondayQueryError):
@@ -213,8 +233,9 @@ class InvalidArgumentError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidargumentexception
     """
 
-    def __init__(self, message="Invalid argument in the query", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Invalid argument in the query", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class InvalidBoardIdError(MondayQueryError):
@@ -225,8 +246,9 @@ class InvalidBoardIdError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidboardidexception
     """
 
-    def __init__(self, message="Invalid board ID", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Invalid board ID", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class InvalidColumnIdError(MondayQueryError):
@@ -237,8 +259,9 @@ class InvalidColumnIdError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidcolumnidexception
     """
 
-    def __init__(self, message="Invalid column ID", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Invalid column ID", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class InvalidUserIdError(MondayQueryError):
@@ -249,8 +272,9 @@ class InvalidUserIdError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invaliduseridexception
     """
 
-    def __init__(self, message="Invalid user ID", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Invalid user ID", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class InvalidVersionError(MondayQueryError):
@@ -261,8 +285,9 @@ class InvalidVersionError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidversionexception
     """
 
-    def __init__(self, message="Invalid API version", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Invalid API version", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ItemNameTooLongError(MondayQueryError):
@@ -273,8 +298,10 @@ class ItemNameTooLongError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#itemnametoolongexception
     """
 
-    def __init__(self, message="Item name exceeds the allowed character limit", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Item name exceeds the allowed character limit",
+                 error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ItemsLimitationError(MondayQueryError):
@@ -285,8 +312,10 @@ class ItemsLimitationError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#itemslimitationexception
     """
 
-    def __init__(self, message="Exceeded the limit of items on the board", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Exceeded the limit of items on the board",
+                 error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class JsonParseError(MondayQueryError):
@@ -296,8 +325,9 @@ class JsonParseError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#jsonparseexception
     """
 
-    def __init__(self, message="JSON parse error", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="JSON parse error", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class RecordValidError(MondayQueryError):
@@ -308,8 +338,9 @@ class RecordValidError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#recordvalidexception
     """
 
-    def __init__(self, message="Record validation error", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Record validation error", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ResourceNotFoundError(MondayQueryError):
@@ -320,8 +351,9 @@ class ResourceNotFoundError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#resourcenotfoundexception
     """
 
-    def __init__(self, message="Resource not found", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="Resource not found", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class UserUnauthorizedError(MondayQueryError):
@@ -332,140 +364,111 @@ class UserUnauthorizedError(MondayQueryError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#userunauthorizedexception
     """
 
-    def __init__(self, message="User unauthorized", original_errors=None):
-        super().__init__(message, original_errors)
+    def __init__(self, message="User unauthorized", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
 class ErrorInfo:
     def __init__(self, response, query):
-        self.error_message = response.get('error_message', '')
-        self.error_code = response.get('error_code', None)
-        self.status_code = response.get('status_code', None)
-        self.errors = []
+        self.error_message = response.get('error_message', 'An error occurred')
+        self.error_code = response.get('error_code')
+        self.status_code = response.get('status_code')
+        self.error_data = response.get('error_data', {})
+        self.path = None
+        self.extensions = None
         self.query_by_lines = graphql_parse(query).split("\n")
+        self.errors = []
         self.process_errors(response)
         self.formatted_message = self.format_errors()
 
     def process_errors(self, response):
-        if 'errors' in response:
-            for err in response['errors']:
-                if isinstance(err, str):
-                    self.add_error(err)
+        for err in response.get('errors', []):
+            message = err.get('message', '')
+            locations = [
+                self.create_location(location) for location in err.get('locations', [])
+            ]
+            error_code = err.get('extensions', {}).get('code')
+            status_code = err.get('extensions', {}).get('status_code')
+            error_data = err.get('extensions', {}).get('error_data', {})
+            path = err.get('path', [])
+            extensions = err.get('extensions', {})
+            self.add_error(message, error_code, status_code, locations, error_data)
+            if error_code == self.error_code:
+                self.extensions = extensions
+                self.path = path
+                self.error_data = error_data
 
-                elif isinstance(err, dict):
-                    message = err.get('message', '')
-                    locations = []
-                    if 'locations' in err:
-                        for location in err['locations']:
-                            line_index = int(location['line'])
-                            column_index = int(location['column'])
-                            prev_line = f'{line_index - 1}) {self.query_by_lines[line_index - 2]}' \
-                                if line_index > 1 and line_index - 2 < len(self.query_by_lines) else ""
-                            error_line = f'{line_index}) {self.query_by_lines[line_index - 1]}' if line_index - 1 < len(
-                                self.query_by_lines) else ""
-                            next_line = f'{line_index + 1}) {self.query_by_lines[line_index]}' if line_index < len(
-                                self.query_by_lines) else ""
-                            locations.append({
-                                'line': line_index,
-                                'column': column_index,
-                                'prev_line': prev_line,
-                                'error_line': error_line,
-                                'next_line': next_line
-                            })
+    def create_location(self, location):
+        line = location.get('line')
+        column = location.get('column')
+        return {
+            'line': line,
+            'column': column,
+            'prev_line': self.get_line(line - 1),
+            'error_line': self.get_line(line),
+            'next_line': self.get_line(line + 1),
+        }
 
-                    error_code = err['extensions'].get('code', '') if 'extensions' in err else None
-                    status_code = err['extensions'].get('status_code', None) if 'extensions' in err else None
-                    self.add_error(message, error_code, status_code, locations)
+    def get_line(self, line_number):
+        if 1 <= line_number <= len(self.query_by_lines):
+            return f'{line_number}) {self.query_by_lines[line_number - 1]}'
+        return ""
 
-    def add_error(self, message: str, error_code: str = None, status_code: int = None, locations: list = None):
-        error_detail = {
+    def add_error(self, message, error_code=None, status_code=None, locations=None, error_data=None):
+        self.errors.append({
             "message": message,
             "locations": locations if locations else [],
             "error_code": error_code,
-            "status_code": status_code
-        }
-        self.errors.append(error_detail)
+            "status_code": status_code,
+            "error_data": error_data
+        })
 
     def format_errors(self) -> str:
         if not self.errors:
-            formatted_message = f"{self.error_message}\n" if self.error_message else "An error occurred\n"
-            formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
-            formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
+            return self.format_single_error(self.error_message, self.error_code, self.status_code)
 
-        elif len(self.errors) == 1:
-            error = self.errors[0]
+        if len(self.errors) == 1:
+            return self.format_error_details(self.errors[0])
 
-            if not self.error_message:
-                self.error_message = error['message']
+        return self.format_multiple_errors()
 
-            if error['message'] == self.error_message:
-                formatted_message = f"{self.error_message}\n" if self.error_message else "An error occurred\n"
-                for location in error['locations']:
-                    formatted_message += f"Location: Line {location['line']}, Column {location['column']}\n"
-                    if location.get('prev_line'):
-                        formatted_message += f"       {location['prev_line']}\n"
-                    formatted_message += f"       {location['error_line']}\n"
-                    if location.get('next_line'):
-                        formatted_message += f"       {location['next_line']}\n"
-                if not self.error_code:
-                    self.error_code = error.get('error_code')
-                if not self.status_code:
-                    self.status_code = error.get('status_code')
+    @staticmethod
+    def format_single_error(message, error_code, status_code) -> str:
+        return (
+                f"{message}\n"
+                + (f"Error Code: {error_code}\n" if error_code else "")
+                + (f"Status Code: {status_code}\n" if status_code else "")
+        )
 
-                formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
-                formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
+    def format_error_details(self, error) -> str:
+        formatted_message = f"{error['message']}\n"
+        for location in error['locations']:
+            formatted_message += self.format_location(location)
+        formatted_message += f"Error Code: {error.get('error_code')}\n" if error.get('error_code') else ""
+        formatted_message += f"Status Code: {error.get('status_code')}\n" if error.get('status_code') else ""
+        return formatted_message
 
-            else:
-                formatted_message = f"{self.error_message}\n" if self.error_message else "An error occurred\n"
+    @staticmethod
+    def format_location(location) -> str:
+        caret_line = ' ' * (location['column'] + 2) + "^"  # Indent caret below the error line at the correct column
+        formatted_message = (
+            f"Location: Line {location['line']}, Column {location['column']}\n"
+        )
+        if location.get('prev_line'):
+            formatted_message += f"       {location['prev_line']}\n"
+        formatted_message += f"       {location['error_line']}\n"
+        formatted_message += f"       {caret_line}\n"
+        if location.get('next_line'):
+            formatted_message += f"       {location['next_line']}\n"
+        return formatted_message
 
-                formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
-                formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
-                formatted_message += f"\nOther errors: {error['message']}\n"
-
-                for location in error['locations']:
-                    formatted_message += f" - Location: Line {location['line']}, Column {location['column']}\n"
-                    if location.get('prev_line'):
-                        formatted_message += f"       {location['prev_line']}\n"
-                    if location.get('error_line'):
-                        formatted_message += f"       {location['error_line']}\n"
-                    if location.get('next_line'):
-                        formatted_message += f"       {location['next_line']}\n"
-
-                formatted_message += f" - Error Code: {error['error_code']}\n" if error.get('error_code') else ''
-                formatted_message += f" - Status Code: {error.get('status_code')}\n" if error.get('status_code') else ''
-        else:
-            if self.error_message:
-                formatted_message = f"{self.error_message}\n"
-
-                formatted_message += f"Error Code: {self.error_code}\n" if self.error_code else ""
-                formatted_message += f"Status Code: {self.status_code}\n" if self.status_code else ""
-                formatted_message += f"\nOther errors:\n"
-
-                for error in self.errors:
-                    formatted_message += f"\n{error['message']}\n"
-                    for location in error['locations']:
-                        formatted_message += f" - Location: Line {location['line']}, Column {location['column']}\n"
-                        if location.get('prev_line'):
-                            formatted_message += f"       {location['prev_line']}\n"
-                        if location.get('error_line'):
-                            formatted_message += f"       {location['error_line']}\n"
-                        if location.get('next_line'):
-                            formatted_message += f"       {location['next_line']}\n"
-                    formatted_message += f" - Error Code: {error['error_code']}\n"
-                    formatted_message += f" - Status Code: {error['status_code']}\n"
-            else:
-                formatted_message = "\nMultiple errors occurred:"
-                for error in self.errors:
-                    formatted_message += f"\n{error['message']}\n"
-                    for location in error['locations']:
-                        formatted_message += f" - Location: Line {location['line']}, Column {location['column']}\n"
-                        if location.get('prev_line'):
-                            formatted_message += f"       {location['prev_line']}\n"
-                        if location.get('error_line'):
-                            formatted_message += f"       {location['error_line']}\n"
-                        if location.get('next_line'):
-                            formatted_message += f"       {location['next_line']}\n"
-                    formatted_message += f" - Error Code: {error['error_code']}\n"
-                    formatted_message += f" - Status Code: {error['status_code']}\n"
-
+    def format_multiple_errors(self) -> str:
+        formatted_message = "\nMultiple errors occurred:\n"
+        for error in self.errors:
+            formatted_message += f"\n{error['message']}\n"
+            for location in error['locations']:
+                formatted_message += self.format_location(location)
+            formatted_message += f" - Error Code: {error.get('error_code')}\n"
+            formatted_message += f" - Status Code: {error.get('status_code')}\n"
         return formatted_message

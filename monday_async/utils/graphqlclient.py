@@ -202,4 +202,6 @@ class AsyncGraphQLClient:
             error_class = error_codes.get(error_info.error_code, MondayQueryError)
 
             if error_info.errors or error_info.error_message:
-                raise error_class(error_info.formatted_message)
+                raise error_class(message=error_info.formatted_message, error_code=error_info.error_code,
+                                  status_code=error_info.status_code, error_data=error_info.error_data,
+                                  extensions=error_info.extensions, path=error_info.path)
