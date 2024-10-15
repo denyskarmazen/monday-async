@@ -396,6 +396,10 @@ class ErrorInfo:
 
     def process_errors(self, response):
         for err in response.get('errors', []):
+            if isinstance(err, str):
+                self.add_error(err, self.error_code, self.status_code)
+                continue
+
             message = err.get('message', '')
             locations = [
                 self.create_location(location) for location in err.get('locations', [])
