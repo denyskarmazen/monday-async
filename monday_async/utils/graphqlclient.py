@@ -4,7 +4,7 @@ import os
 import aiofiles
 import aiohttp
 
-from monday_async.exceptions import *
+from monday_async.exceptions import ERROR_CODES, MondayAPIError, ErrorInfo
 
 TOKEN_HEADER = 'Authorization'
 
@@ -167,40 +167,11 @@ class AsyncGraphQLClient:
         Raises:
             MondayQueryError: If the GraphQL server returns errors.
         """
-        error_codes = {
-            'INTERNAL_SERVER_ERROR': InternalServerError,
-            'GRAPHQL_VALIDATION_FAILED': GraphQLValidationError,
-            'MaxConcurrencyExceeded': ConcurrencyLimitExceededError,
-            'RateLimitExceeded': RateLimitExceededError,
-            'IpRestricted': IpRestrictedError,
-            'Unauthorized': UnauthorizedError,
-            'BadRequest': BadRequestError,
-            'missingRequiredPermissions': MissingRequiredPermissionsError,
-            'ParseError': ParseError,
-            'ColumnValueException': ColumnValueError,
-            'ComplexityException': ComplexityError,
-            'maxComplexityExceeded': MaxComplexityExceededError,
-            'CorrectedValueException': CorrectedValueError,
-            'CreateBoardException': CreateBoardError,
-            'DeleteLastGroupException': DeleteLastGroupError,
-            'FIELD_LIMIT_EXCEEDED': FieldLimitExceededError,
-            'InvalidArgumentException': InvalidArgumentError,
-            'InvalidBoardIdException': InvalidBoardIdError,
-            'InvalidColumnIdException': InvalidColumnIdError,
-            'InvalidUserIdException': InvalidUserIdError,
-            'InvalidVersionException': InvalidVersionError,
-            'ItemNameTooLongException': ItemNameTooLongError,
-            'ItemsLimitationException': ItemsLimitationError,
-            'JsonParseException': JsonParseError,
-            'RecordValidException': RecordValidError,
-            'ResourceNotFoundException': ResourceNotFoundError,
-            'UserUnauthorizedException': UserUnauthorizedError,
-        }
 
         if (isinstance(response, dict) and
                 ('errors' in response or 'error_message' in response or 'error_code' in response)):
             error_info = ErrorInfo(response, query)
-            error_class = error_codes.get(error_info.error_code, MondayAPIError)
+            error_class = ERROR_CODES.get(error_info.error_code, MondayAPIError)
 
             if error_info.errors or error_info.error_message:
                 raise error_class(message=error_info.formatted_message, error_code=error_info.error_code,

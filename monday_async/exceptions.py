@@ -265,6 +265,18 @@ class InvalidArgumentError(MondayAPIError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
+class InvalidItemIdError(MondayAPIError):
+    """
+    Raised when an invalid item ID is provided (HTTP 200).
+    This indicates that the item ID being passed in the query is not a valid item ID.
+    To resolve, ensure the item ID exists and you have access to the item.
+    For more information, visit https://developer.monday.com/api-reference/docs/errors#invaliditemidexception
+    """
+
+    def __init__(self, message="Invalid item ID", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None):
+        super().__init__(message, error_code, status_code, error_data, extensions, path)
+
 class InvalidBoardIdError(MondayAPIError):
     """
     Raised when an invalid board ID is provided (HTTP 200).
@@ -506,3 +518,36 @@ class ErrorInfo:
             formatted_message += f" - Error Code: {error.get('error_code')}\n"
             formatted_message += f" - Status Code: {error.get('status_code')}\n"
         return formatted_message
+
+
+# Mapping of error codes returned by monday.com to exception classes
+ERROR_CODES = {
+    'INTERNAL_SERVER_ERROR': InternalServerError,
+    'GRAPHQL_VALIDATION_FAILED': GraphQLValidationError,
+    'MaxConcurrencyExceeded': ConcurrencyLimitExceededError,
+    'RateLimitExceeded': RateLimitExceededError,
+    'IpRestricted': IpRestrictedError,
+    'Unauthorized': UnauthorizedError,
+    'BadRequest': BadRequestError,
+    'missingRequiredPermissions': MissingRequiredPermissionsError,
+    'ParseError': ParseError,
+    'ColumnValueException': ColumnValueError,
+    'ComplexityException': ComplexityError,
+    'maxComplexityExceeded': MaxComplexityExceededError,
+    'CorrectedValueException': CorrectedValueError,
+    'CreateBoardException': CreateBoardError,
+    'DeleteLastGroupException': DeleteLastGroupError,
+    'FIELD_LIMIT_EXCEEDED': FieldLimitExceededError,
+    'InvalidArgumentException': InvalidArgumentError,
+    'InvalidItemIdException': InvalidItemIdError,
+    'InvalidBoardIdException': InvalidBoardIdError,
+    'InvalidColumnIdException': InvalidColumnIdError,
+    'InvalidUserIdException': InvalidUserIdError,
+    'InvalidVersionException': InvalidVersionError,
+    'ItemNameTooLongException': ItemNameTooLongError,
+    'ItemsLimitationException': ItemsLimitationError,
+    'JsonParseException': JsonParseError,
+    'RecordValidException': RecordValidError,
+    'ResourceNotFoundException': ResourceNotFoundError,
+    'UserUnauthorizedException': UserUnauthorizedError,
+}
