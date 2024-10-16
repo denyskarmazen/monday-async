@@ -1,6 +1,6 @@
 import unittest
 from monday_async.utils.graphqlclient import AsyncGraphQLClient
-from monday_async.exceptions import MondayQueryError, RateLimitExceededError, UnauthorizedError, InternalServerError
+from monday_async.exceptions import MondayAPIError, RateLimitExceededError, UnauthorizedError, InternalServerError
 
 
 class TestGraphQlClient(unittest.TestCase):
@@ -68,7 +68,7 @@ class TestGraphQlClient(unittest.TestCase):
                 ],
             'account_id': 111111111}
 
-        with self.assertRaises(MondayQueryError) as err_info:
+        with self.assertRaises(MondayAPIError) as err_info:
             self.graph_ql_client._throw_on_error(response, query)
 
         expected_message = ("Argument 'ids' on Field 'boards' has an invalid value (string). Expected "
@@ -102,7 +102,7 @@ class TestGraphQlClient(unittest.TestCase):
                     "error_message": "Some error happened",
                     "error_data": {}}
 
-        with self.assertRaises(MondayQueryError) as err_info:
+        with self.assertRaises(MondayAPIError) as err_info:
             self.graph_ql_client._throw_on_error(response, query)
         expected_message = 'Some error happened\nError Code: SomeKindOfException\nStatus Code: 200'
         self.assertEqual(err_info.exception.__str__().strip(), expected_message.strip())
@@ -125,7 +125,7 @@ class TestGraphQlClient(unittest.TestCase):
         response = {"error_message": "Internal server error",
                     "status_code": 500}
 
-        with self.assertRaises(MondayQueryError) as err_info:
+        with self.assertRaises(MondayAPIError) as err_info:
             self.graph_ql_client._throw_on_error(response, query)
         expected_message = '\nInternal server error\nStatus Code: 500\n'
         self.assertEqual(err_info.exception.__str__().strip(), expected_message.strip())
@@ -178,7 +178,7 @@ class TestGraphQlClient(unittest.TestCase):
             "status_code": 500
         }
 
-        with self.assertRaises(MondayQueryError) as err_info:
+        with self.assertRaises(MondayAPIError) as err_info:
             self.graph_ql_client._throw_on_error(response, query)
 
         actual_message = str(err_info.exception).strip()
@@ -246,7 +246,7 @@ class TestGraphQlClient(unittest.TestCase):
             ]
         }
 
-        with self.assertRaises(MondayQueryError) as err_info:
+        with self.assertRaises(MondayAPIError) as err_info:
             self.graph_ql_client._throw_on_error(response, query)
 
         actual_message = str(err_info.exception).strip()

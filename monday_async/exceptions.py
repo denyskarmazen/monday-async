@@ -1,11 +1,12 @@
 import re
+import warnings
 
 from monday_async.utils.utils import graphql_parse
 
 
-class MondayQueryError(Exception):
+class MondayAPIError(Exception):
     """
-    Base class for all Monday query errors.
+    Base class for all errors returned by monday.com API.
     """
 
     def __init__(self, message: str, error_code: str = None, status_code: int = None, error_data: dict = None,
@@ -18,12 +19,26 @@ class MondayQueryError(Exception):
         self.path: dict = path if path is not None else {}
 
 
+class MondayQueryError(MondayAPIError):
+    """
+    Deprecated: Use MondayAPIError instead.
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "MondayQueryError is deprecated and will be removed in a future version. Use MondayAPIError instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        super().__init__(*args, **kwargs)
+
+
 class GraphQLError(Exception):
     def __init__(self, message):
         super().__init__(message)
 
 
-class GraphQLValidationError(MondayQueryError):
+class GraphQLValidationError(MondayAPIError):
     """
     Raised when a GraphQL query is invalid (HTTP 400).
     This indicates that the query you are attempting to send is not valid.
@@ -35,7 +50,7 @@ class GraphQLValidationError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class InternalServerError(MondayQueryError):
+class InternalServerError(MondayAPIError):
     """
     Raised when an internal server error occurs (HTTP 500). This is a general error indicating something went wrong.
     Common causes include invalid arguments or malformatted JSON values.
@@ -47,7 +62,7 @@ class InternalServerError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class ConcurrencyLimitExceededError(MondayQueryError):
+class ConcurrencyLimitExceededError(MondayAPIError):
     """
     Raised when the concurrency limit is exceeded (HTTP 429).
     This indicates that the maximum number of queries allowed at once has been exceeded.
@@ -60,7 +75,7 @@ class ConcurrencyLimitExceededError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class FieldLimitExceededError(MondayQueryError):
+class FieldLimitExceededError(MondayAPIError):
     """
     Raised when there are too many requests running concurrently.
     For more information, visit https://developer.monday.com/api-reference/docs/errors#field-limit-exceeded
@@ -71,7 +86,7 @@ class FieldLimitExceededError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class RateLimitExceededError(MondayQueryError):
+class RateLimitExceededError(MondayAPIError):
     """
     Raised when the rate limit is exceeded (HTTP 429).
     This indicates that more than 5,000 requests were made in one minute.
@@ -84,7 +99,7 @@ class RateLimitExceededError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class IpRestrictedError(MondayQueryError):
+class IpRestrictedError(MondayAPIError):
     """
     Raised when access is restricted due to IP address restrictions (HTTP 401).
     This indicates that an account admin has restricted access from specific IP addresses.
@@ -97,7 +112,7 @@ class IpRestrictedError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class UnauthorizedError(MondayQueryError):
+class UnauthorizedError(MondayAPIError):
     """
     Raised when an unauthorized access attempt is made (HTTP 401).
     This indicates that the necessary permissions are not in place to access the data.
@@ -110,7 +125,7 @@ class UnauthorizedError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class BadRequestError(MondayQueryError):
+class BadRequestError(MondayAPIError):
     """
     Raised when the request is malformed or incorrect (HTTP 400).
     This indicates that the structure of the query string was passed incorrectly.
@@ -124,7 +139,7 @@ class BadRequestError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class MissingRequiredPermissionsError(MondayQueryError):
+class MissingRequiredPermissionsError(MondayAPIError):
     """
     Raised when required permissions are missing (HTTP 200).
     his indicates that the API operation has exceeded the OAuth permission scopes granted for the app.
@@ -137,7 +152,7 @@ class MissingRequiredPermissionsError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class ParseError(MondayQueryError):
+class ParseError(MondayAPIError):
     """
     Raised when there is a parse error in the query (HTTP 200).
     This indicates that some formatting in your query string is incorrect.
@@ -150,7 +165,7 @@ class ParseError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class ColumnValueError(MondayQueryError):
+class ColumnValueError(MondayAPIError):
     """
     Raised when there is an error with the column value formatting (HTTP 200).
     This indicates that the column value you are attempting to send in your query is of the incorrect formatting.
@@ -163,7 +178,7 @@ class ColumnValueError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class ComplexityError(MondayQueryError):
+class ComplexityError(MondayAPIError):
     """
     Raised when the complexity limit is exceeded (HTTP 200).
     This indicates that you have reached the complexity limit for your query.
@@ -188,7 +203,7 @@ class ComplexityError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class MaxComplexityExceededError(MondayQueryError):
+class MaxComplexityExceededError(MondayAPIError):
     """
     Raised when a single query exceeds the maximum complexity limit (HTTP 200).
     """
@@ -198,7 +213,7 @@ class MaxComplexityExceededError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class CorrectedValueError(MondayQueryError):
+class CorrectedValueError(MondayAPIError):
     """
     Raised when there is an error with the value type (HTTP 200).
     This indicates that the value you are attempting to send in your query is of the wrong type.
@@ -211,7 +226,7 @@ class CorrectedValueError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class CreateBoardError(MondayQueryError):
+class CreateBoardError(MondayAPIError):
     """
     Raised when there is an error creating a board (HTTP 200). This indicates an issue in your query to create a board.
     To resolve, ensure the template ID is valid or the board ID exists if duplicating a board.
@@ -223,7 +238,7 @@ class CreateBoardError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class DeleteLastGroupError(MondayQueryError):
+class DeleteLastGroupError(MondayAPIError):
     """
     Raised when attempting to delete the last group on a board (HTTP 409).
     This indicates that the last group on a board is being deleted or archived.
@@ -236,7 +251,7 @@ class DeleteLastGroupError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data)
 
 
-class InvalidArgumentError(MondayQueryError):
+class InvalidArgumentError(MondayAPIError):
     """
     Raised when an invalid argument is passed in the query (HTTP 200).
     This indicates that the argument being passed is not valid or you've hit a pagination limit.
@@ -250,7 +265,7 @@ class InvalidArgumentError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class InvalidBoardIdError(MondayQueryError):
+class InvalidBoardIdError(MondayAPIError):
     """
     Raised when an invalid board ID is provided (HTTP 200).
     This indicates that the board ID being passed in the query is not a valid board ID.
@@ -263,7 +278,7 @@ class InvalidBoardIdError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class InvalidColumnIdError(MondayQueryError):
+class InvalidColumnIdError(MondayAPIError):
     """
     Raised when an invalid column ID is provided (HTTP 200).
     This indicates that the column ID being passed in the query is not a valid column ID.
@@ -276,7 +291,7 @@ class InvalidColumnIdError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class InvalidUserIdError(MondayQueryError):
+class InvalidUserIdError(MondayAPIError):
     """
     Raised when an invalid user ID is provided (HTTP 200).
     This indicates that the user ID being passed in the query is not a valid user ID.
@@ -289,7 +304,7 @@ class InvalidUserIdError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class InvalidVersionError(MondayQueryError):
+class InvalidVersionError(MondayAPIError):
     """
     Raised when an invalid API version is requested (HTTP 200).
     This indicates that the requested API version is invalid.
@@ -302,7 +317,7 @@ class InvalidVersionError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class ItemNameTooLongError(MondayQueryError):
+class ItemNameTooLongError(MondayAPIError):
     """
     Raised when the item name exceeds the character limit (HTTP 200).
     This indicates that the item name you have chosen has exceeded the number of characters allowed.
@@ -316,7 +331,7 @@ class ItemNameTooLongError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class ItemsLimitationError(MondayQueryError):
+class ItemsLimitationError(MondayAPIError):
     """
     Raised when the limit of items on a board is exceeded (HTTP 200).
     This indicates that you have exceeded the limit of items allowed for a board.
@@ -330,7 +345,7 @@ class ItemsLimitationError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class JsonParseError(MondayQueryError):
+class JsonParseError(MondayAPIError):
     """
     Raised when there is a JSON parse error (HTTP 400). This indicates an issue interpreting the provided JSON.
     To resolve, verify all JSON is valid using a JSON validator.
@@ -342,7 +357,7 @@ class JsonParseError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class RecordValidError(MondayQueryError):
+class RecordValidError(MondayAPIError):
     """
     Raised when there is a record validation error (HTTP 422). This indicates that a board has exceeded the number of
     permitted subscribers or a user/team has exceeded the board subscription limit.
@@ -355,7 +370,7 @@ class RecordValidError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class ResourceNotFoundError(MondayQueryError):
+class ResourceNotFoundError(MondayAPIError):
     """
     Raised when the requested resource is not found (HTTP 200 or 404).
     This indicates that the ID you are attempting to pass in your query is invalid.
@@ -368,7 +383,7 @@ class ResourceNotFoundError(MondayQueryError):
         super().__init__(message, error_code, status_code, error_data, extensions, path)
 
 
-class UserUnauthorizedError(MondayQueryError):
+class UserUnauthorizedError(MondayAPIError):
     """
     Raised when the user does not have the required permissions (HTTP 403).
     This indicates that the user in question does not have permission to perform the action.

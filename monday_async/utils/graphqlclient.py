@@ -145,7 +145,7 @@ class AsyncGraphQLClient:
                         response_data = await response.json()
                         self._throw_on_error(response_data, query)
                         return response_data
-            except (aiohttp.ClientError, json.JSONDecodeError, MondayQueryError) as e:
+            except (aiohttp.ClientError, json.JSONDecodeError, MondayAPIError) as e:
                 if self.session:
                     await self.close_session()
                 raise e
@@ -200,7 +200,7 @@ class AsyncGraphQLClient:
         if (isinstance(response, dict) and
                 ('errors' in response or 'error_message' in response or 'error_code' in response)):
             error_info = ErrorInfo(response, query)
-            error_class = error_codes.get(error_info.error_code, MondayQueryError)
+            error_class = error_codes.get(error_info.error_code, MondayAPIError)
 
             if error_info.errors or error_info.error_message:
                 raise error_class(message=error_info.formatted_message, error_code=error_info.error_code,
