@@ -2517,6 +2517,12 @@ def get_item_updates_query(item_id: ID, ids: Union[ID, List[ID]] = None,
                     id
                     text_body
                 }}
+                likes {{
+                    id
+                    reaction_type
+                    creator_id
+                    updated_at
+                }}
             }}
         }}
     }}
@@ -2585,11 +2591,8 @@ def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: in
 
     Args:
         ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
-
         limit (int): (Optional) The maximum number of updates to return. Defaults to 25.
-
         page (int): (Optional) The page number to return. Starts at 1.
-
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     if ids and isinstance(ids, list):
@@ -2611,6 +2614,12 @@ def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: in
             replies {{
                 id
                 text_body
+            }}
+            likes {{
+                id
+                reaction_type
+                creator_id
+                updated_at
             }}
         }}
     }}
@@ -2647,6 +2656,78 @@ def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, 
     return graphql_parse(query)
 
 
+def edit_update_query(update_id: ID, body: str, with_complexity: bool = False) -> str:
+    """
+    This query allows you to edit an update. For more information, visit
+    https://developer.monday.com/api-reference/reference/updates#edit-an-update
+
+    Args:
+        update_id (ID): The ID of the update to edit.
+        body (str): The new text content of the update as a string or in HTML format.
+        with_complexity (bool): Set to True to return the query's complexity along with the results.
+    """
+    query = f"""
+    mutation {{{add_complexity() if with_complexity else ""}
+        edit_update (
+            id: {format_param_value(update_id)},
+            body: {format_param_value(body)}
+        ) {{
+            id
+            body
+        }}
+    }}
+    """
+    return graphql_parse(query)
+
+
+def pin_update_query(update_id: ID, with_complexity: bool = False) -> str:
+    """
+    This query pins an update to the top of the updates section of a specific item. For more information, visit
+    https://developer.monday.com/api-reference/reference/updates#pin-an-update
+    Args:
+        update_id (ID): The ID of the update to pin.
+        with_complexity (bool): Set to True to return the query's complexity along with the results.
+
+    Returns:
+        str: The formatted GraphQL query.
+    """
+    query = f"""
+    mutation {{{add_complexity() if with_complexity else ""}
+        pin_to_top (
+            id: {format_param_value(update_id)}
+        ) {{
+            id
+            item_id
+        }}
+    }}
+    """
+    return graphql_parse(query)
+
+
+def unpin_update_query(update_id: ID, with_complexity: bool = False) -> str:
+    """
+    This query unpins an update from the top of the updates section of a specific item. For more information, visit
+    https://developer.monday.com/api-reference/reference/updates#unpin-an-update
+    Args:
+        update_id (ID): The ID of the update to unpin.
+        with_complexity (bool): Set to True to return the query's complexity along with the results.
+
+    Returns:
+        str: The formatted GraphQL query.
+    """
+    query = f"""
+    mutation {{{add_complexity() if with_complexity else ""}
+        unpin_from_top (
+            id: {format_param_value(update_id)}
+        ) {{
+            id
+            item_id
+        }}
+    }}
+    """
+    return graphql_parse(query)
+
+
 def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
     """
     This query adds a like to a specific update. For more information, visit
@@ -2661,6 +2742,36 @@ def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
     mutation {{{add_complexity() if with_complexity else ""}
         like_update (update_id: {format_param_value(update_id)}) {{
             id
+            item_id
+            likes {{
+                id
+                reaction_type
+            }}
+        }}
+    }}
+    """
+    return graphql_parse(query)
+
+
+def unlike_update_query(update_id: ID, with_complexity: bool = False) -> str:
+    """
+    This query removes a like from a specific update. For more information, visit
+    https://developer.monday.com/api-reference/reference/updates#unlike-an-update
+
+    Args:
+        update_id (ID): The ID of the update to unlike.
+
+        with_complexity (bool): Set to True to return the query's complexity along with the results.
+    """
+    query = f"""
+    mutation {{{add_complexity() if with_complexity else ""}
+        unlike_update (update_id: {format_param_value(update_id)}) {{
+            id
+            item_id
+            likes {{
+                id
+                reaction_type
+            }}
         }}
     }}
     """
