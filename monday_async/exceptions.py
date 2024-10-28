@@ -525,6 +525,7 @@ ERROR_CODES = {
     'INTERNAL_SERVER_ERROR': InternalServerError,
     'GRAPHQL_VALIDATION_FAILED': GraphQLValidationError,
     'MaxConcurrencyExceeded': ConcurrencyLimitExceededError,
+    'maxConcurrencyExceeded': ConcurrencyLimitExceededError,
     'RateLimitExceeded': RateLimitExceededError,
     'IpRestricted': IpRestrictedError,
     'Unauthorized': UnauthorizedError,
