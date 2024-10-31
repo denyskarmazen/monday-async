@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Union, Optional, Any
+from typing import List, Union, Optional, Any, Dict
 
 from monday_async.types import (WebhookEventType, TargetType, UserKind, WorkspaceKind, State,
                                 FolderColor, SubscriberKind, BoardKind, BoardAttributes, GroupUpdateColors,
