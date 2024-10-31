@@ -1,7 +1,7 @@
 from typing import List, Union, Optional
 
-from monday_async.query_params import QueryParams, ItemByColumnValuesParam
 from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import QueryParams, ItemByColumnValuesParam, ColumnsMappingInput
 from monday_async.utils.queries import (
     get_items_by_id_query, get_items_by_board_query, get_items_by_group_query,
     get_items_by_column_value_query, get_items_by_multiple_column_values_query,
@@ -10,7 +10,7 @@ from monday_async.utils.queries import (
     create_subitem_query, change_multiple_item_column_values_query,
     change_item_column_json_value_query, change_item_column_simple_value_query,
     upload_file_to_column_query, get_item_updates_query, clear_item_updates_query,
-    move_item_to_group_query
+    move_item_to_group_query, move_item_to_board_query
 )
 
 ID = Union[int, str]
@@ -433,4 +433,35 @@ class ItemResource(AsyncBaseResource):
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
         query = move_item_to_group_query(item_id=item_id, group_id=group_id, with_complexity=with_complexity)
+        return await self.client.execute(query)
+
+    async def move_item_to_board(self, item_id: ID, board_id: ID, group_id: str = None,
+                                 columns_mapping: Union[ColumnsMappingInput, List[dict]] = None,
+                                 subitems_columns_mapping: Union[ColumnsMappingInput, List[dict]] = None,
+                                 with_complexity: bool = False) -> dict:
+        """
+        The move_item_to_board mutation allows you to move an item to a different board.
+        For more information, visit https://developer.monday.com/api-reference/reference/items#move-item-to-board
+
+        Args:
+            board_id (ID): The ID of the target board.
+            group_id (str): The ID of the target group within the board.
+            item_id (ID): The ID of the item to move.
+            columns_mapping (Union[ColumnsMappingInput, List[Dict[str, str]]]): The object that defines the column mapping
+                between the original and target board. Every column type can be mapped except for formula columns.
+                If you omit this argument, the columns will be mapped based on the best match.
+            subitems_columns_mapping (Union[ColumnsMappingInput, List[Dict[str, str]]]): The object that defines the
+                subitems' column mapping between the original and target board.
+                Every column type can be mapped except for formula columns.
+                If you omit this argument, the columns will be mapped based on the best match.
+            with_complexity (bool): Set to True to return the query's complexity along with the results.
+
+        Returns:
+            dict: The JSON response from the GraphQL server.
+        """
+        query = move_item_to_board_query(item_id=item_id, board_id=board_id, group_id=group_id,
+                                         columns_mapping=columns_mapping,
+                                         subitems_columns_mapping=subitems_columns_mapping,
+                                         with_complexity=with_complexity)
+        print(query)
         return await self.client.execute(query)

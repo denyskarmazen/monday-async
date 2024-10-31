@@ -2586,6 +2586,83 @@ def move_item_to_group_query(item_id: ID, group_id: str, with_complexity: bool =
     return graphql_parse(query)
 
 
+def move_item_to_board_query(board_id: ID, group_id: str, item_id: ID,
+                             columns_mapping: Union[ColumnsMappingInput, List[Dict[str, str]]] = None,
+                             subitems_columns_mapping: Union[ColumnsMappingInput, List[Dict[str, str]]] = None,
+                             with_complexity=False) -> str:
+    """
+    This query moves an item to a different board. For more information, visit
+    https://developer.monday.com/api-reference/reference/items#move-item-to-board
+
+    Args:
+        board_id (ID): The ID of the target board.
+        group_id (str): The ID of the target group within the board.
+        item_id (ID): The ID of the item to move.
+        columns_mapping (Union[ColumnsMappingInput, List[Dict[str, str]]]): The object that defines the column mapping
+            between the original and target board. Every column type can be mapped except for formula columns.
+            If you omit this argument, the columns will be mapped based on the best match.
+        subitems_columns_mapping (Union[ColumnsMappingInput, List[Dict[str, str]]]): The object that defines the
+            subitems' column mapping between the original and target board.
+            Every column type can be mapped except for formula columns.
+            If you omit this argument, the columns will be mapped based on the best match.
+        with_complexity (bool): Set to True to return the query's complexity along with the results.
+
+    Returns:
+        str: The formatted GraphQL query.
+
+    Raises:
+        TypeError: If the columns_mapping or subitems_columns_mapping parameter is not a
+        ColumnsMappingInput or a list of dictionaries.
+    """
+    if not columns_mapping:
+        columns_mapping_str = ""
+    elif isinstance(columns_mapping, ColumnsMappingInput):
+        columns_mapping_str = "columns_mapping: " + str(columns_mapping) + ","
+    elif isinstance(columns_mapping, list):
+        columns_mapping_str = ("columns_mapping: [" +
+                               ", ".join([format_dict_value(mapping) for mapping in columns_mapping]) + "],")
+    else:
+        raise TypeError(
+            "Unsupported type for 'columns_mapping' parameter. Expected ColumnsMappingInput or list of dictionaries.")
+
+    if not subitems_columns_mapping:
+        subitems_columns_mapping_str = ""
+    elif isinstance(subitems_columns_mapping, ColumnsMappingInput):
+        subitems_columns_mapping_str = "subitems_columns_mapping: " + str(subitems_columns_mapping) + ","
+    elif isinstance(subitems_columns_mapping, list):
+        subitems_columns_mapping_str = ("subitems_columns_mapping: [" +
+                                        ", ".join([format_dict_value(mapping)
+                                                   for mapping in subitems_columns_mapping]) + "],")
+    else:
+        raise TypeError("Unsupported type for 'subitems_columns_mapping' parameter. "
+                        "Expected ColumnsMappingInput or list of dictionaries.")
+
+    query = f"""
+    mutation {{{add_complexity() if with_complexity else ""}
+        move_item_to_board (
+            board_id: {format_param_value(board_id)},
+            group_id: {format_param_value(group_id)},
+            item_id: {format_param_value(item_id)},
+            {columns_mapping_str}
+            {subitems_columns_mapping_str}
+        ) {{
+            id
+            name
+            board {{
+                id
+                name
+            }}
+            group {{
+                id
+                title
+                color
+            }}
+        }}
+    }}
+    """
+    return graphql_parse(query)
+
+
 # ### UPDATE RESOURCE QUERIES ### #
 def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: int = 1,
                       with_complexity: bool = False) -> str:
