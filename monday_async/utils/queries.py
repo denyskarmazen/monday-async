@@ -1005,7 +1005,7 @@ def create_board_query(board_name: str, board_kind: BoardKind, description: Opti
                        template_id: Optional[ID] = None, board_owner_ids: List[ID] = None,
                        board_owner_team_ids: List[ID] = None, board_subscriber_ids: List[ID] = None,
                        board_subscriber_teams_ids: List[ID] = None, empty: bool = False,
-                       with_columns: bool = True, with_groups: bool = True, with_complexity: bool = False) -> str:
+                       with_columns: bool = False, with_groups: bool = False, with_complexity: bool = False) -> str:
     """
     This query creates a new board with specified name, kind, and optional description, folder, workspace, template,
     and subscribers/owners.
@@ -1023,8 +1023,8 @@ def create_board_query(board_name: str, board_kind: BoardKind, description: Opti
         board_subscriber_ids (List[ID]): (Optional) A list of user IDs to subscribe to the board.
         board_subscriber_teams_ids (List[ID]): (Optional) A list of team IDs to subscribe to the board.
         empty (bool): (Optional) Set to True to create an empty board without default items. Defaults to False.
-        with_columns (bool): (Optional) Set to True to include columns in the query results.
-        with_groups (bool): (Optional) Set to True to include groups in the query results.
+        with_columns (bool): (Optional) Set to True to include columns in the query results. Defaults to False.
+        with_groups (bool): (Optional) Set to True to include groups in the query results. Defaults to False.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     board_kind_value = board_kind.value if isinstance(board_kind, BoardKind) else board_kind
@@ -1057,7 +1057,7 @@ def create_board_query(board_name: str, board_kind: BoardKind, description: Opti
 def duplicate_board_query(board_id: ID, duplicate_type: DuplicateBoardType,
                           board_name: Optional[str] = None, workspace_id: Optional[ID] = None,
                           folder_id: Optional[ID] = None, keep_subscribers: bool = False,
-                          with_columns: bool = True, with_groups: bool = True, with_complexity: bool = False) -> str:
+                          with_columns: bool = False, with_groups: bool = False, with_complexity: bool = False) -> str:
     """
     This query duplicates a board with options to include structure, items, updates, and subscribers.
     For more information, visit https://developer.monday.com/api-reference/reference/boards#duplicate-a-board
@@ -1073,8 +1073,8 @@ def duplicate_board_query(board_id: ID, duplicate_type: DuplicateBoardType,
         folder_id (ID): (Optional) The ID of the folder to place the duplicated board in.
             Defaults to the original board's folder.
         keep_subscribers (bool): (Optional) Whether to copy subscribers to the new board. Defaults to False.
-        with_columns (bool): (Optional) Set to True to include columns in the query results.
-        with_groups (bool): (Optional) Set to True to include groups in the query results.
+        with_columns (bool): (Optional) Set to True to include columns in the query results. Defaults to False.
+        with_groups (bool): (Optional) Set to True to include groups in the query results. Defaults to False.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     duplicate_type_value = duplicate_type.value if isinstance(duplicate_type, DuplicateBoardType) else duplicate_type

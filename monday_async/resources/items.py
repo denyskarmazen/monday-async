@@ -463,5 +463,4 @@ class ItemResource(AsyncBaseResource):
                                          columns_mapping=columns_mapping,
                                          subitems_columns_mapping=subitems_columns_mapping,
                                          with_complexity=with_complexity)
-        print(query)
         return await self.client.execute(query)

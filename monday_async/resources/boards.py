@@ -46,12 +46,13 @@ class BoardResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def create_board(self, board_name: str, board_kind: BoardKind,
-                           description: Optional[str] = None,
-                           folder_id: Optional[ID] = None, workspace_id: Optional[ID] = None,
+                           description: Optional[str] = None, folder_id: Optional[ID] = None,
+                           workspace_id: Optional[ID] = None,
                            template_id: Optional[ID] = None, board_owner_ids: List[ID] = None,
                            board_owner_team_ids: List[ID] = None, board_subscriber_ids: List[ID] = None,
                            board_subscriber_teams_ids: List[ID] = None, empty: bool = False,
-                           with_columns: bool = True, with_groups: bool = True, with_complexity: bool = False) -> dict:
+                           with_columns: bool = False, with_groups: bool = False,
+                           with_complexity: bool = False) -> dict:
         """
         Execute a query to create a new board with specified name, kind, and optional description, folder, workspace,
          template, and subscribers/owners.
@@ -70,8 +71,8 @@ class BoardResource(AsyncBaseResource):
             board_subscriber_ids (List[ID]): (Optional) A list of user IDs to subscribe to the board.
             board_subscriber_teams_ids (List[ID]): (Optional) A list of team IDs to subscribe to the board.
             empty (bool): (Optional) Set to True to create an empty board without default items. Defaults to False.
-            with_columns (bool): (Optional) Set to True to include columns in the query results.
-            with_groups (bool): (Optional) Set to True to include groups in the query results.
+            with_columns (bool): (Optional) Set to True to include columns in the query results. Defaults to False.
+            with_groups (bool): (Optional) Set to True to include groups in the query results. Defaults to False.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
         query = create_board_query(board_name=board_name, board_kind=board_kind, description=description,
@@ -86,7 +87,8 @@ class BoardResource(AsyncBaseResource):
     async def duplicate_board(self, board_id: ID, duplicate_type: DuplicateBoardType,
                               board_name: Optional[str] = None, workspace_id: Optional[ID] = None,
                               folder_id: Optional[ID] = None, keep_subscribers: bool = False,
-                              with_columns: bool = True, with_groups: bool = True, with_complexity: bool = False) -> dict:
+                              with_columns: bool = False, with_groups: bool = False,
+                              with_complexity: bool = False) -> dict:
         """
         Execute a query to duplicate a board with options to include structure, items, updates, and subscribers.
 
@@ -103,8 +105,8 @@ class BoardResource(AsyncBaseResource):
             folder_id (ID): (Optional) The ID of the folder to place the duplicated board in.
                 Defaults to the original board's folder.
             keep_subscribers (bool): (Optional) Whether to copy subscribers to the new board. Defaults to False.
-            with_columns (bool): (Optional) Set to True to include columns in the query results.
-            with_groups (bool): (Optional) Set to True to include groups in the query results.
+            with_columns (bool): (Optional) Set to True to include columns in the query results. Defaults to False.
+            with_groups (bool): (Optional) Set to True to include groups in the query results. Defaults to False.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
         query = duplicate_board_query(board_id=board_id, duplicate_type=duplicate_type,
