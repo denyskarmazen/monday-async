@@ -1,14 +1,25 @@
+"""
+These are the types that are used as arguments for queries
+"""
+
 from typing import List, Union, Optional, Dict, Any
 
-from monday_async.types import ItemsQueryOperator, ID, ItemsQueryRuleOperator
-from monday_async.utils.utils import format_param_value
+from monday_async.utils.utils import format_param_value, format_dict_value
+from .enum_values import ItemsQueryOperator, ID, ItemsQueryRuleOperator
 
 
-class QueryParams:
+class Arg:
+    """
+    Base class for all query argument types.
+    """
+    pass
+
+
+class QueryParams(Arg):
     """
     A class to create an ItemsQuery type that can be used as an argument for the items_page object
     and contains a set of parameters to filter, sort, and control the scope of the boards query.
-
+    For more information visit https://developer.monday.com/api-reference/reference/other-types#items-query
     Args:
         ids (ID): The specific item IDs to return. The maximum is 100.
 
@@ -33,7 +44,7 @@ class QueryParams:
     def __str__(self):
         return self.format_value()
 
-    def format_value(self):
+    def format_value(self) -> str:
         items = [f"{key}: {value}" for key, value in self._value.items()]
         return "{" + ", ".join(items) + "}"
 
@@ -55,7 +66,7 @@ class QueryParams:
         self._value['rules'] = '[' + ', '.join(self._rules) + ']'
 
 
-class ItemByColumnValuesParam:
+class ItemByColumnValuesParam(Arg):
     """
     A class to create a ItemsPageByColumnValuesQuery type that can be used as an argument for the
     items_page_by_column_values object and contains a set of fields used to specify which columns and column values to
@@ -78,3 +89,33 @@ class ItemByColumnValuesParam:
         """
         column = {'column_id': column_id, 'column_values': column_values}
         self.value.append(column)
+
+
+class ColumnsMappingInput(Arg):
+    """
+    When using this argument, you must specify the mapping for all columns.
+    You can select the target as None for any columns you don't want to map, but doing so will lose the column's data.
+    For more information visit https://developer.monday.com/api-reference/reference/other-types#column-mapping-input
+    """
+    def __init__(self):
+        self._mappings = []
+
+    def add_mapping(self, source: str, target: Optional[str] = None):
+        """Adds a single mapping to the list with formatted source and target values."""
+        self._mappings.append({"source": source, "target": target})
+
+    def _format_mapping(self) -> str:
+        """Formats mappings as a GraphQL-compatible string representation."""
+        string_mappings = [format_dict_value(mapping) for mapping in self._mappings]
+        return "[" + ", ".join(string_mappings) + "]"
+
+    def __str__(self):
+        """Returns the formatted mapping string for GraphQL queries."""
+        return self._format_mapping()
+
+    def __repr__(self):
+        """Provides a representation with raw mappings."""
+        return f"ColumnsMappingInput(mappings={self._mappings})"
+
+
+__all__ = ["QueryParams", "ItemByColumnValuesParam", "ColumnsMappingInput"]
