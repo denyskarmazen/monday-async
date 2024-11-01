@@ -25,7 +25,7 @@ def add_complexity() -> str:
 
 
 def add_columns() -> str:
-    """This can be added to any query to return its columns with it"""
+    """This can be added to any boards query to return its columns with it"""
     columns = f"""
     columns {{
         id
@@ -38,7 +38,7 @@ def add_columns() -> str:
 
 
 def add_groups() -> str:
-    """This can be added to any query to return its groups with it"""
+    """This can be added to any boards query to return its groups with it"""
     groups = f"""
     groups {{
         id
@@ -51,6 +51,7 @@ def add_groups() -> str:
 
 
 def add_column_values() -> str:
+    """This can be added to any items query to return its column values with it"""
     column_values = f"""
     column_values {{
         id
@@ -103,6 +104,7 @@ def add_column_values() -> str:
 
 
 def add_subitems() -> str:
+    """This can be added to any items query to return its subitems with it"""
     subitems = f"""
     subitems {{
         id
@@ -115,6 +117,7 @@ def add_subitems() -> str:
 
 
 def add_updates() -> str:
+    """This can be added to any items query to return its updates with it"""
     updates = f"""
     updates (limit: 100) {{
         id
@@ -883,7 +886,7 @@ def update_folder_query(folder_id: ID, name: Optional[str] = None, color: Option
                         parent_folder_id: Optional[ID] = None, with_complexity: bool = False) -> str:
     """
     This query modifies an existing folder's name, color, or parent folder.
-
+    For more information, visit https://developer.monday.com/api-reference/reference/folders#update-a-folder
     Args:
         folder_id (ID): The unique identifier of the folder to update.
 
@@ -916,6 +919,7 @@ def update_folder_query(folder_id: ID, name: Optional[str] = None, color: Option
 def delete_folder_query(folder_id: ID, with_complexity: bool = False) -> str:
     """
     This query permanently removes a folder from a workspace.
+    For more information, visit https://developer.monday.com/api-reference/reference/folders#delete-a-folder
 
     Args:
         folder_id (ID): The unique identifier of the folder to delete.
@@ -926,6 +930,7 @@ def delete_folder_query(folder_id: ID, with_complexity: bool = False) -> str:
     mutation {{{add_complexity() if with_complexity else ""}
         delete_folder (folder_id: {format_param_value(folder_id)}) {{
             id
+            name
         }}
     }}
     """
@@ -1143,6 +1148,7 @@ def archive_board_query(board_id: ID, with_complexity: bool = False) -> str:
     mutation {{{add_complexity() if with_complexity else ""}
         archive_board (board_id: {format_param_value(board_id)}) {{
             id
+            name
         }}
     }}
     """
@@ -1163,6 +1169,7 @@ def delete_board_query(board_id: ID, with_complexity: bool = False) -> str:
     mutation {{{add_complexity() if with_complexity else ""}
         delete_board (board_id: {format_param_value(board_id)}) {{
             id
+            name
         }}
     }}
     """
@@ -1535,6 +1542,7 @@ def change_column_description_query(board_id: ID, column_id: str, description: s
             value: {format_param_value(description)}
         ) {{
             id
+            title
             description
         }}
     }}
@@ -1561,6 +1569,7 @@ def delete_column_query(board_id: ID, column_id: str, with_complexity: bool = Fa
             column_id: {format_param_value(column_id)}
         ) {{
             id
+            title
         }}
     }}
     """
@@ -1709,6 +1718,8 @@ def duplicate_group_query(board_id: ID, group_id: str, add_to_top: Optional[bool
         ) {{
             id
             title
+            color
+            position
         }}
     }}
     """
@@ -1734,6 +1745,7 @@ def archive_group_query(board_id: ID, group_id: str, with_complexity: bool = Fal
             group_id: {format_param_value(group_id)}
         ) {{
             id
+            title
         }}
     }}
     """
@@ -1759,6 +1771,7 @@ def delete_group_query(board_id: ID, group_id: str, with_complexity: bool = Fals
             group_id: {format_param_value(group_id)}
         ) {{
             id
+            title
         }}
     }}
     """
@@ -2231,6 +2244,11 @@ def duplicate_item_query(board_id: ID, item_id: ID, with_updates: Optional[bool]
         ) {{
             id
             name
+            column_values {{
+                id
+                text
+                value
+            }}
         }}
     }}
     """
@@ -2613,29 +2631,18 @@ def move_item_to_board_query(board_id: ID, group_id: str, item_id: ID,
         TypeError: If the columns_mapping or subitems_columns_mapping parameter is not a
         ColumnsMappingInput or a list of dictionaries.
     """
-    if not columns_mapping:
-        columns_mapping_str = ""
-    elif isinstance(columns_mapping, ColumnsMappingInput):
-        columns_mapping_str = "columns_mapping: " + str(columns_mapping) + ","
-    elif isinstance(columns_mapping, list):
-        columns_mapping_str = ("columns_mapping: [" +
-                               ", ".join([format_dict_value(mapping) for mapping in columns_mapping]) + "],")
-    else:
-        raise TypeError(
-            "Unsupported type for 'columns_mapping' parameter. Expected ColumnsMappingInput or list of dictionaries.")
+    def parse_mapping(mapping, name):
+        if not mapping:
+            return ""
+        if isinstance(mapping, ColumnsMappingInput):
+            return f"{name}: {mapping},"
+        if isinstance(mapping, list):
+            formatted_list = ", ".join([format_dict_value(m) for m in mapping])
+            return f"{name}: [{formatted_list}],"
+        raise TypeError(f"Unsupported type for '{name}'. Expected ColumnsMappingInput or list of dictionaries.")
 
-    if not subitems_columns_mapping:
-        subitems_columns_mapping_str = ""
-    elif isinstance(subitems_columns_mapping, ColumnsMappingInput):
-        subitems_columns_mapping_str = "subitems_columns_mapping: " + str(subitems_columns_mapping) + ","
-    elif isinstance(subitems_columns_mapping, list):
-        subitems_columns_mapping_str = ("subitems_columns_mapping: [" +
-                                        ", ".join([format_dict_value(mapping)
-                                                   for mapping in subitems_columns_mapping]) + "],")
-    else:
-        raise TypeError("Unsupported type for 'subitems_columns_mapping' parameter. "
-                        "Expected ColumnsMappingInput or list of dictionaries.")
-
+    columns_mapping_str = parse_mapping(columns_mapping, "columns_mapping")
+    subitems_columns_mapping_str = parse_mapping(subitems_columns_mapping, "subitems_columns_mapping")
     query = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         move_item_to_board (
@@ -2701,6 +2708,9 @@ def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: in
                 creator_id
                 updated_at
             }}
+            pinned_to_top {{
+                item_id
+            }}
         }}
     }}
     """
@@ -2730,6 +2740,7 @@ def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, 
         ) {{
             id
             body
+            item_id
         }}
     }}
     """
@@ -2778,6 +2789,9 @@ def pin_update_query(update_id: ID, with_complexity: bool = False) -> str:
         ) {{
             id
             item_id
+            pinned_to_top {{
+                item_id
+            }}
         }}
     }}
     """
@@ -2802,6 +2816,9 @@ def unpin_update_query(update_id: ID, with_complexity: bool = False) -> str:
         ) {{
             id
             item_id
+            pinned_to_top {{
+                item_id
+            }}
         }}
     }}
     """
@@ -2893,6 +2910,9 @@ def add_file_to_update(update_id: ID, with_complexity: bool = False) -> str:
     mutation ($file: File!){{{add_complexity() if with_complexity else ""}
         add_file_to_update (update_id: {format_param_value(update_id)}, file: $file) {{
             id
+            name
+            url
+            created_at
         }}
     }}
     """
