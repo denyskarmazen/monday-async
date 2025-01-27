@@ -11,7 +11,7 @@ def monday_json_stringify(value: dict) -> str:
 
     Example:
         Input: {"label": "Done"}
-        Output: "{\"label\":\"Done\"}"  # This is a double-encoded JSON string.
+        Output: "{\"label\":\"Done\"}"
 
     Args:
         value: A Python object to be double-encoded into a JSON string.
@@ -20,7 +20,7 @@ def monday_json_stringify(value: dict) -> str:
         A double-encoded JSON string.
     """
     if value:
-        return json.dumps(json.dumps(value))
+        return json.dumps(json.dumps(value, separators=(',', ':')))
     # If the value is None return null instead of "null"
     return json.dumps(value)
 
@@ -48,17 +48,9 @@ def gather_params(params: Iterable[Tuple[str, Any]], excluded_params: Optional[L
 
 
 def format_param_value(value: Any) -> str:
-    if value is None:
-        return 'null'
-    if isinstance(value, str):
-        return f'"{value}"'
-    if isinstance(value, list):
-        return f"[{', '.join(format_param_value(val) for val in value)}]"
-    if isinstance(value, bool):
-        return str(value).lower()
     if isinstance(value, Enum):
-        return value.value
-    return str(value)
+        return json.dumps(value.value)
+    return json.dumps(value)
 
 
 def format_dict_value(dictionary: dict) -> str:

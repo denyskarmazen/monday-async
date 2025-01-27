@@ -7,7 +7,13 @@ from monday_async.utils.queries import (get_me_query, get_users_query, get_users
 
 
 class UsersResource(AsyncBaseResource):
-    async def get_me(self, with_complexity: bool = False):
+    async def get_me(self, with_complexity: bool = False) -> dict:
+        """
+        Get information about the user whose API key is being used. For more information, visit
+        https://developer.monday.com/api-reference/reference/me#queries
+        Args:
+            with_complexity: Returns the complexity of the query with the query if set to True.
+        """
         query = get_me_query(with_complexity=with_complexity)
         return await self.client.execute(query)
 

@@ -1,10 +1,10 @@
 from typing import List, Union, Optional, Any
 
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import PositionRelative, GroupAttributes, GroupUpdateColors
+from monday_async.types import PositionRelative, GroupAttributes, GroupUpdateColors, GroupColors
 from monday_async.utils.queries import (
     get_groups_by_board_query, create_group_query, update_group_query,
-    duplicate_group_query, archive_group_query, delete_group_query, GroupColors
+    duplicate_group_query, archive_group_query, delete_group_query
 )
 
 ID = Union[int, str]
