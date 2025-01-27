@@ -1,1 +1,1 @@
-from .mondayclient import AsyncMondayClient
+from monday_async.mondayclient import AsyncMondayClient
