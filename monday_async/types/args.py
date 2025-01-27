@@ -5,7 +5,7 @@ These are the types that are used as arguments for queries
 from typing import List, Union, Optional, Dict, Any
 
 from monday_async.utils.utils import format_param_value, format_dict_value
-from .enum_values import ItemsQueryOperator, ID, ItemsQueryRuleOperator
+from monday_async.types import ItemsQueryOperator, ID, ItemsQueryRuleOperator
 
 
 class Arg:

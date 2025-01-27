@@ -32,7 +32,7 @@ class WebhookEventType(Enum):
     CREATE_SUBITEM_UPDATE = "create_subitem_update"
 
 
-class TargetType(Enum):
+class NotificationTargetType(Enum):
     POST = "Post"
     PROJECT = "Project"
 
@@ -239,7 +239,7 @@ class ItemsQueryRuleOperator(Enum):
 
 
 __all__ = [
-    "WebhookEventType", "TargetType", "UserKind", "WorkspaceKind", "State", "SubscriberKind", "FolderColor",
+    "WebhookEventType", "NotificationTargetType", "UserKind", "WorkspaceKind", "State", "SubscriberKind", "FolderColor",
     "BoardKind", "BoardAttributes", "DuplicateBoardType", "PositionRelative", "ColumnType", "GroupAttributes",
     "GroupUpdateColors", "GroupColors", "BoardsOrderBy", "ItemsQueryOperator", "ItemsOrderByDirection",
     "ItemsQueryRuleOperator", "ID"
