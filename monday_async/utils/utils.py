@@ -20,7 +20,7 @@ def monday_json_stringify(value: dict) -> str:
         A double-encoded JSON string.
     """
     if value:
-        return json.dumps(json.dumps(value, separators=(',', ':')))
+        return json.dumps(json.dumps(value, ensure_ascii=False, separators=(',', ':')), ensure_ascii=False)
     # If the value is None return null instead of "null"
     return json.dumps(value)
 
