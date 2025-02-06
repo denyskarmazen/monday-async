@@ -11,7 +11,7 @@ def monday_json_stringify(value: dict) -> str:
 
     Example:
         Input: {"label": "Done"}
-        Output: "{\"label\":\"Done\"}"
+        Output: '\"{\\"label\\":\\"Done\\"}\"'
 
     Args:
         value: A Python object to be double-encoded into a JSON string.
@@ -19,7 +19,7 @@ def monday_json_stringify(value: dict) -> str:
     Returns:
         A double-encoded JSON string.
     """
-    if value:
+    if value is not None:
         return json.dumps(json.dumps(value, ensure_ascii=False, separators=(',', ':')), ensure_ascii=False)
     # If the value is None return null instead of "null"
     return json.dumps(value)
