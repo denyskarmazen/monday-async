@@ -6,7 +6,7 @@ from ._version import __version__
 from .resources import (
     APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource,
     FolderResource, BoardResource, TagResource, ColumnResource, GroupResource, ItemResource, UpdateResource,
-    ComplexityResource, AccountResource
+    ComplexityResource, AccountResource, TeamsResource
 )
 
 _DEFAULT_HEADERS = {
@@ -20,9 +20,11 @@ class AsyncMondayClient:
         complexity (ComplexityResource):
         custom (CustomResource):
         api (APIResource):
+        account (AccountResource):
         webhooks (WebhooksResource):
         notifications (NotificationResource):
         users (UsersResource):
+        teams (TeamsResource):
         workspaces (WorkspaceResource):
         folders (FolderResource):
         boards (BoardResource):
@@ -52,6 +54,7 @@ class AsyncMondayClient:
         self.webhooks = WebhooksResource(token=token, headers=headers, session=session)
         self.notifications = NotificationResource(token=token, headers=headers, session=session)
         self.users = UsersResource(token=token, headers=headers, session=session)
+        self.teams = TeamsResource(token=token, headers=headers, session=session)
         self.workspaces = WorkspaceResource(token=token, headers=headers, session=session)
         self.folders = FolderResource(token=token, headers=headers, session=session)
         self.boards = BoardResource(token=token, headers=headers, session=session)

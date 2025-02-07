@@ -4,8 +4,8 @@ These are the types that are used as arguments for queries
 
 from typing import List, Union, Optional, Dict, Any
 
-from monday_async.utils.utils import format_param_value, format_dict_value
 from monday_async.types import ItemsQueryOperator, ID, ItemsQueryRuleOperator
+from monday_async.utils.utils import format_param_value, format_dict_value
 
 
 class Arg:
@@ -97,6 +97,7 @@ class ColumnsMappingInput(Arg):
     You can select the target as None for any columns you don't want to map, but doing so will lose the column's data.
     For more information visit https://developer.monday.com/api-reference/reference/other-types#column-mapping-input
     """
+
     def __init__(self):
         self._mappings = []
 
