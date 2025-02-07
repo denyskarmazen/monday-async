@@ -1,7 +1,5 @@
 import re
-import warnings
-
-from monday_async.utils.utils import graphql_parse
+from typing import Dict, List, Union
 
 
 class MondayAPIError(Exception):
@@ -10,32 +8,14 @@ class MondayAPIError(Exception):
     """
 
     def __init__(self, message: str, error_code: str = None, status_code: int = None, error_data: dict = None,
-                 extensions: dict = None, path: dict = None):
+                 extensions: dict = None, path: dict = None, partial_data: dict = None):
         super().__init__(message)
         self.error_code: str = error_code
         self.status_code: int = status_code
         self.error_data: dict = error_data if error_data is not None else {}
         self.extensions: dict = extensions if extensions is not None else {}
         self.path: dict = path if path is not None else {}
-
-
-class MondayQueryError(MondayAPIError):
-    """
-    Deprecated: Use MondayAPIError instead.
-    """
-
-    def __init__(self, *args, **kwargs):
-        warnings.warn(
-            "MondayQueryError is deprecated and will be removed in a future version. Use MondayAPIError instead.",
-            DeprecationWarning,
-            stacklevel=2
-        )
-        super().__init__(*args, **kwargs)
-
-
-class GraphQLError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
+        self.partial_data: Union[Dict, List] = partial_data if partial_data is not None else []
 
 
 class GraphQLValidationError(MondayAPIError):
@@ -46,8 +26,9 @@ class GraphQLValidationError(MondayAPIError):
     """
 
     def __init__(self, message="GraphQL query is invalid", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class InternalServerError(MondayAPIError):
@@ -58,8 +39,36 @@ class InternalServerError(MondayAPIError):
     """
 
     def __init__(self, message: str = "Internal server error occurred", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
+
+
+class APITemporarilyBlockedError(MondayAPIError):
+    """
+    Raised when the API is temporarily blocked (HTTP 200).
+    This indicates that there is an issue with the API and usage has temporarily been blocked.
+    For more information, visit https://developer.monday.com/api-reference/docs/errors#api-temporarily-blocked
+    """
+
+    def __init__(self, message: str = "API temporarily blocked", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
+
+
+class DailyLimitExceededError(MondayAPIError):
+    """
+    Raised when the daily API usage limit is exceeded.
+    This indicates that the daily limit of requests has been exceeded.
+    To resolve, reduce the number of requests sent in a day.
+    For more information, visit https://developer.monday.com/api-reference/docs/rate-limits#daily-call-limit
+    """
+
+    def __init__(self, message: str = "Daily limit exceeded", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class ConcurrencyLimitExceededError(MondayAPIError):
@@ -71,8 +80,9 @@ class ConcurrencyLimitExceededError(MondayAPIError):
     """
 
     def __init__(self, message: str = "Concurrency limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class FieldLimitExceededError(MondayAPIError):
@@ -82,8 +92,9 @@ class FieldLimitExceededError(MondayAPIError):
     """
 
     def __init__(self, message="Field limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class RateLimitExceededError(MondayAPIError):
@@ -95,8 +106,9 @@ class RateLimitExceededError(MondayAPIError):
     """
 
     def __init__(self, message="Rate limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class IpRestrictedError(MondayAPIError):
@@ -108,8 +120,9 @@ class IpRestrictedError(MondayAPIError):
     """
 
     def __init__(self, message="Your IP is restricted", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class UnauthorizedError(MondayAPIError):
@@ -121,8 +134,9 @@ class UnauthorizedError(MondayAPIError):
     """
 
     def __init__(self, message="Unauthorized access", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class BadRequestError(MondayAPIError):
@@ -135,8 +149,9 @@ class BadRequestError(MondayAPIError):
     """
 
     def __init__(self, message="Bad request", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class MissingRequiredPermissionsError(MondayAPIError):
@@ -148,8 +163,9 @@ class MissingRequiredPermissionsError(MondayAPIError):
     """
 
     def __init__(self, message="Missing required permissions", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class ParseError(MondayAPIError):
@@ -161,8 +177,9 @@ class ParseError(MondayAPIError):
     """
 
     def __init__(self, message="Parse error in the query", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class ColumnValueError(MondayAPIError):
@@ -174,8 +191,9 @@ class ColumnValueError(MondayAPIError):
     """
 
     def __init__(self, message="Column value formatting error", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class ComplexityError(MondayAPIError):
@@ -191,7 +209,7 @@ class ComplexityError(MondayAPIError):
     """
 
     def __init__(self, message="Complexity limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
         pattern = r"budget remaining (\d+) out of \d+ reset in (\d+) seconds"
         match = re.search(pattern, message)
         if match:
@@ -200,7 +218,8 @@ class ComplexityError(MondayAPIError):
         else:
             self.remaining_complexity = None
             self.reset_in = None
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class MaxComplexityExceededError(MondayAPIError):
@@ -209,8 +228,9 @@ class MaxComplexityExceededError(MondayAPIError):
     """
 
     def __init__(self, message="Max complexity exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class CorrectedValueError(MondayAPIError):
@@ -222,8 +242,9 @@ class CorrectedValueError(MondayAPIError):
     """
 
     def __init__(self, message="Incorrect value type", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class CreateBoardError(MondayAPIError):
@@ -234,8 +255,9 @@ class CreateBoardError(MondayAPIError):
     """
 
     def __init__(self, message="Error creating board", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class DeleteLastGroupError(MondayAPIError):
@@ -261,8 +283,9 @@ class InvalidArgumentError(MondayAPIError):
     """
 
     def __init__(self, message="Invalid argument in the query", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class InvalidItemIdError(MondayAPIError):
@@ -274,8 +297,10 @@ class InvalidItemIdError(MondayAPIError):
     """
 
     def __init__(self, message="Invalid item ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
+
 
 class InvalidBoardIdError(MondayAPIError):
     """
@@ -286,8 +311,9 @@ class InvalidBoardIdError(MondayAPIError):
     """
 
     def __init__(self, message="Invalid board ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class InvalidColumnIdError(MondayAPIError):
@@ -299,8 +325,9 @@ class InvalidColumnIdError(MondayAPIError):
     """
 
     def __init__(self, message="Invalid column ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class InvalidUserIdError(MondayAPIError):
@@ -312,8 +339,22 @@ class InvalidUserIdError(MondayAPIError):
     """
 
     def __init__(self, message="Invalid user ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
+
+
+class InvalidInputError(MondayAPIError):
+    """
+    Raised when an invalid input is provided.
+    This indicates that the input you are providing is invalid.
+    To resolve, ensure the input is in the correct format and follows the API documentation.
+    """
+
+    def __init__(self, message="Invalid input provided", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class InvalidVersionError(MondayAPIError):
@@ -325,8 +366,9 @@ class InvalidVersionError(MondayAPIError):
     """
 
     def __init__(self, message="Invalid API version", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class ItemNameTooLongError(MondayAPIError):
@@ -339,8 +381,9 @@ class ItemNameTooLongError(MondayAPIError):
 
     def __init__(self, message="Item name exceeds the allowed character limit",
                  error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class ItemsLimitationError(MondayAPIError):
@@ -353,8 +396,9 @@ class ItemsLimitationError(MondayAPIError):
 
     def __init__(self, message="Exceeded the limit of items on the board",
                  error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class JsonParseError(MondayAPIError):
@@ -365,8 +409,9 @@ class JsonParseError(MondayAPIError):
     """
 
     def __init__(self, message="JSON parse error", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class RecordValidError(MondayAPIError):
@@ -378,8 +423,9 @@ class RecordValidError(MondayAPIError):
     """
 
     def __init__(self, message="Record validation error", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class ResourceNotFoundError(MondayAPIError):
@@ -391,8 +437,9 @@ class ResourceNotFoundError(MondayAPIError):
     """
 
     def __init__(self, message="Resource not found", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
 class UserUnauthorizedError(MondayAPIError):
@@ -404,151 +451,29 @@ class UserUnauthorizedError(MondayAPIError):
     """
 
     def __init__(self, message="User unauthorized", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None):
-        super().__init__(message, error_code, status_code, error_data, extensions, path)
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
 
 
-class ErrorInfo:
-    def __init__(self, response, query):
-        self.error_message = response.get('error_message', 'An error occurred')
-        self.error_code = response.get('error_code')
-        self.status_code = response.get('status_code')
-        self.error_data = response.get('error_data', {})
-        self.path = None
-        self.extensions = None
-        self.query_by_lines = graphql_parse(query).split("\n")
-        self.errors = []
-        self.process_errors(response)
-        self.formatted_message = self.format_errors()
+class MultipleErrors(MondayAPIError):
+    """
+    Special exception for handling multiple API errors in a single response.
+    Contains full collection of parsed errors.
+    """
 
-    def process_errors(self, response):
-        for err in response.get('errors', []):
-            if isinstance(err, str):
-                self.add_error(err, self.error_code, self.status_code)
-                continue
-
-            message = err.get('message', '')
-            locations = [
-                self.create_location(location) for location in err.get('locations', [])
-            ]
-            error_code = err.get('extensions', {}).get('code')
-            status_code = err.get('extensions', {}).get('status_code')
-            error_data = err.get('extensions', {}).get('error_data', {})
-            path = err.get('path', [])
-            extensions = err.get('extensions', {})
-            self.add_error(message, error_code, status_code, locations, error_data)
-            if not self.error_code:
-                self.error_code = error_code
-            if error_code == self.error_code:
-                self.extensions = extensions
-                self.path = path
-                self.error_data = error_data
-
-    def create_location(self, location):
-        line = location.get('line')
-        column = location.get('column')
-        return {
-            'line': line,
-            'column': column,
-            'prev_line': self.get_line(line - 1),
-            'error_line': self.get_line(line),
-            'next_line': self.get_line(line + 1),
-        }
-
-    def get_line(self, line_number):
-        if 1 <= line_number <= len(self.query_by_lines):
-            return f'{line_number}) {self.query_by_lines[line_number - 1]}'
-        return ""
-
-    def add_error(self, message, error_code=None, status_code=None, locations=None, error_data=None):
-        self.errors.append({
-            "message": message,
-            "locations": locations if locations else [],
-            "error_code": error_code,
-            "status_code": status_code,
-            "error_data": error_data
-        })
-
-    def format_errors(self) -> str:
-        if not self.errors:
-            return self.format_single_error(self.error_message, self.error_code, self.status_code)
-
-        if len(self.errors) == 1:
-            return self.format_error_details(self.errors[0])
-
-        return self.format_multiple_errors()
-
-    @staticmethod
-    def format_single_error(message, error_code, status_code) -> str:
-        return (
-                f"{message}\n"
-                + (f"Error Code: {error_code}\n" if error_code else "")
-                + (f"Status Code: {status_code}\n" if status_code else "")
-        )
-
-    def format_error_details(self, error) -> str:
-        formatted_message = f"{error['message']}\n"
-        for location in error['locations']:
-            formatted_message += self.format_location(location)
-        formatted_message += f"Error Code: {error.get('error_code')}\n" if error.get('error_code') else ""
-        formatted_message += f"Status Code: {error.get('status_code')}\n" if error.get('status_code') else ""
-        return formatted_message
-
-    @staticmethod
-    def format_location(location) -> str:
-        caret_line = ' ' * (location['column'] + 2) + "^"  # Indent caret below the error line at the correct column
-        formatted_message = (
-            f"Location: Line {location['line']}, Column {location['column']}\n"
-        )
-        if location['error_line']:
-            if location.get('prev_line'):
-                formatted_message += f"       {location['prev_line']}\n"
-            formatted_message += f"       {location['error_line']}\n"
-            formatted_message += f"       {caret_line}\n"
-            if location.get('next_line'):
-                formatted_message += f"       {location['next_line']}\n"
-        return formatted_message
-
-    def format_multiple_errors(self) -> str:
-        formatted_message = "\nMultiple errors occurred:\n"
-        for error in self.errors:
-            formatted_message += f"\n{error['message']}\n"
-            for location in error['locations']:
-                formatted_message += self.format_location(location)
-            formatted_message += f" - Error Code: {error.get('error_code')}\n"
-            formatted_message += f" - Status Code: {error.get('status_code')}\n"
-        return formatted_message
+    def __init__(self, message: str, errors: List[MondayAPIError], partial_data: dict = None):
+        super().__init__(message=message, partial_data=partial_data)
+        self.errors = errors
+        self.partial_data = partial_data
 
 
-# Mapping of error codes returned by monday.com to exception classes
-ERROR_CODES = {
-    'INTERNAL_SERVER_ERROR': InternalServerError,
-    'GRAPHQL_VALIDATION_FAILED': GraphQLValidationError,
-    'MaxConcurrencyExceeded': ConcurrencyLimitExceededError,
-    'maxConcurrencyExceeded': ConcurrencyLimitExceededError,
-    'RateLimitExceeded': RateLimitExceededError,
-    'IpRestricted': IpRestrictedError,
-    'Unauthorized': UnauthorizedError,
-    'BadRequest': BadRequestError,
-    'missingRequiredPermissions': MissingRequiredPermissionsError,
-    'ParseError': ParseError,
-    'ColumnValueException': ColumnValueError,
-    'ComplexityException': ComplexityError,
-    'maxComplexityExceeded': MaxComplexityExceededError,
-    'CorrectedValueException': CorrectedValueError,
-    'CreateBoardException': CreateBoardError,
-    'DeleteLastGroupException': DeleteLastGroupError,
-    'FIELD_LIMIT_EXCEEDED': FieldLimitExceededError,
-    'InvalidArgumentException': InvalidArgumentError,
-    'InvalidItemIdException': InvalidItemIdError,
-    'InvalidBoardIdException': InvalidBoardIdError,
-    'InvalidColumnIdException': InvalidColumnIdError,
-    'InvalidUserIdException': InvalidUserIdError,
-    'InvalidVersionException': InvalidVersionError,
-    'ItemNameTooLongException': ItemNameTooLongError,
-    'ItemsLimitationException': ItemsLimitationError,
-    'JsonParseException': JsonParseError,
-    'RecordValidException': RecordValidError,
-    'ResourceNotFoundException': ResourceNotFoundError,
-    'UserUnauthorizedException': UserUnauthorizedError,
-}
+__all__ = [
+    "MondayAPIError", "APITemporarilyBlockedError", "ColumnValueError", "GraphQLValidationError",
+    "InternalServerError", "ConcurrencyLimitExceededError", "FieldLimitExceededError", "RateLimitExceededError",
+    "IpRestrictedError", "UnauthorizedError", "BadRequestError", "MissingRequiredPermissionsError", "ParseError",
+    "ComplexityError", "MaxComplexityExceededError", "CorrectedValueError", "CreateBoardError", "DeleteLastGroupError",
+    "InvalidArgumentError", "InvalidItemIdError", "InvalidBoardIdError", "InvalidColumnIdError", "InvalidUserIdError",
+    "InvalidVersionError", "ItemNameTooLongError", "ItemsLimitationError", "JsonParseError", "RecordValidError",
+    "ResourceNotFoundError", "UserUnauthorizedError", "DailyLimitExceededError", "MultipleErrors", "InvalidInputError"
+]

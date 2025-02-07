@@ -4,7 +4,8 @@ import os
 import aiofiles
 import aiohttp
 
-from monday_async.exceptions import ERROR_CODES, MondayAPIError, ErrorInfo
+from monday_async.exceptions import MondayAPIError
+from monday_async.utils.response_parser import ResponseParser
 
 TOKEN_HEADER = 'Authorization'
 
@@ -143,8 +144,9 @@ class AsyncGraphQLClient:
                 async with aiohttp.ClientSession() as session:
                     async with session.post(self.endpoint, headers=headers, data=payload) as response:
                         response_data = await response.json()
-                        self._throw_on_error(response_data, query)
-                        return response_data
+                        parser = ResponseParser(response_data, query)
+                        data = parser.parse_response()
+                        return data
             except (aiohttp.ClientError, json.JSONDecodeError, MondayAPIError) as e:
                 if self.session:
                     await self.close_session()
@@ -152,28 +154,6 @@ class AsyncGraphQLClient:
         else:
             async with self.session.post(self.endpoint, headers=headers, data=payload) as response:
                 response_data = await response.json()
-                self._throw_on_error(response_data, query)
-                return response_data
-
-    @staticmethod
-    def _throw_on_error(response, query: str):
-        """
-        Analyzes the response from the GraphQL server and raises an exception if there are errors.
-
-        Args:
-            response (dict): The JSON response from the server.
-            query (str): The GraphQL query or mutation that was sent.
-
-        Raises:
-            MondayQueryError: If the GraphQL server returns errors.
-        """
-
-        if (isinstance(response, dict) and
-                ('errors' in response or 'error_message' in response or 'error_code' in response)):
-            error_info = ErrorInfo(response, query)
-            error_class = ERROR_CODES.get(error_info.error_code, MondayAPIError)
-
-            if error_info.errors or error_info.error_message:
-                raise error_class(message=error_info.formatted_message, error_code=error_info.error_code,
-                                  status_code=error_info.status_code, error_data=error_info.error_data,
-                                  extensions=error_info.extensions, path=error_info.path)
+                parser = ResponseParser(response_data, query)
+                data = parser.parse_response()
+                return data
