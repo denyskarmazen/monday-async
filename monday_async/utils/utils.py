@@ -42,7 +42,7 @@ def graphql_parse(query: str) -> str:
 
 def format_param_value(value: Any) -> str:
     if isinstance(value, Enum):
-        return json.dumps(value.value)
+        return str(value.value)
     return json.dumps(value)
 
 
