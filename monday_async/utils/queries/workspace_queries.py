@@ -1,8 +1,9 @@
+from enum import Enum
 from typing import List, Union, Optional
 
 from monday_async.types import WorkspaceKind, State, SubscriberKind, ID
 from monday_async.utils.queries.query_addons import add_complexity
-from monday_async.utils.utils import format_param_value, graphql_parse, gather_params
+from monday_async.utils.utils import format_param_value, graphql_parse
 
 
 def get_workspaces_query(workspace_ids: Union[ID, List[ID]] = None, limit: int = 25, page: int = 1,
@@ -104,13 +105,18 @@ def update_workspace_query(workspace_id: ID, name: Optional[str] = None, kind: O
 
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
     """
-    raw_params = locals().items()
-    update_params = gather_params(raw_params, excluded_params=["workspace_id", "with_complexity"])
+    update_params = [
+        value for value in [
+            f"name: {format_param_value(name)}" if name else None,
+            f"kind: {kind.value if isinstance(kind, Enum) else kind}" if kind else None,
+            f"description: {format_param_value(description)}" if description else None
+        ] if value is not None
+    ]
     query = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         update_workspace (
             id: {format_param_value(workspace_id)},
-            attributes: {{{update_params}}}
+            attributes: {{{', '.join(update_params)}}}
         ) {{
             id
             name

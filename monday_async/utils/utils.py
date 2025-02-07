@@ -1,6 +1,6 @@
 import json
 from enum import Enum
-from typing import List, Iterable, Tuple, Any, Optional
+from typing import Any
 
 from graphql import parse, print_ast
 
@@ -38,13 +38,6 @@ def graphql_parse(query: str) -> str:
     """
     parsed = parse(query)
     return print_ast(parsed)
-
-
-def gather_params(params: Iterable[Tuple[str, Any]], excluded_params: Optional[List[str]] = None,
-                  exclude_none: bool = True) -> str:
-    valid_params = [f"{param}: {format_param_value(value)}" for param, value in params
-                    if not ((excluded_params and param in excluded_params) or (value is None and exclude_none))]
-    return ', '.join(valid_params)
 
 
 def format_param_value(value: Any) -> str:

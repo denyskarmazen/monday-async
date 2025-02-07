@@ -1,8 +1,9 @@
+from enum import Enum
 from typing import List, Union, Optional
 
 from monday_async.types import FolderColor, ID
 from monday_async.utils.queries.query_addons import add_complexity
-from monday_async.utils.utils import format_param_value, graphql_parse, gather_params
+from monday_async.utils.utils import format_param_value, graphql_parse
 
 
 def get_folders_query(ids: Union[ID, List[ID]] = None, workspace_ids: Union[ID, List[ID]] = None,
@@ -107,14 +108,19 @@ def update_folder_query(folder_id: ID, name: Optional[str] = None, color: Option
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    raw_params = locals().items()
-    update_params = gather_params(raw_params, excluded_params=["folder_id", "with_complexity"])
+    update_params = [
+        value for value in [
+            f"name: {format_param_value(name)}" if name else None,
+            f"color: {color.value if isinstance(color, Enum) else color}" if color else None,
+            f"parent_folder_id: {format_param_value(parent_folder_id)}" if parent_folder_id else None
+        ] if value is not None
+    ]
 
     query = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         update_folder (
             folder_id: {format_param_value(folder_id)},
-            {update_params}
+            {', '.join(update_params)}
         ) {{
             id
             name
