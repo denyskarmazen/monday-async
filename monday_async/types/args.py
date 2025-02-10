@@ -1,7 +1,6 @@
 """
 These are the types that are used as arguments for queries
 """
-
 from typing import List, Union, Optional, Dict, Any
 
 from monday_async.types import ItemsQueryOperator, ID, ItemsQueryRuleOperator
@@ -36,6 +35,8 @@ class QueryParams(Arg):
         self._order_by = order_by
         self._rules = []
         self._value = {'rules': "[]", 'operator': self._operator}
+        if self._ids:
+            self._value['ids'] = format_param_value(self._ids)
         if self._order_by:
             if self._order_by.get('column_id'):
                 self._order_by['column_id'] = format_param_value(self._order_by.get('column_id'))
@@ -49,7 +50,8 @@ class QueryParams(Arg):
         return "{" + ", ".join(items) + "}"
 
     def add_rule(self, column_id: str, compare_value: Any,
-                 operator: ItemsQueryRuleOperator = ItemsQueryRuleOperator.ANY_OF):
+                 operator: ItemsQueryRuleOperator = ItemsQueryRuleOperator.ANY_OF,
+                 compare_attribute: Optional[str] = None):
         """
         Adds a rule to the query parameters.
 
@@ -57,10 +59,12 @@ class QueryParams(Arg):
             column_id (str): The unique identifier of the column to filter by.
             compare_value (Any): The column value to filter by.
                 This can be a string or index value depending on the column type.
-            operator (ItemsQueryRuleOperator, optional): The condition for value comparison. Default is any_of.
+            operator (ItemsQueryRuleOperator): The condition for value comparison. Default is any_of.
+            compare_attribute (Optional[str]): The comparison attribute. Most columns don't have a compare_attribute.
         """
         rule = f"{{column_id: {format_param_value(column_id)}"
         rule += f", compare_value: {format_param_value(compare_value)}"
+        rule += f", compare_attribute: {format_param_value(compare_attribute)}" if compare_attribute else ""
         rule += f", operator: {operator.value if isinstance(operator, ItemsQueryRuleOperator) else operator}}}"
         self._rules.append(rule)
         self._value['rules'] = '[' + ', '.join(self._rules) + ']'
@@ -75,10 +79,10 @@ class ItemByColumnValuesParam(Arg):
     """
 
     def __init__(self):
-        self.value = []
+        self.value: List[Dict] = []
 
     def __str__(self):
-        return str(self.value)
+        return f"[{', '.join(format_dict_value(column) for column in self.value)}]"
 
     def add_column(self, column_id: str, column_values: Union[str, List[str]]):
         """
@@ -99,24 +103,19 @@ class ColumnsMappingInput(Arg):
     """
 
     def __init__(self):
-        self._mappings = []
+        self.value = []
 
     def add_mapping(self, source: str, target: Optional[str] = None):
         """Adds a single mapping to the list with formatted source and target values."""
-        self._mappings.append({"source": source, "target": target})
-
-    def _format_mapping(self) -> str:
-        """Formats mappings as a GraphQL-compatible string representation."""
-        string_mappings = [format_dict_value(mapping) for mapping in self._mappings]
-        return "[" + ", ".join(string_mappings) + "]"
+        self.value.append({"source": source, "target": target})
 
     def __str__(self):
         """Returns the formatted mapping string for GraphQL queries."""
-        return self._format_mapping()
+        return f"[{', '.join(format_dict_value(mapping) for mapping in self.value)}]"
 
     def __repr__(self):
         """Provides a representation with raw mappings."""
-        return f"ColumnsMappingInput(mappings={self._mappings})"
+        return f"ColumnsMappingInput(mappings={self.value})"
 
 
 __all__ = ["QueryParams", "ItemByColumnValuesParam", "ColumnsMappingInput"]

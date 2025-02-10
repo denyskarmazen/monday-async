@@ -244,7 +244,7 @@ def get_items_by_column_value_query(board_id: ID, column_id: str, column_values:
     else:
         params = ItemByColumnValuesParam()
         params.add_column(column_id=column_id, column_values=column_values)
-        columns_value = "columns: " + format_dict_value(params.value[0])
+        columns_value = f"columns: {params}"
 
     query = f"""
     query {{{add_complexity() if with_complexity else ""}
@@ -308,19 +308,16 @@ def get_items_by_multiple_column_values_query(board_id: ID, columns: Union[ItemB
     if cursor:
         columns_value = ""
 
-
     else:
-
         if isinstance(columns, ItemByColumnValuesParam):
-            formatted_columns = [format_dict_value(column) for column in columns.value]
-            columns_value = "columns: [" + ", ".join(formatted_columns) + "]"
+            columns_value = f"columns: {columns}"
 
         elif isinstance(columns, list):
-            formatted_columns = [format_dict_value(column) for column in columns]
-            columns_value = "columns: [" + ", ".join(formatted_columns) + "]"
+            formatted_columns = f"[{', '.join(format_dict_value(column) for column in columns)}]"
+            columns_value = f"columns: {formatted_columns}"
 
         elif isinstance(columns, dict):
-            columns_value = "columns: [" + format_dict_value(columns) + "]"
+            columns_value = f"columns: [{format_dict_value(columns)}]"
 
         else:
             raise TypeError(
@@ -863,7 +860,7 @@ def move_item_to_board_query(board_id: ID, group_id: str, item_id: ID,
             return ""
         if isinstance(mapping, ColumnsMappingInput):
             return f"{name}: {mapping},"
-        if isinstance(mapping, list):
+        elif isinstance(mapping, list):
             formatted_list = ", ".join([format_dict_value(m) for m in mapping])
             return f"{name}: [{formatted_list}],"
         raise TypeError(f"Unsupported type for '{name}'. Expected ColumnsMappingInput or list of dictionaries.")
