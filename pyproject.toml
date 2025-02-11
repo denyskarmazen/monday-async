@@ -1,0 +1,29 @@
+[project]
+name = "monday-async"
+dynamic = ["version"]
+description = "An asynchronous Python client library for monday.com"
+readme = "README.md"
+authors = [{ name = "Den", email = "deniskarmazen@gmail.com" }]
+requires-python = ">=3.9"
+
+dependencies = [
+    "aiofiles>=23.2.1",
+    "aiohttp>=3.11.11",
+    "graphql-core~=3.2.3",
+    "setuptools>=75.6.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { attr = "monday_async._version.__version__" }
+
+[dependency-groups]
+dev = [
+    "build>=1.2.2.post1",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
+    "python-dotenv>=1.0.1",
+]
