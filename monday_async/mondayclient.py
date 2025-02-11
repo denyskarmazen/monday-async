@@ -2,8 +2,8 @@ from typing import Optional
 
 from aiohttp import ClientSession
 
-from ._version import __version__
-from .resources import (
+from monday_async import __version__
+from monday_async.resources import (
     APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource,
     FolderResource, BoardResource, TagResource, ColumnResource, GroupResource, ItemResource, UpdateResource,
     ComplexityResource, AccountResource, TeamsResource

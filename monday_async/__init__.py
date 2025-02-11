@@ -1,1 +1,2 @@
+from monday_async._version import __version__
 from monday_async.mondayclient import AsyncMondayClient
