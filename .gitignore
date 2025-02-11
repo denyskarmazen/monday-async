@@ -1,4 +1,8 @@
 async.py
 test.py
 .env
+.venv/
 .idea/
+.tox/
+monday_async.egg-info/
+dist/
