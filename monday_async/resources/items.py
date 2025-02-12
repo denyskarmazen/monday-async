@@ -392,7 +392,8 @@ class ItemResource(AsyncBaseResource):
         return await self.file_upload_client.execute(query, variables={"file": file})
 
     async def get_item_updates(self, item_id: ID, ids: Union[ID, List[ID]] = None,
-                               limit: int = 25, page: int = 1, with_complexity: bool = False) -> dict:
+                               limit: int = 25, page: int = 1, with_viewers: bool = False,
+                               with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve updates associated with a specific item,
          allowing pagination and filtering by update IDs.
@@ -402,9 +403,10 @@ class ItemResource(AsyncBaseResource):
             ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
             limit (int): (Optional) The maximum number of updates to return. Defaults to 25.
             page (int): (Optional) The page number to return. Starts at 1.
+            with_viewers (bool): Set to True to return the viewers of the update.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = get_item_updates_query(item_id=item_id, ids=ids, limit=limit, page=page,
+        query = get_item_updates_query(item_id=item_id, ids=ids, limit=limit, page=page, with_viewers=with_viewers,
                                        with_complexity=with_complexity)
         return await self.client.execute(query)
 

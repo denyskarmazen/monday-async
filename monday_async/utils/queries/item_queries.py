@@ -725,19 +725,17 @@ def upload_file_to_column_query(item_id: ID, column_id: str, with_complexity: bo
 
 
 def get_item_updates_query(item_id: ID, ids: Union[ID, List[ID]] = None,
-                           limit: int = 25, page: int = 1, with_complexity: bool = False) -> str:
+                           limit: int = 25, page: int = 1, with_viewers: bool = False,
+                           with_complexity: bool = False) -> str:
     """
     This query retrieves updates associated with a specific item, allowing pagination and filtering by update IDs.
 
     Args:
         item_id (ID): The ID of the item to retrieve updates from.
-
-        ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
-
-        limit (int): (Optional) The maximum number of updates to return. Defaults to 25.
-
-        page (int): (Optional) The page number to return. Starts at 1.
-
+        ids (Union[ID, List[ID]]): A list of update IDs to retrieve specific updates.
+        limit (int): The maximum number of updates to return. Defaults to 25.
+        page (int): The page number to return. Starts at 1.
+        with_viewers (bool): Set to True to return the viewers of the update.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     if ids and isinstance(ids, list):
@@ -745,29 +743,7 @@ def get_item_updates_query(item_id: ID, ids: Union[ID, List[ID]] = None,
     query = f"""
     query {{{add_complexity() if with_complexity else ""}
         items (ids: {format_param_value(item_id)}) {{
-            updates (ids: {format_param_value(ids if ids else None)}, limit: {limit}, page: {page}) {{
-                id
-                text_body
-                body
-                creator_id
-                assets {{
-                    id 
-                    name
-                    file_extension
-                    url
-                    public_url 
-                }}
-                replies {{
-                    id
-                    text_body
-                }}
-                likes {{
-                    id
-                    reaction_type
-                    creator_id
-                    updated_at
-                }}
-            }}
+            {add_updates(ids=ids, limit=limit, page=page, with_viewers=with_viewers, with_pins=True, with_likes=True)}
         }}
     }}
     """
