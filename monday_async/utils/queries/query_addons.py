@@ -1,3 +1,9 @@
+from typing import List, Union, Optional
+
+from monday_async.types import ID
+from monday_async.utils.utils import format_param_value
+
+
 def add_complexity() -> str:
     """This can be added to any query to return its complexity with it"""
     query = f"""
@@ -103,10 +109,45 @@ def add_subitems() -> str:
     return subitems
 
 
-def add_updates() -> str:
-    """This can be added to any items query to return its updates with it"""
+def add_updates(ids: Optional[Union[ID, List[ID]]] = None, limit: int = 100, page: int = 1,
+                with_pins: bool = False, with_likes: bool = False, with_viewers: bool = False) -> str:
+    """
+    This can be added to any items query to return its updates with it
+
+    Args:
+        ids (Union[ID, List[ID]]): A list of update IDs to retrieve specific updates.
+        limit (int): the maximum number of updates to return. Defaults to 100. Maximum is 100 per page.
+        page (int): The page number to return. Starts at 1.
+        with_pins (bool): Set to True to return the pinned_to_top field.
+        with_likes (bool): Set to True to return the likes of the update.
+        with_viewers (bool): Set to True to return the viewers of the update.
+    """
+    viewers = f"""
+    viewers {{
+        medium
+        user {{
+            id
+            name
+            email
+            title
+        }}
+    }}
+    """
+    likes = f"""
+    likes {{
+        id
+        reaction_type
+        creator_id
+        updated_at
+    }}
+    """
+    pinned = f"""
+    pinned_to_top {{
+        item_id
+    }}
+    """
     updates = f"""
-    updates (limit: 100) {{
+    updates (ids: {format_param_value(ids if ids else None)}, limit: {limit}, page: {page}) {{
         id
         text_body
         body
@@ -122,6 +163,10 @@ def add_updates() -> str:
             id
             text_body
         }}
+        edited_at
+        {pinned if with_pins else ""}
+        {likes if with_likes else ""}
+        {viewers if with_viewers else ""}
     }}
     """
     return updates

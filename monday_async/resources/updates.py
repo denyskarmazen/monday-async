@@ -15,8 +15,9 @@ class UpdateResource(AsyncBaseResource):
     Updates allow users to organize communication across their organization and respond asynchronously.
     For many users, the updates section is their primary form of communication within the platform.
     """
-    async def get_updates(self, ids: Union[ID, List[ID]] = None,
-                          limit: int = 25, page: int = 1, with_complexity: bool = False) -> dict:
+
+    async def get_updates(self, ids: Union[ID, List[ID]] = None, limit: int = 25, page: int = 1,
+                          with_viewers: bool = False, with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve updates, allowing pagination and filtering by update IDs.
 
@@ -26,9 +27,11 @@ class UpdateResource(AsyncBaseResource):
             ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
             limit (int): (Optional) The maximum number of updates to return. Defaults to 25.
             page (int): (Optional) The page number to return. Starts at 1.
+            with_viewers (bool): Set to True to return the viewers of the update.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = get_updates_query(ids=ids, limit=limit, page=page, with_complexity=with_complexity)
+        query = get_updates_query(ids=ids, limit=limit, page=page, with_viewers=with_viewers,
+                                  with_complexity=with_complexity)
         return await self.client.execute(query)
 
     async def create_update(self, body: str, item_id: ID, parent_id: Optional[ID] = None,

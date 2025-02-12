@@ -1,52 +1,28 @@
 from typing import List, Union, Optional
 
 from monday_async.types import ID
-from monday_async.utils.queries.query_addons import add_complexity
+from monday_async.utils.queries.query_addons import add_complexity, add_updates
 from monday_async.utils.utils import format_param_value, graphql_parse
 
 
-def get_updates_query(ids: Union[ID, List[ID]] = None, limit: int = 25, page: int = 1,
-                      with_complexity: bool = False) -> str:
+def get_updates_query(ids: Optional[Union[ID, List[ID]]] = None, limit: int = 25, page: int = 1,
+                      with_viewers: bool = False, with_complexity: bool = False) -> str:
     """
     This query retrieves updates, allowing pagination and filtering by update IDs. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#queries
 
     Args:
-        ids (Union[ID, List[ID]]): (Optional) A list of update IDs to retrieve specific updates.
-        limit (int): (Optional) The maximum number of updates to return. Defaults to 25.
-        page (int): (Optional) The page number to return. Starts at 1.
+        ids (Union[ID, List[ID]]): A list of update IDs to retrieve specific updates.
+        limit (int): the maximum number of updates to return. Defaults to 25. Maximum is 100 per page.
+        page (int): The page number to return. Starts at 1.
+        with_viewers (bool): Set to True to return the viewers of the update.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     if ids and isinstance(ids, list):
         limit = len(ids)
     query = f"""
     query {{{add_complexity() if with_complexity else ""}
-        updates (ids: {format_param_value(ids if ids else None)}, limit: {limit}, page: {page}) {{
-            id
-            text_body
-            body
-            creator_id
-            assets {{
-                id 
-                name
-                file_extension
-                url
-                public_url 
-            }}
-            replies {{
-                id
-                text_body
-            }}
-            likes {{
-                id
-                reaction_type
-                creator_id
-                updated_at
-            }}
-            pinned_to_top {{
-                item_id
-            }}
-        }}
+        {add_updates(ids=ids, limit=limit, page=page, with_viewers=with_viewers, with_pins=True, with_likes=True)}
     }}
     """
     return graphql_parse(query)
@@ -59,11 +35,8 @@ def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, 
 
     Args:
         body (str): The text content of the update as a string or in HTML format.
-
         item_id (ID): The ID of the item to create the update on.
-
-        parent_id (ID): (Optional) The ID of the parent update to reply to.
-
+        parent_id (Optional[ID]): The ID of the parent update to reply to.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     query = f"""
@@ -167,7 +140,6 @@ def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
 
     Args:
         update_id (ID): The ID of the update to like.
-
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     query = f"""
@@ -192,7 +164,6 @@ def unlike_update_query(update_id: ID, with_complexity: bool = False) -> str:
 
     Args:
         update_id (ID): The ID of the update to unlike.
-
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     query = f"""
@@ -217,7 +188,6 @@ def delete_update_query(update_id: ID, with_complexity: bool = False) -> str:
 
     Args:
         update_id (ID): The unique identifier of the update to delete.
-
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     query = f"""
@@ -237,7 +207,6 @@ def add_file_to_update(update_id: ID, with_complexity: bool = False) -> str:
 
     Args:
         update_id (ID): The unique identifier of the update to delete.
-
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
 
