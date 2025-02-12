@@ -91,6 +91,9 @@ def add_column_values() -> str:
                 kind
             }}
         }}
+        ... on FormulaValue {{
+            display_value
+        }}
     }}   
     """
     return column_values
