@@ -6,17 +6,21 @@ from monday_async.utils.queries import get_webhooks_by_board_id_query, create_we
 
 
 class WebhooksResource(AsyncBaseResource):
-    async def get_webhooks_by_board_id(self, board_id: Union[int, str], with_complexity: bool = False) -> dict:
+    async def get_webhooks_by_board_id(self, board_id: Union[int, str], app_webhooks_only: bool = False,
+                                       with_complexity: bool = False) -> dict:
         """
         Get all webhooks for a board. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#queries
 
         Args:
             board_id (Union[int, str]): a unique identifier of a board, can be an integer or a string containing
-            integers.
+                integers.
+            app_webhooks_only (bool): if set to Trues returns only the webhooks created by
+                the app initiating the request.
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
-        query = get_webhooks_by_board_id_query(board_id=board_id, with_complexity=with_complexity)
+        query = get_webhooks_by_board_id_query(board_id=board_id, app_webhooks_only=app_webhooks_only,
+                                               with_complexity=with_complexity)
         return await self.client.execute(query)
 
     async def create_webhook(self, board_id: Union[int, str], url: str, event: WebhookEventType,

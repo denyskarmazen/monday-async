@@ -1,5 +1,4 @@
 from monday_async.exceptions import *
-from monday_async.utils.utils import graphql_parse
 
 # Mapping of error codes returned by monday.com to exception classes
 ERROR_CODES_MAPPING = {
@@ -8,6 +7,7 @@ ERROR_CODES_MAPPING = {
     'API_TEMPORARILY_BLOCKED': APITemporarilyBlockedError,
     'DAILY_LIMIT_EXCEEDED': DailyLimitExceededError,
     'maxConcurrencyExceeded': ConcurrencyLimitExceededError,
+    'maxDepthExceeded': DepthLimitExceededError,
     'RateLimitExceeded': RateLimitExceededError,
     'IpRestricted': IpRestrictedError,
     'Unauthorized': UnauthorizedError,
