@@ -85,6 +85,19 @@ class ConcurrencyLimitExceededError(MondayAPIError):
                          extensions, path, partial_data)
 
 
+class DepthLimitExceededError(MondayAPIError):
+    """
+    Raised when the depth limit is exceeded.
+    This indicates that the depth limit for the query has been exceeded.
+    To resolve, reduce the depth of your queries.
+    """
+
+    def __init__(self, message="Depth limit exceeded", error_code: str = None, status_code: int = None,
+                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+        super().__init__(message, error_code, status_code, error_data,
+                         extensions, path, partial_data)
+
+
 class FieldLimitExceededError(MondayAPIError):
     """
     Raised when there are too many requests running concurrently.
@@ -475,5 +488,6 @@ __all__ = [
     "ComplexityError", "MaxComplexityExceededError", "CorrectedValueError", "CreateBoardError", "DeleteLastGroupError",
     "InvalidArgumentError", "InvalidItemIdError", "InvalidBoardIdError", "InvalidColumnIdError", "InvalidUserIdError",
     "InvalidVersionError", "ItemNameTooLongError", "ItemsLimitationError", "JsonParseError", "RecordValidError",
-    "ResourceNotFoundError", "UserUnauthorizedError", "DailyLimitExceededError", "MultipleErrors", "InvalidInputError"
+    "ResourceNotFoundError", "UserUnauthorizedError", "DailyLimitExceededError", "MultipleErrors", "InvalidInputError",
+    "DepthLimitExceededError"
 ]

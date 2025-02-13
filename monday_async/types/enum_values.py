@@ -37,6 +37,14 @@ class NotificationTargetType(Enum):
     PROJECT = "Project"
 
 
+class BaseRoleName(Enum):
+    """The base role name."""
+    ADMIN = "ADMIN"
+    MEMBER = "MEMBER"
+    VIEWER = "VIEWER"
+    GUEST = "GUEST"
+
+
 class UserKind(Enum):
     ALL = "all"
     NON_GUESTS = "non_guests"
@@ -242,5 +250,5 @@ __all__ = [
     "WebhookEventType", "NotificationTargetType", "UserKind", "WorkspaceKind", "State", "SubscriberKind", "FolderColor",
     "BoardKind", "BoardAttributes", "DuplicateBoardType", "PositionRelative", "ColumnType", "GroupAttributes",
     "GroupUpdateColors", "GroupColors", "BoardsOrderBy", "ItemsQueryOperator", "ItemsOrderByDirection",
-    "ItemsQueryRuleOperator", "ID"
+    "ItemsQueryRuleOperator", "ID", "BaseRoleName"
 ]
