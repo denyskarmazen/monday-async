@@ -238,14 +238,8 @@ class ComplexityError(MondayAPIError):
 
     def __init__(self, message="Complexity limit exceeded", error_code: str = None, status_code: int = None,
                  error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        pattern = r"budget remaining (\d+) out of \d+ reset in (\d+) seconds"
-        match = re.search(pattern, message)
-        if match:
-            self.remaining_complexity = int(match.group(1))
-            self.reset_in = int(match.group(2))
-        else:
-            self.remaining_complexity = None
-            self.reset_in = None
+        self.reset_in = extensions.get("resetInXSeconds") if extensions else None
+        self.remaining_complexity = extensions.get("complexityBudgetLeft") if extensions else None
         super().__init__(message, error_code, status_code, error_data,
                          extensions, path, partial_data)
 

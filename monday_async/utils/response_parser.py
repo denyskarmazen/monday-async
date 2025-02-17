@@ -31,6 +31,7 @@ ERROR_CODES_MAPPING = {
     'ParseError': ParseError,
     'ColumnValueException': ColumnValueError,
     'ComplexityException': ComplexityError,
+    'complexityBudgetExhausted': ComplexityError,
     'maxComplexityExceeded': MaxComplexityExceededError,
     'CorrectedValueException': CorrectedValueError,
     'CreateBoardException': CreateBoardError,
