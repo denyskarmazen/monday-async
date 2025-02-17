@@ -21,6 +21,7 @@ ERROR_CODES_MAPPING = {
     'GRAPHQL_VALIDATION_FAILED': GraphQLValidationError,
     'API_TEMPORARILY_BLOCKED': APITemporarilyBlockedError,
     'DAILY_LIMIT_EXCEEDED': DailyLimitExceededError,
+    'MAX_CONCURRENCY_EXCEEDED': ConcurrencyLimitExceededError,
     'maxConcurrencyExceeded': ConcurrencyLimitExceededError,
     'maxDepthExceeded': DepthLimitExceededError,
     'RateLimitExceeded': RateLimitExceededError,
