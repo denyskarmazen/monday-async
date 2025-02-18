@@ -235,10 +235,12 @@ class ComplexityError(MondayAPIError):
         reset_in (int or None): The time in seconds until the budget resets.
     """
 
-    def __init__(self, message="Complexity limit exceeded", error_code: str = None, status_code: int = None,
+    def __init__(self, message="Complexity budget exhausted", error_code: str = None, status_code: int = None,
                  error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        self.reset_in = extensions.get("resetInXSeconds") if extensions else None
-        self.remaining_complexity = extensions.get("complexityBudgetLeft") if extensions else None
+        self.reset_in = extensions.get("retry_in_seconds") if extensions else None
+        self.remaining_complexity = extensions.get("complexity_budget_left") if extensions else None
+        self.complexity = extensions.get("complexity") if extensions else None
+        self.complexity_budget_limit = extensions.get("complexity_budget_limit") if extensions else None
         super().__init__(message, error_code, status_code, error_data,
                          extensions, path, partial_data)
 
