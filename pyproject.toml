@@ -7,7 +7,7 @@ requires-python = ">=3.9"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 authors = [{ name = "Denys", email = "deniskarmazen@gmail.com" }]
-keywords = ["monday.com", "async", "aiohttp", "graphql", "API", "wrapper", "api client", "monday api client"]
+keywords = ["monday.com", "async", "aiohttp", "graphql", "API", "wrapper", "python-client", "monday-api-client", "library", "monday"]
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",

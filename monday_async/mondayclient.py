@@ -58,26 +58,44 @@ class AsyncMondayClient:
                 for all the requests.
             headers (dict): Additional headers to send with each request.
         """
+        self._session = session
+        self._external_session = True if session else False
 
         if not headers:
             headers = _DEFAULT_HEADERS.copy()
 
-        self.complexity = ComplexityResource(token=token, headers=headers, session=session)
-        self.custom = CustomResource(token=token, headers=headers, session=session)
-        self.api = APIResource(token=token, headers=headers, session=session)
-        self.account = AccountResource(token=token, headers=headers, session=session)
-        self.webhooks = WebhooksResource(token=token, headers=headers, session=session)
-        self.notifications = NotificationResource(token=token, headers=headers, session=session)
-        self.users = UsersResource(token=token, headers=headers, session=session)
-        self.teams = TeamsResource(token=token, headers=headers, session=session)
-        self.workspaces = WorkspaceResource(token=token, headers=headers, session=session)
-        self.folders = FolderResource(token=token, headers=headers, session=session)
-        self.boards = BoardResource(token=token, headers=headers, session=session)
-        self.tags = TagResource(token=token, headers=headers, session=session)
-        self.columns = ColumnResource(token=token, headers=headers, session=session)
-        self.groups = GroupResource(token=token, headers=headers, session=session)
-        self.items = ItemResource(token=token, headers=headers, session=session)
-        self.updates = UpdateResource(token=token, headers=headers, session=session)
+        self.complexity = ComplexityResource(token=token, headers=headers, session=self._session)
+        self.custom = CustomResource(token=token, headers=headers, session=self._session)
+        self.api = APIResource(token=token, headers=headers, session=self._session)
+        self.account = AccountResource(token=token, headers=headers, session=self._session)
+        self.webhooks = WebhooksResource(token=token, headers=headers, session=self._session)
+        self.notifications = NotificationResource(token=token, headers=headers, session=self._session)
+        self.users = UsersResource(token=token, headers=headers, session=self._session)
+        self.teams = TeamsResource(token=token, headers=headers, session=self._session)
+        self.workspaces = WorkspaceResource(token=token, headers=headers, session=self._session)
+        self.folders = FolderResource(token=token, headers=headers, session=self._session)
+        self.boards = BoardResource(token=token, headers=headers, session=self._session)
+        self.tags = TagResource(token=token, headers=headers, session=self._session)
+        self.columns = ColumnResource(token=token, headers=headers, session=self._session)
+        self.groups = GroupResource(token=token, headers=headers, session=self._session)
+        self.items = ItemResource(token=token, headers=headers, session=self._session)
+        self.updates = UpdateResource(token=token, headers=headers, session=self._session)
+
+    def __enter__(self):
+        raise RuntimeError('Use `async with AsyncMondayClient(...)` instead of `with AsyncMondayClient(...)`')
+
+    def __exit__(self, exc_type, exc, tb):
+        pass
+
+    async def __aenter__(self):
+        if not self._session:
+            self._session = ClientSession()
+            self._external_session = False
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        if not self._external_session and self._session:
+            await self._session.close()
 
     def __str__(self):
         return f'AsyncMondayClient {__version__}'
