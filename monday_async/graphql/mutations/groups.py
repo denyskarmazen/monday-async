@@ -14,46 +14,24 @@
 # limitations under the License.
 
 from enum import Enum
-from typing import List, Union, Optional, Any
+from typing import Any
 
-from monday_async.types import GroupUpdateColors, PositionRelative, GroupAttributes, GroupColors, ID
-from monday_async.utils.queries.query_addons import add_complexity
-from monday_async.utils.utils import format_param_value, graphql_parse
+from monday_async.core.helpers import format_param_value, graphql_parse
+from monday_async.graphql.addons import add_complexity
+from monday_async.types import ID, GroupAttributes, GroupColors, GroupUpdateColors, PositionRelative
 
 
-def get_groups_by_board_query(board_id: ID, ids: Union[str, List[str]] = None,
-                              with_complexity: bool = False) -> str:
+def create_group_mutation(
+    board_id: ID,
+    group_name: str,
+    group_color: GroupColors | str | None = None,
+    relative_to: str | None = None,
+    position_relative_method: PositionRelative | None = None,
+    with_complexity: bool = False,
+) -> str:
     """
-    This query retrieves groups associated with a specific board, with the option to filter by group IDs.
-    For more information, visit https://developer.monday.com/api-reference/reference/groups#queries
-
-    Args:
-        board_id (ID): The ID of the board to retrieve groups from.
-
-        ids (Union[ID, List[ID]]): (Optional) A list of group IDs to retrieve specific groups.
-
-        with_complexity (bool): Set to True to return the query's complexity along with the results.
-    """
-    query = f"""
-    query {{{add_complexity() if with_complexity else ""}
-        boards (ids: {format_param_value(board_id)}) {{
-            groups (ids: {format_param_value(ids if ids else None)}) {{
-                id
-                title
-                color
-                position
-            }}
-        }}
-    }}
-    """
-    return graphql_parse(query)
-
-
-def create_group_query(board_id: ID, group_name: str, group_color: Optional[Union[GroupColors, str]] = None,
-                       relative_to: Optional[str] = None, position_relative_method: Optional[PositionRelative] = None,
-                       with_complexity: bool = False) -> str:
-    """
-    This query creates a new group on a specific board with a specified name and positioning relative to other groups.
+    This mutation creates a new group on a specific board with a specified name and positioning
+    relative to other groups.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#create-a-group
 
     Args:
@@ -72,13 +50,16 @@ def create_group_query(board_id: ID, group_name: str, group_color: Optional[Unio
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     if position_relative_method:
-        position_relative_method_value = position_relative_method.value \
-            if isinstance(position_relative_method, PositionRelative) else position_relative_method
+        position_relative_method_value = (
+            position_relative_method.value
+            if isinstance(position_relative_method, PositionRelative)
+            else position_relative_method
+        )
     else:
         position_relative_method_value = "null"
 
     group_color_value = group_color.value if isinstance(group_color, GroupColors) else group_color
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_group (
             board_id: {format_param_value(board_id)},
@@ -93,13 +74,18 @@ def create_group_query(board_id: ID, group_name: str, group_color: Optional[Unio
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def update_group_query(board_id: ID, group_id: str, group_attribute: GroupAttributes,
-                       new_value: Union[Any, GroupUpdateColors], with_complexity: bool = False) -> str:
+def update_group_mutation(
+    board_id: ID,
+    group_id: str,
+    group_attribute: GroupAttributes,
+    new_value: Any | GroupUpdateColors,
+    with_complexity: bool = False,
+) -> str:
     """
-    This query modifies an existing group's title, color, or position on the board.
+    This mutation modifies an existing group's title, color, or position on the board.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#update-a-group
 
     Args:
@@ -116,7 +102,7 @@ def update_group_query(board_id: ID, group_id: str, group_attribute: GroupAttrib
     """
     group_attribute_value = group_attribute.value if isinstance(group_attribute, GroupAttributes) else group_attribute
     group_new_value = new_value.value if isinstance(new_value, Enum) else new_value
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         update_group (
             board_id: {format_param_value(board_id)},
@@ -131,13 +117,18 @@ def update_group_query(board_id: ID, group_id: str, group_attribute: GroupAttrib
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def duplicate_group_query(board_id: ID, group_id: str, add_to_top: Optional[bool] = None,
-                          group_title: Optional[str] = None, with_complexity: bool = False) -> str:
+def duplicate_group_mutation(
+    board_id: ID,
+    group_id: str,
+    add_to_top: bool | None = None,
+    group_title: str | None = None,
+    with_complexity: bool = False,
+) -> str:
     """
-    This query creates a copy of a group within the same board,
+    This mutation creates a copy of a group within the same board,
         with options to position the new group and set its title.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#duplicate-group
 
@@ -152,7 +143,7 @@ def duplicate_group_query(board_id: ID, group_id: str, add_to_top: Optional[bool
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         duplicate_group (
             board_id: {format_param_value(board_id)},
@@ -167,12 +158,12 @@ def duplicate_group_query(board_id: ID, group_id: str, add_to_top: Optional[bool
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def archive_group_query(board_id: ID, group_id: str, with_complexity: bool = False) -> str:
+def archive_group_mutation(board_id: ID, group_id: str, with_complexity: bool = False) -> str:
     """
-    This query archives a group on a specific board, removing it from the active view. For more information, visit
+    This mutation archives a group on a specific board, removing it from the active view. For more information, visit
     https://developer.monday.com/api-reference/reference/groups#archive-a-group
 
     Args:
@@ -182,7 +173,7 @@ def archive_group_query(board_id: ID, group_id: str, with_complexity: bool = Fal
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         archive_group (
             board_id: {format_param_value(board_id)},
@@ -193,12 +184,12 @@ def archive_group_query(board_id: ID, group_id: str, with_complexity: bool = Fal
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_group_query(board_id: ID, group_id: str, with_complexity: bool = False) -> str:
+def delete_group_mutation(board_id: ID, group_id: str, with_complexity: bool = False) -> str:
     """
-    This query permanently removes a group from a board. For more information, visit
+    This mutation permanently removes a group from a board. For more information, visit
     https://developer.monday.com/api-reference/reference/groups#delete-a-group
 
     Args:
@@ -208,7 +199,7 @@ def delete_group_query(board_id: ID, group_id: str, with_complexity: bool = Fals
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_group (
             board_id: {format_param_value(board_id)},
@@ -219,14 +210,13 @@ def delete_group_query(board_id: ID, group_id: str, with_complexity: bool = Fals
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
 __all__ = [
-    "get_groups_by_board_query",
-    "create_group_query",
-    "update_group_query",
-    "duplicate_group_query",
-    "archive_group_query",
-    "delete_group_query"
+    "archive_group_mutation",
+    "create_group_mutation",
+    "delete_group_mutation",
+    "duplicate_group_mutation",
+    "update_group_mutation",
 ]

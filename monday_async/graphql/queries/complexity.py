@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from monday_async.utils.utils import graphql_parse
-from monday_async.utils.queries.query_addons import add_complexity
+from monday_async.core.helpers import graphql_parse
+from monday_async.graphql.addons import add_complexity
 
 
 def get_complexity_query() -> str:
@@ -26,6 +26,4 @@ def get_complexity_query() -> str:
     return graphql_parse(query)
 
 
-__all__ = [
-    'get_complexity_query'
-]
+__all__ = ["get_complexity_query"]

@@ -13,51 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
 
-from monday_async.types import ColumnType, ID
-from monday_async.utils.queries.query_addons import add_complexity
-from monday_async.utils.utils import monday_json_stringify, format_param_value, graphql_parse
+from monday_async.core.helpers import format_param_value, graphql_parse, monday_json_stringify
+from monday_async.graphql.addons import add_complexity
+from monday_async.types import ID, ColumnType
 
 
-def get_columns_by_board_query(board_id: ID, ids: Union[ID, List[ID]] = None,
-                               types: Union[ColumnType, List[ColumnType]] = None, with_complexity: bool = False) -> str:
+def create_column_mutation(
+    board_id: ID,
+    title: str,
+    column_type: ColumnType,
+    description: str | None = None,
+    defaults: dict | None = None,
+    column_id: str | None = None,
+    after_column_id: ID | None = None,
+    with_complexity: bool = False,
+) -> str:
     """
-    This query retrieves columns associated with a specific board, allowing filtering by column IDs and types.
-    For more information, visit https://developer.monday.com/api-reference/reference/columns#queries
-
-    Args:
-        board_id (ID): The ID of the board to retrieve columns from.
-
-        ids (Union[ID, List[ID]]): (Optional) A list of column IDs to retrieve specific columns.
-
-        types (List[ColumnType]): (Optional) A list of column types to filter by.
-
-        with_complexity (bool): Set to True to return the query's complexity along with the results.
-    """
-    query = f"""
-    query {{{add_complexity() if with_complexity else ""}
-        boards (ids: {format_param_value(board_id)}) {{
-            id
-            name
-            columns (ids: {format_param_value(ids if ids else None)}, types: {format_param_value(types)}) {{
-                id
-                title
-                type
-                description
-                settings_str
-            }}
-        }}
-    }}
-    """
-    return graphql_parse(query)
-
-
-def create_column_query(board_id: ID, title: str, column_type: ColumnType, description: Optional[str] = None,
-                        defaults: Optional[dict] = None, column_id: Optional[str] = None,
-                        after_column_id: Optional[ID] = None, with_complexity: bool = False) -> str:
-    """
-    This query creates a new column on a specific board with a specified title, type, and optional description,
+    This mutation creates a new column on a specific board with a specified title, type, and optional description,
     defaults, user-specified ID, and positioning.
     For more information, visit https://developer.monday.com/api-reference/reference/columns#create-a-column
 
@@ -85,7 +58,7 @@ def create_column_query(board_id: ID, title: str, column_type: ColumnType, descr
     """
     column_type_value = column_type.value if isinstance(column_type, ColumnType) else column_type
     id_value = f"id: {format_param_value(column_id)}" if column_id else ""
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_column (
             board_id: {format_param_value(board_id)},
@@ -103,13 +76,12 @@ def create_column_query(board_id: ID, title: str, column_type: ColumnType, descr
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def change_column_title_query(board_id: ID, column_id: str, title: str,
-                              with_complexity: bool = False) -> str:
+def change_column_title_mutation(board_id: ID, column_id: str, title: str, with_complexity: bool = False) -> str:
     """
-    This query updates the title of an existing column on a specific board. For more information, visit
+    This mutation updates the title of an existing column on a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#change-a-column-title
 
     Args:
@@ -121,7 +93,7 @@ def change_column_title_query(board_id: ID, column_id: str, title: str,
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         change_column_title (
             board_id: {format_param_value(board_id)},
@@ -133,13 +105,14 @@ def change_column_title_query(board_id: ID, column_id: str, title: str,
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def change_column_description_query(board_id: ID, column_id: str, description: str,
-                                    with_complexity: bool = False) -> str:
+def change_column_description_mutation(
+    board_id: ID, column_id: str, description: str, with_complexity: bool = False
+) -> str:
     """
-    This query updates the description of an existing column on a specific board. For more information, visit
+    This mutation updates the description of an existing column on a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#change-column-metadata
 
     Args:
@@ -151,7 +124,7 @@ def change_column_description_query(board_id: ID, column_id: str, description: s
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         change_column_metadata (
             board_id: {format_param_value(board_id)},
@@ -165,12 +138,12 @@ def change_column_description_query(board_id: ID, column_id: str, description: s
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_column_query(board_id: ID, column_id: str, with_complexity: bool = False) -> str:
+def delete_column_mutation(board_id: ID, column_id: str, with_complexity: bool = False) -> str:
     """
-    This query removes a column from a specific board. For more information, visit
+    This mutation removes a column from a specific board. For more information, visit
     https://developer.monday.com/api-reference/reference/columns#delete-a-column
 
     Args:
@@ -180,7 +153,7 @@ def delete_column_query(board_id: ID, column_id: str, with_complexity: bool = Fa
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_column (
             board_id: {format_param_value(board_id)},
@@ -191,13 +164,12 @@ def delete_column_query(board_id: ID, column_id: str, with_complexity: bool = Fa
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
 __all__ = [
-    'get_columns_by_board_query',
-    'create_column_query',
-    'change_column_title_query',
-    'change_column_description_query',
-    'delete_column_query'
+    "change_column_description_mutation",
+    "change_column_title_mutation",
+    "create_column_mutation",
+    "delete_column_mutation",
 ]

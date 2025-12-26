@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from monday_async.core.helpers import graphql_parse
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.utils.utils import graphql_parse
 
 
 class CustomResource(AsyncBaseResource):

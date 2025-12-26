@@ -13,14 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
 
+from typing import Optional
+
+from monday_async.graphql.mutations import (
+    activate_users_mutation,
+    deactivate_users_mutation,
+    update_users_email_domain_mutation,
+    update_users_role_mutation,
+)
+from monday_async.graphql.queries import get_me_query, get_users_by_email_query, get_users_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import UserKind, ID, BaseRoleName
-from monday_async.utils.queries import (get_me_query, get_users_query, get_users_by_email_query,
-                                        deactivate_users_mutation, activate_users_mutation,
-                                        update_users_email_domain_mutation)
-from monday_async.utils.queries.user_queries import update_users_role_mutation
+from monday_async.types import ID, BaseRoleName, Product, UserKind
 
 
 class UsersResource(AsyncBaseResource):
@@ -38,9 +42,15 @@ class UsersResource(AsyncBaseResource):
         query = get_me_query(with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def get_users(self, user_ids: Union[int, str, List[Union[int, str]]] = None, limit: int = 50,
-                        user_kind: UserKind = UserKind.ALL, newest_first: bool = False,
-                        page: int = 1, with_complexity: bool = False) -> dict:
+    async def get_users(
+        self,
+        user_ids: Optional[int | str | list[int | str]] = None,
+        limit: int = 50,
+        user_kind: UserKind = UserKind.ALL,
+        newest_first: bool = False,
+        page: int = 1,
+        with_complexity: bool = False,
+    ) -> dict:
         """
         Get all users or get users by ids if provided. For more information, visit
         https://developer.monday.com/api-reference/reference/users#queries
@@ -57,12 +67,23 @@ class UsersResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = get_users_query(user_ids=user_ids, limit=limit, user_kind=user_kind, newest_first=newest_first,
-                                page=page, with_complexity=with_complexity)
+        query = get_users_query(
+            user_ids=user_ids,
+            limit=limit,
+            user_kind=user_kind,
+            newest_first=newest_first,
+            page=page,
+            with_complexity=with_complexity,
+        )
         return await self.client.execute(query)
 
-    async def get_users_by_email(self, user_emails: Union[str, List[str]], user_kind: Optional[UserKind] = UserKind.ALL,
-                                 newest_first: bool = False, with_complexity: bool = False) -> dict:
+    async def get_users_by_email(
+        self,
+        user_emails: str | list[str],
+        user_kind: UserKind | None = UserKind.ALL,
+        newest_first: bool = False,
+        with_complexity: bool = False,
+    ) -> dict:
         """
         Get users by emails. For more information, visit
         https://developer.monday.com/api-reference/reference/users#queries
@@ -76,12 +97,14 @@ class UsersResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = get_users_by_email_query(user_emails=user_emails, user_kind=user_kind, newest_first=newest_first,
-                                         with_complexity=with_complexity)
+        query = get_users_by_email_query(
+            user_emails=user_emails, user_kind=user_kind, newest_first=newest_first, with_complexity=with_complexity
+        )
         return await self.client.execute(query)
 
-    async def update_users_role(self, user_ids: Union[ID, List[ID]], new_role: Union[BaseRoleName, str],
-                                with_complexity: bool = False) -> dict:
+    async def update_users_role(
+        self, user_ids: ID | list[ID], new_role: BaseRoleName | str, with_complexity: bool = False
+    ) -> dict:
         """
         Update a user's role. For more information, visit
         https://developer.monday.com/api-reference/reference/users#update-a-users-role
@@ -97,7 +120,7 @@ class UsersResource(AsyncBaseResource):
         mutation = update_users_role_mutation(user_ids=user_ids, new_role=new_role, with_complexity=with_complexity)
         return await self.client.execute(mutation)
 
-    async def deactivate_users(self, user_ids: Union[ID, List[ID]], with_complexity: bool = False) -> dict:
+    async def deactivate_users(self, user_ids: ID | list[ID], with_complexity: bool = False) -> dict:
         """
         Deactivates users from a monday.com account. For more information, visit
         https://developer.monday.com/api-reference/reference/users#deactivate-users
@@ -112,7 +135,7 @@ class UsersResource(AsyncBaseResource):
         mutation = deactivate_users_mutation(user_ids=user_ids, with_complexity=with_complexity)
         return await self.client.execute(mutation)
 
-    async def activate_users(self, user_ids: Union[ID, List[ID]], with_complexity: bool = False) -> dict:
+    async def activate_users(self, user_ids: ID | list[ID], with_complexity: bool = False) -> dict:
         """
         Re-activate users in a monday.com account. For more information, visit
         https://developer.monday.com/api-reference/reference/users#activate-users
@@ -127,8 +150,9 @@ class UsersResource(AsyncBaseResource):
         mutation = activate_users_mutation(user_ids=user_ids, with_complexity=with_complexity)
         return await self.client.execute(mutation)
 
-    async def update_users_email_domain(self, new_domain: str, user_ids: Union[ID, List[ID]],
-                                        with_complexity: bool = False) -> dict:
+    async def update_users_email_domain(
+        self, new_domain: str, user_ids: ID | list[ID], with_complexity: bool = False
+    ) -> dict:
         """
         Update a user's email domain. For more information, visit
         https://developer.monday.com/api-reference/reference/users#update-a-users-email-domain
@@ -141,6 +165,26 @@ class UsersResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        mutation = update_users_email_domain_mutation(new_domain=new_domain, user_ids=user_ids,
-                                                      with_complexity=with_complexity)
+        mutation = update_users_email_domain_mutation(
+            new_domain=new_domain, user_ids=user_ids, with_complexity=with_complexity
+        )
         return await self.client.execute(mutation)
+
+    async def invite_users(
+        self,
+        emails: str | list[str],
+        product: Product | str,
+        user_role: BaseRoleName | str,
+        with_complexity: bool = False,
+    ):
+        """
+
+        Args:
+            emails:
+            product:
+            user_role:
+            with_complexity:
+
+        Returns:
+
+        """

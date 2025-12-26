@@ -13,19 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
+from typing import Union
 
+from monday_async.graphql.mutations import create_or_get_tag_mutation
+from monday_async.graphql.queries import get_tags_by_board_query, get_tags_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.utils.queries import (
-    get_tags_query, get_tags_by_board_query, create_or_get_tag_query
-)
 
 ID = Union[int, str]
 
 
 class TagResource(AsyncBaseResource):
-    async def get_tags(self, ids: Union[ID, List[ID]] = None,
-                       with_complexity: bool = False) -> dict:
+    async def get_tags(self, ids: ID | list[ID] = None, with_complexity: bool = False) -> dict:
         """
         Execute a query to retrieve tags, allowing you to specify individual tags or retrieve all tags.
 
@@ -51,10 +49,12 @@ class TagResource(AsyncBaseResource):
         query = get_tags_by_board_query(board_id=board_id, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def create_or_get_tag(self, tag_name: str, board_id: Optional[ID] = None,
-                                with_complexity: bool = False) -> dict:
+    async def create_or_get_tag(
+        self, tag_name: str, board_id: ID | None = None, with_complexity: bool = False
+    ) -> dict:
         """
-        Execute a query to create a new tag with the specified name or retrieve the existing tag if it already exists.
+        Execute a mutation to create a new tag with the specified name or retrieve the existing tag
+        if it already exists.
 
         For more information, visit https://developer.monday.com/api-reference/reference/tags-1#create-or-get-a-tag
 
@@ -63,5 +63,5 @@ class TagResource(AsyncBaseResource):
             board_id (ID): (Optional) The ID of the private board to create the tag in. Not needed for public boards.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = create_or_get_tag_query(tag_name=tag_name, board_id=board_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_or_get_tag_mutation(tag_name=tag_name, board_id=board_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)

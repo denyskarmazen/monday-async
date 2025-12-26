@@ -13,29 +13,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
+from typing import Optional, Union
 
-from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import QueryParams, ItemByColumnValuesParam, ColumnsMappingInput
-from monday_async.utils.queries import (
-    get_items_by_id_query, get_items_by_board_query, get_items_by_group_query,
-    get_items_by_column_value_query, get_items_by_multiple_column_values_query,
-    next_items_page_query, create_item_query, duplicate_item_query,
-    archive_item_query, delete_item_query, get_subitems_by_parent_item_query,
-    create_subitem_query, change_multiple_item_column_values_query,
-    change_item_column_json_value_query, change_item_column_simple_value_query,
-    upload_file_to_column_query, get_item_updates_query, clear_item_updates_query,
-    move_item_to_group_query, move_item_to_board_query
+from monday_async.graphql.mutations import (
+    archive_item_mutation,
+    change_item_column_json_value_mutation,
+    change_item_column_simple_value_mutation,
+    change_multiple_item_column_values_mutation,
+    clear_item_updates_mutation,
+    create_item_mutation,
+    create_subitem_mutation,
+    delete_item_mutation,
+    duplicate_item_mutation,
+    move_item_to_board_mutation,
+    move_item_to_group_mutation,
+    upload_file_to_column_mutation,
 )
+from monday_async.graphql.queries import (
+    get_item_updates_query,
+    get_items_by_board_query,
+    get_items_by_column_value_query,
+    get_items_by_group_query,
+    get_items_by_id_query,
+    get_items_by_multiple_column_values_query,
+    get_subitems_by_parent_item_query,
+    next_items_page_query,
+)
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import ColumnsMappingInput, ItemByColumnValuesParam, QueryParams
 
 ID = Union[int, str]
 
 
 class ItemResource(AsyncBaseResource):
-    async def get_items_by_id(self, ids: Union[ID, List[ID]], newest_first: Optional[bool] = None,
-                              exclude_nonactive: Optional[bool] = None, limit: int = 25, page: int = 1,
-                              with_complexity: bool = False, with_column_values: bool = True,
-                              with_subitems: bool = False, with_updates: bool = False) -> dict:
+    async def get_items_by_id(
+        self,
+        ids: ID | list[ID],
+        newest_first: bool | None = None,
+        exclude_nonactive: bool | None = None,
+        limit: int = 25,
+        page: int = 1,
+        with_complexity: bool = False,
+        with_column_values: bool = True,
+        with_subitems: bool = False,
+        with_updates: bool = False,
+    ) -> dict:
         """
         Execute a query to retrieve items, allowing filtering by IDs, sorting, and excluding inactive items.
 
@@ -54,17 +76,30 @@ class ItemResource(AsyncBaseResource):
             with_subitems (bool): Set to True to return the items subitems along with the results. False by default.
             with_updates (bool): Set to True to return the items updates along with the results. False by default.
         """
-        query = get_items_by_id_query(ids=ids, newest_first=newest_first, exclude_nonactive=exclude_nonactive,
-                                      limit=limit, page=page, with_complexity=with_complexity,
-                                      with_column_values=with_column_values, with_subitems=with_subitems,
-                                      with_updates=with_updates)
+        query = get_items_by_id_query(
+            ids=ids,
+            newest_first=newest_first,
+            exclude_nonactive=exclude_nonactive,
+            limit=limit,
+            page=page,
+            with_complexity=with_complexity,
+            with_column_values=with_column_values,
+            with_subitems=with_subitems,
+            with_updates=with_updates,
+        )
         return await self.client.execute(query)
 
-    async def get_items_by_board(self, board_ids: Union[ID, List[ID]],
-                                 query_params: Optional[QueryParams] = None, limit: int = 25,
-                                 cursor: str = None, with_complexity: bool = False,
-                                 with_column_values: bool = True, with_subitems: bool = False,
-                                 with_updates: bool = False) -> dict:
+    async def get_items_by_board(
+        self,
+        board_ids: ID | list[ID],
+        query_params: QueryParams | None = None,
+        limit: int = 25,
+        cursor: Optional[str] = None,
+        with_complexity: bool = False,
+        with_column_values: bool = True,
+        with_subitems: bool = False,
+        with_updates: bool = False,
+    ) -> dict:
         """
         Execute a query to retrieve items from a specific board, allowing filtering by IDs, sorting,
         and excluding inactive items.
@@ -87,17 +122,30 @@ class ItemResource(AsyncBaseResource):
             with_subitems (bool): Set to True to return the items subitems along with the results. False by default.
             with_updates (bool): Set to True to return the items updates along with the results. False by default.
         """
-        query = get_items_by_board_query(board_ids=board_ids, query_params=query_params, limit=limit,
-                                         cursor=cursor, with_complexity=with_complexity,
-                                         with_column_values=with_column_values, with_subitems=with_subitems,
-                                         with_updates=with_updates)
+        query = get_items_by_board_query(
+            board_ids=board_ids,
+            query_params=query_params,
+            limit=limit,
+            cursor=cursor,
+            with_complexity=with_complexity,
+            with_column_values=with_column_values,
+            with_subitems=with_subitems,
+            with_updates=with_updates,
+        )
         return await self.client.execute(query)
 
-    async def get_items_by_group(self, board_id: ID, group_id: ID,
-                                 query_params: Optional[QueryParams] = None, limit: int = 25,
-                                 cursor: str = None, with_complexity: bool = False,
-                                 with_column_values: bool = True, with_subitems: bool = False,
-                                 with_updates: bool = False) -> dict:
+    async def get_items_by_group(
+        self,
+        board_id: ID,
+        group_id: ID,
+        query_params: QueryParams | None = None,
+        limit: int = 25,
+        cursor: Optional[str] = None,
+        with_complexity: bool = False,
+        with_column_values: bool = True,
+        with_subitems: bool = False,
+        with_updates: bool = False,
+    ) -> dict:
         """
         Execute a query to retrieve items from a specific group within a board, allowing filtering by IDs, sorting,
         and excluding inactive items.
@@ -121,17 +169,31 @@ class ItemResource(AsyncBaseResource):
             with_subitems (bool): Set to True to return the items subitems along with the results. False by default.
             with_updates (bool): Set to True to return the items updates along with the results. False by default.
         """
-        query = get_items_by_group_query(board_id=board_id, group_id=group_id, query_params=query_params,
-                                         limit=limit, cursor=cursor, with_complexity=with_complexity,
-                                         with_column_values=with_column_values, with_subitems=with_subitems,
-                                         with_updates=with_updates)
+        query = get_items_by_group_query(
+            board_id=board_id,
+            group_id=group_id,
+            query_params=query_params,
+            limit=limit,
+            cursor=cursor,
+            with_complexity=with_complexity,
+            with_column_values=with_column_values,
+            with_subitems=with_subitems,
+            with_updates=with_updates,
+        )
         return await self.client.execute(query)
 
-    async def get_items_by_column_value(self, board_id: ID, column_id: str,
-                                        column_values: Union[str, List[str]],
-                                        limit: int = 25, cursor: str = None, with_complexity: bool = False,
-                                        with_column_values: bool = True, with_subitems: bool = False,
-                                        with_updates: bool = False) -> dict:
+    async def get_items_by_column_value(
+        self,
+        board_id: ID,
+        column_id: str,
+        column_values: str | list[str],
+        limit: int = 25,
+        cursor: Optional[str] = None,
+        with_complexity: bool = False,
+        with_column_values: bool = True,
+        with_subitems: bool = False,
+        with_updates: bool = False,
+    ) -> dict:
         """
         Execute a query to retrieve items based on the value of a specific column.
 
@@ -152,17 +214,30 @@ class ItemResource(AsyncBaseResource):
             with_subitems (bool): Set to True to return the items subitems along with the results. False by default.
             with_updates (bool): Set to True to return the items updates along with the results. False by default.
         """
-        query = get_items_by_column_value_query(board_id=board_id, column_id=column_id,
-                                                column_values=column_values, limit=limit, cursor=cursor,
-                                                with_complexity=with_complexity, with_column_values=with_column_values,
-                                                with_subitems=with_subitems, with_updates=with_updates)
+        query = get_items_by_column_value_query(
+            board_id=board_id,
+            column_id=column_id,
+            column_values=column_values,
+            limit=limit,
+            cursor=cursor,
+            with_complexity=with_complexity,
+            with_column_values=with_column_values,
+            with_subitems=with_subitems,
+            with_updates=with_updates,
+        )
         return await self.client.execute(query)
 
-    async def get_items_by_multiple_column_values(self, board_id: ID,
-                                                  columns: Union[ItemByColumnValuesParam, dict, List[dict]],
-                                                  limit: int = 25, cursor: str = None,
-                                                  with_complexity: bool = False, with_column_values: bool = True,
-                                                  with_subitems: bool = False, with_updates: bool = False) -> dict:
+    async def get_items_by_multiple_column_values(
+        self,
+        board_id: ID,
+        columns: ItemByColumnValuesParam | dict | list[dict],
+        limit: int = 25,
+        cursor: Optional[str] = None,
+        with_complexity: bool = False,
+        with_column_values: bool = True,
+        with_subitems: bool = False,
+        with_updates: bool = False,
+    ) -> dict:
         """
         Execute a query to retrieve items based on the values of multiple columns.
 
@@ -171,8 +246,8 @@ class ItemResource(AsyncBaseResource):
 
         Args:
             board_id (ID): The ID of the board containing the items.
-            columns (Union[ItemByColumnValuesParam, dict]): The column values to filter by can be ItemByColumnValuesParam
-                instance or a list consisting of dictionaries of this format:
+            columns (Union[ItemByColumnValuesParam, dict]): The column values to filter by can be
+                ItemByColumnValuesParam instance or a list consisting of dictionaries of this format:
                 {"column_id": column_id, "column_values": column_values}
             limit (int): (Optional) The maximum number of items to return. Defaults to 25.
             cursor (str): An opaque cursor that represents the position in the list after the last returned item.
@@ -184,15 +259,27 @@ class ItemResource(AsyncBaseResource):
             with_subitems (bool): Set to True to return the items subitems along with the results. False by default.
             with_updates (bool): Set to True to return the items updates along with the results. False by default.
         """
-        query = get_items_by_multiple_column_values_query(board_id=board_id, columns=columns, limit=limit,
-                                                          cursor=cursor, with_complexity=with_complexity,
-                                                          with_column_values=with_column_values,
-                                                          with_subitems=with_subitems, with_updates=with_updates)
+        query = get_items_by_multiple_column_values_query(
+            board_id=board_id,
+            columns=columns,
+            limit=limit,
+            cursor=cursor,
+            with_complexity=with_complexity,
+            with_column_values=with_column_values,
+            with_subitems=with_subitems,
+            with_updates=with_updates,
+        )
         return await self.client.execute(query)
 
-    async def next_items_page(self, cursor: str, limit: int = 500, with_complexity: bool = False,
-                              with_column_values: bool = True, with_subitems: bool = False,
-                              with_updates: bool = False) -> dict:
+    async def next_items_page(
+        self,
+        cursor: str,
+        limit: int = 500,
+        with_complexity: bool = False,
+        with_column_values: bool = True,
+        with_subitems: bool = False,
+        with_updates: bool = False,
+    ) -> dict:
         """
         Execute a query to return the next set of items that correspond with the provided cursor.
 
@@ -210,16 +297,28 @@ class ItemResource(AsyncBaseResource):
             with_subitems (bool): Set to True to return the items subitems along with the results. False by default.
             with_updates (bool): Set to True to return the items updates along with the results. False by default.
         """
-        query = next_items_page_query(cursor=cursor, limit=limit, with_complexity=with_complexity,
-                                      with_column_values=with_column_values, with_subitems=with_subitems,
-                                      with_updates=with_updates)
+        query = next_items_page_query(
+            cursor=cursor,
+            limit=limit,
+            with_complexity=with_complexity,
+            with_column_values=with_column_values,
+            with_subitems=with_subitems,
+            with_updates=with_updates,
+        )
         return await self.client.execute(query)
 
-    async def create_item(self, item_name: str, board_id: ID, group_id: Optional[str] = None,
-                          column_values: Optional[dict] = None, create_labels_if_missing: bool = False,
-                          with_complexity: bool = False) -> dict:
+    async def create_item(
+        self,
+        item_name: str,
+        board_id: ID,
+        group_id: str | None = None,
+        column_values: dict | None = None,
+        create_labels_if_missing: bool = False,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to create a new item on a specified board and group with a given name and optional column values.
+        Execute a mutation to create a new item on a specified board and group with a given name
+        and optional column values.
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#create-an-item
 
@@ -232,15 +331,21 @@ class ItemResource(AsyncBaseResource):
                 Requires permission to change board structure.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = create_item_query(item_name=item_name, board_id=board_id, group_id=group_id,
-                                  column_values=column_values, create_labels_if_missing=create_labels_if_missing,
-                                  with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_item_mutation(
+            item_name=item_name,
+            board_id=board_id,
+            group_id=group_id,
+            column_values=column_values,
+            create_labels_if_missing=create_labels_if_missing,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def duplicate_item(self, board_id: ID, item_id: ID, with_updates: Optional[bool] = None,
-                             with_complexity: bool = False) -> dict:
+    async def duplicate_item(
+        self, board_id: ID, item_id: ID, with_updates: bool | None = None, with_complexity: bool = False
+    ) -> dict:
         """
-        Execute a query to create a copy of an item on the same board, with the option to include updates.
+        Execute a mutation to create a copy of an item on the same board, with the option to include updates.
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#duplicate-an-item
 
@@ -250,13 +355,14 @@ class ItemResource(AsyncBaseResource):
             item_id (ID): The ID of the item to duplicate.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = duplicate_item_query(board_id=board_id, item_id=item_id, with_updates=with_updates,
-                                     with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = duplicate_item_mutation(
+            board_id=board_id, item_id=item_id, with_updates=with_updates, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)
 
     async def archive_item(self, item_id: ID, with_complexity: bool = False) -> dict:
         """
-        Execute a query to archive an item, making it no longer visible in the active item list.
+        Execute a mutation to archive an item, making it no longer visible in the active item list.
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#archive-an-item
 
@@ -264,12 +370,12 @@ class ItemResource(AsyncBaseResource):
             item_id (ID): The ID of the item to archive.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = archive_item_query(item_id=item_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = archive_item_mutation(item_id=item_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
     async def delete_item(self, item_id: ID, with_complexity: bool = False) -> dict:
         """
-        Execute a query to permanently remove an item from a board.
+        Execute a mutation to permanently remove an item from a board.
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#delete-an-item
 
@@ -277,12 +383,12 @@ class ItemResource(AsyncBaseResource):
             item_id (ID): The ID of the item to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = delete_item_query(item_id=item_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_item_mutation(item_id=item_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def get_subitems_by_parent_item(self, parent_item_id: ID,
-                                          with_column_values: bool = True,
-                                          with_complexity: bool = False) -> dict:
+    async def get_subitems_by_parent_item(
+        self, parent_item_id: ID, with_column_values: bool = True, with_complexity: bool = False
+    ) -> dict:
         """
         Execute a query to retrieve subitems of a specific item.
 
@@ -294,17 +400,22 @@ class ItemResource(AsyncBaseResource):
                 True by default.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = get_subitems_by_parent_item_query(parent_item_id=parent_item_id,
-                                                  with_column_values=with_column_values,
-                                                  with_complexity=with_complexity)
+        query = get_subitems_by_parent_item_query(
+            parent_item_id=parent_item_id, with_column_values=with_column_values, with_complexity=with_complexity
+        )
         return await self.client.execute(query)
 
-    async def create_subitem(self, parent_item_id: ID, subitem_name: str,
-                             column_values: Optional[dict] = None,
-                             create_labels_if_missing: bool = False,
-                             with_complexity: bool = False) -> dict:
+    async def create_subitem(
+        self,
+        parent_item_id: ID,
+        subitem_name: str,
+        column_values: dict | None = None,
+        create_labels_if_missing: bool = False,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to create a new subitem under a specific parent item with a given name and optional column values.
+        Execute a mutation to create a new subitem under a specific parent item with a given name
+        and optional column values.
 
         For more information, visit https://developer.monday.com/api-reference/reference/subitems#create-a-subitem
 
@@ -316,16 +427,25 @@ class ItemResource(AsyncBaseResource):
                 Requires permission to change board structure.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = create_subitem_query(parent_item_id=parent_item_id, subitem_name=subitem_name,
-                                     column_values=column_values, create_labels_if_missing=create_labels_if_missing,
-                                     with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_subitem_mutation(
+            parent_item_id=parent_item_id,
+            subitem_name=subitem_name,
+            column_values=column_values,
+            create_labels_if_missing=create_labels_if_missing,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def change_multiple_item_column_values(self, item_id: ID, board_id: ID, column_values: dict,
-                                                 create_labels_if_missing: bool = False,
-                                                 with_complexity: bool = False) -> dict:
+    async def change_multiple_item_column_values(
+        self,
+        item_id: ID,
+        board_id: ID,
+        column_values: dict,
+        create_labels_if_missing: bool = False,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to update the values of multiple columns for a specific item.
+        Execute a mutation to update the values of multiple columns for a specific item.
 
         For more information, visit
         https://developer.monday.com/api-reference/reference/columns#change-multiple-column-values
@@ -338,17 +458,26 @@ class ItemResource(AsyncBaseResource):
                 Requires permission to change board structure.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = change_multiple_item_column_values_query(item_id=item_id, board_id=board_id,
-                                                         column_values=column_values,
-                                                         create_labels_if_missing=create_labels_if_missing,
-                                                         with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = change_multiple_item_column_values_mutation(
+            item_id=item_id,
+            board_id=board_id,
+            column_values=column_values,
+            create_labels_if_missing=create_labels_if_missing,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def change_item_column_json_value(self, item_id: ID, board_id: ID, column_id: str, value: dict,
-                                            create_labels_if_missing: bool = False,
-                                            with_complexity: bool = False) -> dict:
+    async def change_item_column_json_value(
+        self,
+        item_id: ID,
+        board_id: ID,
+        column_id: str,
+        value: dict,
+        create_labels_if_missing: bool = False,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to update the value of a specific column for an item using a JSON value.
+        Execute a mutation to update the value of a specific column for an item using a JSON value.
 
         For more information, visit https://developer.monday.com/api-reference/reference/columns#change-a-column-value
 
@@ -361,16 +490,27 @@ class ItemResource(AsyncBaseResource):
                 Requires permission to change board structure.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = change_item_column_json_value_query(item_id=item_id, column_id=column_id, board_id=board_id,
-                                                    value=value, create_labels_if_missing=create_labels_if_missing,
-                                                    with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = change_item_column_json_value_mutation(
+            item_id=item_id,
+            column_id=column_id,
+            board_id=board_id,
+            value=value,
+            create_labels_if_missing=create_labels_if_missing,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def change_item_column_simple_value(self, item_id: ID, board_id: ID, column_id: str, value: str,
-                                              create_labels_if_missing: bool = False,
-                                              with_complexity: bool = False) -> dict:
+    async def change_item_column_simple_value(
+        self,
+        item_id: ID,
+        board_id: ID,
+        column_id: str,
+        value: str,
+        create_labels_if_missing: bool = False,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to update the value of a specific column for an item using a simple string value.
+        Execute a mutation to update the value of a specific column for an item using a simple string value.
 
         For more information, visit
         https://developer.monday.com/api-reference/reference/columns#change-a-simple-column-value
@@ -384,15 +524,21 @@ class ItemResource(AsyncBaseResource):
                 Requires permission to change board structure.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = change_item_column_simple_value_query(item_id=item_id, column_id=column_id, board_id=board_id,
-                                                      value=value, create_labels_if_missing=create_labels_if_missing,
-                                                      with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = change_item_column_simple_value_mutation(
+            item_id=item_id,
+            column_id=column_id,
+            board_id=board_id,
+            value=value,
+            create_labels_if_missing=create_labels_if_missing,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def upload_file_to_column(self, item_id: ID, column_id: str, file: str,
-                                    with_complexity: bool = False) -> dict:
+    async def upload_file_to_column(
+        self, item_id: ID, column_id: str, file: str, with_complexity: bool = False
+    ) -> dict:
         """
-        Execute a query to upload a file and add it to a specific column of an item.
+        Execute a mutation to upload a file and add it to a specific column of an item.
 
         For more information, visit
         https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column
@@ -403,12 +549,18 @@ class ItemResource(AsyncBaseResource):
             file (str): The filepath to the file.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = upload_file_to_column_query(item_id=item_id, column_id=column_id, with_complexity=with_complexity)
-        return await self.file_upload_client.execute(query, variables={"file": file})
+        mutation = upload_file_to_column_mutation(item_id=item_id, column_id=column_id, with_complexity=with_complexity)
+        return await self.file_upload_client.execute(mutation, variables={"file": file})
 
-    async def get_item_updates(self, item_id: ID, ids: Union[ID, List[ID]] = None,
-                               limit: int = 25, page: int = 1, with_viewers: bool = False,
-                               with_complexity: bool = False) -> dict:
+    async def get_item_updates(
+        self,
+        item_id: ID,
+        ids: ID | list[ID] = None,
+        limit: int = 25,
+        page: int = 1,
+        with_viewers: bool = False,
+        with_complexity: bool = False,
+    ) -> dict:
         """
         Execute a query to retrieve updates associated with a specific item,
          allowing pagination and filtering by update IDs.
@@ -421,13 +573,14 @@ class ItemResource(AsyncBaseResource):
             with_viewers (bool): Set to True to return the viewers of the update.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = get_item_updates_query(item_id=item_id, ids=ids, limit=limit, page=page, with_viewers=with_viewers,
-                                       with_complexity=with_complexity)
+        query = get_item_updates_query(
+            item_id=item_id, ids=ids, limit=limit, page=page, with_viewers=with_viewers, with_complexity=with_complexity
+        )
         return await self.client.execute(query)
 
     async def clear_item_updates(self, item_id: ID, with_complexity: bool = False) -> dict:
         """
-        Execute a query to remove all updates associated with a specific item.
+        Execute a mutation to remove all updates associated with a specific item.
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#clear-an-items-updates
 
@@ -435,12 +588,12 @@ class ItemResource(AsyncBaseResource):
             item_id (ID): The ID of the item to clear updates from.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = clear_item_updates_query(item_id=item_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = clear_item_updates_mutation(item_id=item_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
     async def move_item_to_group(self, item_id: ID, group_id: str, with_complexity: bool = False) -> dict:
         """
-        Execute a query to move an item to a different group within the same board.
+        Execute a mutation to move an item to a different group within the same board.
 
         For more information, visit https://developer.monday.com/api-reference/reference/items#move-item-to-group
 
@@ -449,23 +602,29 @@ class ItemResource(AsyncBaseResource):
             group_id (str): The ID of the target group within the board.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = move_item_to_group_query(item_id=item_id, group_id=group_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = move_item_to_group_mutation(item_id=item_id, group_id=group_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def move_item_to_board(self, item_id: ID, board_id: ID, group_id: str = None,
-                                 columns_mapping: Union[ColumnsMappingInput, List[dict]] = None,
-                                 subitems_columns_mapping: Union[ColumnsMappingInput, List[dict]] = None,
-                                 with_complexity: bool = False) -> dict:
+    async def move_item_to_board(
+        self,
+        item_id: ID,
+        board_id: ID,
+        group_id: Optional[str] = None,
+        columns_mapping: ColumnsMappingInput | list[dict] = None,
+        subitems_columns_mapping: ColumnsMappingInput | list[dict] = None,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        The move_item_to_board mutation allows you to move an item to a different board.
+        Execute a mutation to move an item to a different board.
         For more information, visit https://developer.monday.com/api-reference/reference/items#move-item-to-board
 
         Args:
             board_id (ID): The ID of the target board.
             group_id (str): The ID of the target group within the board.
             item_id (ID): The ID of the item to move.
-            columns_mapping (Union[ColumnsMappingInput, List[Dict[str, str]]]): The object that defines the column mapping
-                between the original and target board. Every column type can be mapped except for formula columns.
+            columns_mapping (Union[ColumnsMappingInput, List[Dict[str, str]]]): The object that defines
+                the column mapping between the original and target board. Every column type can be mapped
+                except for formula columns.
                 If you omit this argument, the columns will be mapped based on the best match.
             subitems_columns_mapping (Union[ColumnsMappingInput, List[Dict[str, str]]]): The object that defines the
                 subitems' column mapping between the original and target board.
@@ -476,8 +635,12 @@ class ItemResource(AsyncBaseResource):
         Returns:
             dict: The JSON response from the GraphQL server.
         """
-        query = move_item_to_board_query(item_id=item_id, board_id=board_id, group_id=group_id,
-                                         columns_mapping=columns_mapping,
-                                         subitems_columns_mapping=subitems_columns_mapping,
-                                         with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = move_item_to_board_mutation(
+            item_id=item_id,
+            board_id=board_id,
+            group_id=group_id,
+            columns_mapping=columns_mapping,
+            subitems_columns_mapping=subitems_columns_mapping,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)

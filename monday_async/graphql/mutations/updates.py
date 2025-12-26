@@ -13,39 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
 
+from monday_async.core.helpers import format_param_value, graphql_parse
+from monday_async.graphql.addons import add_complexity
 from monday_async.types import ID
-from monday_async.utils.queries.query_addons import add_complexity, add_updates
-from monday_async.utils.utils import format_param_value, graphql_parse
 
 
-def get_updates_query(ids: Optional[Union[ID, List[ID]]] = None, limit: int = 25, page: int = 1,
-                      with_viewers: bool = False, with_complexity: bool = False) -> str:
+def create_update_mutation(
+    body: str, item_id: ID, parent_id: ID | None = None, with_complexity: bool = False
+) -> str:
     """
-    This query retrieves updates, allowing pagination and filtering by update IDs. For more information, visit
-    https://developer.monday.com/api-reference/reference/updates#queries
-
-    Args:
-        ids (Union[ID, List[ID]]): A list of update IDs to retrieve specific updates.
-        limit (int): the maximum number of updates to return. Defaults to 25. Maximum is 100 per page.
-        page (int): The page number to return. Starts at 1.
-        with_viewers (bool): Set to True to return the viewers of the update.
-        with_complexity (bool): Set to True to return the query's complexity along with the results.
-    """
-    if ids and isinstance(ids, list):
-        limit = len(ids)
-    query = f"""
-    query {{{add_complexity() if with_complexity else ""}
-        {add_updates(ids=ids, limit=limit, page=page, with_viewers=with_viewers, with_pins=True, with_likes=True)}
-    }}
-    """
-    return graphql_parse(query)
-
-
-def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, with_complexity: bool = False) -> str:
-    """
-    This query creates a new update on a specific item or as a reply to another update. For more information, visit
+    This mutation creates a new update on a specific item or as a reply to another update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#create-an-update
 
     Args:
@@ -54,7 +32,7 @@ def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, 
         parent_id (Optional[ID]): The ID of the parent update to reply to.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_update (
             body: {format_param_value(body)},
@@ -67,12 +45,12 @@ def create_update_query(body: str, item_id: ID, parent_id: Optional[ID] = None, 
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def edit_update_query(update_id: ID, body: str, with_complexity: bool = False) -> str:
+def edit_update_mutation(update_id: ID, body: str, with_complexity: bool = False) -> str:
     """
-    This query allows you to edit an update. For more information, visit
+    This mutation allows you to edit an update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#edit-an-update
 
     Args:
@@ -80,7 +58,7 @@ def edit_update_query(update_id: ID, body: str, with_complexity: bool = False) -
         body (str): The new text content of the update as a string or in HTML format.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         edit_update (
             id: {format_param_value(update_id)},
@@ -91,12 +69,12 @@ def edit_update_query(update_id: ID, body: str, with_complexity: bool = False) -
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def pin_update_query(update_id: ID, with_complexity: bool = False) -> str:
+def pin_update_mutation(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query pins an update to the top of the updates section of a specific item. For more information, visit
+    This mutation pins an update to the top of the updates section of a specific item. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#pin-an-update
     Args:
         update_id (ID): The ID of the update to pin.
@@ -105,7 +83,7 @@ def pin_update_query(update_id: ID, with_complexity: bool = False) -> str:
     Returns:
         str: The formatted GraphQL query.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         pin_to_top (
             id: {format_param_value(update_id)}
@@ -118,12 +96,12 @@ def pin_update_query(update_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def unpin_update_query(update_id: ID, with_complexity: bool = False) -> str:
+def unpin_update_mutation(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query unpins an update from the top of the updates section of a specific item. For more information, visit
+    This mutation unpins an update from the top of the updates section of a specific item. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#unpin-an-update
     Args:
         update_id (ID): The ID of the update to unpin.
@@ -132,7 +110,7 @@ def unpin_update_query(update_id: ID, with_complexity: bool = False) -> str:
     Returns:
         str: The formatted GraphQL query.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         unpin_from_top (
             id: {format_param_value(update_id)}
@@ -145,19 +123,19 @@ def unpin_update_query(update_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
+def like_update_mutation(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query adds a like to a specific update. For more information, visit
+    This mutation adds a like to a specific update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#like-an-update
 
     Args:
         update_id (ID): The ID of the update to like.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         like_update (update_id: {format_param_value(update_id)}) {{
             id
@@ -169,19 +147,19 @@ def like_update_query(update_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def unlike_update_query(update_id: ID, with_complexity: bool = False) -> str:
+def unlike_update_mutation(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query removes a like from a specific update. For more information, visit
+    This mutation removes a like from a specific update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#unlike-an-update
 
     Args:
         update_id (ID): The ID of the update to unlike.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         unlike_update (update_id: {format_param_value(update_id)}) {{
             id
@@ -193,31 +171,31 @@ def unlike_update_query(update_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_update_query(update_id: ID, with_complexity: bool = False) -> str:
+def delete_update_mutation(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query removes an update. For more information, visit
+    This mutation removes an update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#delete-an-update
 
     Args:
         update_id (ID): The unique identifier of the update to delete.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_update (id: {format_param_value(update_id)}) {{
             id
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def add_file_to_update(update_id: ID, with_complexity: bool = False) -> str:
+def add_file_to_update_mutation(update_id: ID, with_complexity: bool = False) -> str:
     """
-    This query adds a file to an update. For more information, visit
+    This mutation adds a file to an update. For more information, visit
     https://developer.monday.com/api-reference/reference/assets-1#add-a-file-to-an-update
 
     Args:
@@ -225,7 +203,7 @@ def add_file_to_update(update_id: ID, with_complexity: bool = False) -> str:
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
 
-    query = f"""
+    mutation = f"""
     mutation ($file: File!){{{add_complexity() if with_complexity else ""}
         add_file_to_update (update_id: {format_param_value(update_id)}, file: $file) {{
             id
@@ -235,17 +213,16 @@ def add_file_to_update(update_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
 __all__ = [
-    "get_updates_query",
-    "create_update_query",
-    "edit_update_query",
-    "pin_update_query",
-    "unpin_update_query",
-    "like_update_query",
-    "unlike_update_query",
-    "delete_update_query",
-    "add_file_to_update",
+    "add_file_to_update_mutation",
+    "create_update_mutation",
+    "delete_update_mutation",
+    "edit_update_mutation",
+    "like_update_mutation",
+    "pin_update_mutation",
+    "unlike_update_mutation",
+    "unpin_update_mutation",
 ]

@@ -14,66 +14,17 @@
 # limitations under the License.
 
 from enum import Enum
-from typing import List, Union, Optional
 
-from monday_async.types import WorkspaceKind, State, SubscriberKind, ID
-from monday_async.utils.queries.query_addons import add_complexity
-from monday_async.utils.utils import format_param_value, graphql_parse
+from monday_async.core.helpers import format_param_value, graphql_parse
+from monday_async.graphql.addons import add_complexity
+from monday_async.types import ID, SubscriberKind, WorkspaceKind
 
 
-def get_workspaces_query(workspace_ids: Union[ID, List[ID]] = None, limit: int = 25, page: int = 1,
-                         kind: Optional[WorkspaceKind] = None, with_complexity: bool = False,
-                         state: State = State.ACTIVE) -> str:
+def create_workspace_mutation(
+    name: str, kind: WorkspaceKind, description: str | None = None, with_complexity: bool = False
+):
     """
-    Construct a query to get workspaces. For more information, visit
-    https://developer.monday.com/api-reference/reference/workspaces#queries
-
-    Args:
-        workspace_ids (Union[int, str, List[Union[int, str]]]): A single workspace ID, a list of workspace IDs, or
-            None to get all workspaces.
-
-        limit (int): The number of workspaces to return. The default is 25.
-
-        page (int): The page number to get. Starts at 1.
-
-        kind (WorkspaceKind): The kind of workspaces to return: open or closed.
-
-        state (State): The state of workspaces you want to search by: all, active, archived, or deleted.
-            The default is active.
-
-        with_complexity (bool): Returns the complexity of the query with the query if set to True.
-    """
-    if workspace_ids and isinstance(workspace_ids, list):
-        limit = len(workspace_ids)
-    if kind:
-        workspace_kind_value = kind.value if isinstance(kind, WorkspaceKind) else kind
-    else:
-        workspace_kind_value = "null"
-    state_value = state.value if isinstance(state, State) else state
-    query = f"""
-    query {{{add_complexity() if with_complexity else ""}
-        workspaces (
-            ids: {format_param_value(workspace_ids if workspace_ids else None)},
-            kind: {workspace_kind_value},
-            limit: {limit},
-            page: {page},
-            state: {state_value}
-                    ) {{
-            id
-            name
-            kind
-            description
-            state
-        }}
-    }}
-    """
-    return graphql_parse(query)
-
-
-def create_workspace_query(name: str, kind: WorkspaceKind, description: Optional[str] = None,
-                           with_complexity: bool = False):
-    """
-    Construct a query to create a workspace. For more information, visit
+    Construct a mutation to create a workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#create-a-workspace
 
     Args:
@@ -86,7 +37,7 @@ def create_workspace_query(name: str, kind: WorkspaceKind, description: Optional
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
     """
     workspace_kind_value = kind.value if isinstance(kind, WorkspaceKind) else kind
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_workspace (
             name:{format_param_value(name)},
@@ -100,13 +51,18 @@ def create_workspace_query(name: str, kind: WorkspaceKind, description: Optional
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def update_workspace_query(workspace_id: ID, name: Optional[str] = None, kind: Optional[WorkspaceKind] = None,
-                           description: Optional[str] = None, with_complexity: bool = False):
+def update_workspace_mutation(
+    workspace_id: ID,
+    name: str | None = None,
+    kind: WorkspaceKind | None = None,
+    description: str | None = None,
+    with_complexity: bool = False,
+):
     """
-    Construct a query to update a workspace. For more information, visit
+    Construct a mutation to update a workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#update-a-workspace
 
     Args:
@@ -121,17 +77,19 @@ def update_workspace_query(workspace_id: ID, name: Optional[str] = None, kind: O
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
     """
     update_params = [
-        value for value in [
+        value
+        for value in [
             f"name: {format_param_value(name)}" if name else None,
             f"kind: {kind.value if isinstance(kind, Enum) else kind}" if kind else None,
-            f"description: {format_param_value(description)}" if description else None
-        ] if value is not None
+            f"description: {format_param_value(description)}" if description else None,
+        ]
+        if value is not None
     ]
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         update_workspace (
             id: {format_param_value(workspace_id)},
-            attributes: {{{', '.join(update_params)}}}
+            attributes: {{{", ".join(update_params)}}}
         ) {{
             id
             name
@@ -140,12 +98,12 @@ def update_workspace_query(workspace_id: ID, name: Optional[str] = None, kind: O
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_workspace_query(workspace_id: Union[int, str], with_complexity: bool = False):
+def delete_workspace_mutation(workspace_id: int | str, with_complexity: bool = False):
     """
-    Construct a query to delete a workspace. For more information, visit
+    Construct a mutation to delete a workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#delete-a-workspace
 
     Args:
@@ -153,20 +111,21 @@ def delete_workspace_query(workspace_id: Union[int, str], with_complexity: bool 
 
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_workspace (workspace_id: {workspace_id}) {{
             id
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def add_users_to_workspace_query(workspace_id: ID, user_ids: Union[ID, List[ID]],
-                                 kind: SubscriberKind, with_complexity: bool = False) -> str:
+def add_users_to_workspace_mutation(
+    workspace_id: ID, user_ids: ID | list[ID], kind: SubscriberKind, with_complexity: bool = False
+) -> str:
     """
-    This query adds users as subscribers or owners to a specific workspace. For more information, visit
+    This mutation adds users as subscribers or owners to a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#add-users-to-a-workspace
 
     Args:
@@ -179,7 +138,7 @@ def add_users_to_workspace_query(workspace_id: ID, user_ids: Union[ID, List[ID]]
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     kind_value = kind.value if isinstance(kind, SubscriberKind) else kind
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         add_users_to_workspace (
             workspace_id: {format_param_value(workspace_id)},
@@ -192,13 +151,14 @@ def add_users_to_workspace_query(workspace_id: ID, user_ids: Union[ID, List[ID]]
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_users_from_workspace_query(workspace_id: ID, user_ids: Union[ID, List[ID]],
-                                      with_complexity: bool = False) -> str:
+def delete_users_from_workspace_mutation(
+    workspace_id: ID, user_ids: ID | list[ID], with_complexity: bool = False
+) -> str:
     """
-    This query removes users from a specific workspace. For more information, visit
+    This mutation removes users from a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#delete-users-from-a-workspace
 
     Args:
@@ -208,7 +168,7 @@ def delete_users_from_workspace_query(workspace_id: ID, user_ids: Union[ID, List
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_users_from_workspace (
             workspace_id: {format_param_value(workspace_id)},
@@ -220,13 +180,14 @@ def delete_users_from_workspace_query(workspace_id: ID, user_ids: Union[ID, List
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def add_teams_to_workspace_query(workspace_id: ID, team_ids: Union[ID, List[ID]],
-                                 kind: SubscriberKind, with_complexity: bool = False) -> str:
+def add_teams_to_workspace_mutation(
+    workspace_id: ID, team_ids: ID | list[ID], kind: SubscriberKind, with_complexity: bool = False
+) -> str:
     """
-    This query adds teams as subscribers or owners to a specific workspace. For more information, visit
+    This mutation adds teams as subscribers or owners to a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#add-teams-to-a-workspace
 
     Args:
@@ -240,7 +201,7 @@ def add_teams_to_workspace_query(workspace_id: ID, team_ids: Union[ID, List[ID]]
     """
     kind_value = kind.value if isinstance(kind, SubscriberKind) else kind
 
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         add_teams_to_workspace (
             workspace_id: {format_param_value(workspace_id)},
@@ -252,13 +213,14 @@ def add_teams_to_workspace_query(workspace_id: ID, team_ids: Union[ID, List[ID]]
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_teams_from_workspace_query(workspace_id: ID, team_ids: Union[ID, List[ID]],
-                                      with_complexity: bool = False) -> str:
+def delete_teams_from_workspace_mutation(
+    workspace_id: ID, team_ids: ID | list[ID], with_complexity: bool = False
+) -> str:
     """
-    This query removes teams from a specific workspace. For more information, visit
+    This mutation removes teams from a specific workspace. For more information, visit
     https://developer.monday.com/api-reference/reference/workspaces#delete-teams-from-a-workspace
 
     Args:
@@ -268,7 +230,7 @@ def delete_teams_from_workspace_query(workspace_id: ID, team_ids: Union[ID, List
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_teams_from_workspace (
             workspace_id: {format_param_value(workspace_id)},
@@ -279,16 +241,15 @@ def delete_teams_from_workspace_query(workspace_id: ID, team_ids: Union[ID, List
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
 __all__ = [
-    "get_workspaces_query",
-    "create_workspace_query",
-    "update_workspace_query",
-    "delete_workspace_query",
-    "add_users_to_workspace_query",
-    "delete_users_from_workspace_query",
-    "add_teams_to_workspace_query",
-    "delete_teams_from_workspace_query"
+    "add_teams_to_workspace_mutation",
+    "add_users_to_workspace_mutation",
+    "create_workspace_mutation",
+    "delete_teams_from_workspace_mutation",
+    "delete_users_from_workspace_mutation",
+    "delete_workspace_mutation",
+    "update_workspace_mutation",
 ]

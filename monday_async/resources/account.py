@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from monday_async.graphql.queries import get_account_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.utils.queries import get_account_query
 
 
 class AccountResource(AsyncBaseResource):

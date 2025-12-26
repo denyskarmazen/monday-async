@@ -1,4 +1,4 @@
-# monday-async &middot; [![Tests](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml/badge.svg)](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml)
+# monday-async &middot; [![Tests](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml/badge.svg)](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml) [![PyPI Downloads](https://static.pepy.tech/badge/monday-async)](https://pepy.tech/projects/monday-async)
 
 An asynchronous Python client library for monday.com
 
@@ -22,7 +22,7 @@ from monday_async import AsyncMondayClient
 
 
 async def main():
-    with AsyncMondayClient(token="YOUR_API_KEY") as client:
+    async with AsyncMondayClient(token="YOUR_API_KEY") as client:
         boards = await client.boards.get_boards()
 
 

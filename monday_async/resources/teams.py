@@ -13,18 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
 
+from typing import Optional
+
+from monday_async.graphql.mutations import (
+    add_users_to_team_mutation,
+    assign_team_owners_mutation,
+    create_team_mutation,
+    delete_team_mutation,
+    remove_team_owners_mutation,
+    remove_users_from_team_mutation,
+)
+from monday_async.graphql.queries import get_teams_query
 from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.types import ID
-from monday_async.utils.queries import get_teams_query, add_users_to_team_query, remove_users_from_team_query, \
-    create_team_query, delete_team_query, assign_team_owners_query, remove_team_owners_query
 
 
 class TeamsResource(AsyncBaseResource):
-
-    async def get_teams(self, team_ids: Union[int, str, List[Union[int, str]]] = None,
-                        with_complexity: bool = False) -> dict:
+    async def get_teams(
+        self, team_ids: Optional[int | str | list[int | str]] = None, with_complexity: bool = False
+    ) -> dict:
         """
         Get all teams or get teams by ids if provided. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#queries
@@ -37,14 +45,17 @@ class TeamsResource(AsyncBaseResource):
         query = get_teams_query(team_ids=team_ids, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def create_team(self, name: str,
-                          subscriber_ids: Optional[List[ID]] = None,
-                          parent_team_id: Optional[ID] = None,
-                          is_quest_team: bool = False,
-                          allow_empty_teams: bool = True,
-                          with_complexity: bool = False) -> dict:
+    async def create_team(
+        self,
+        name: str,
+        subscriber_ids: list[ID] | None = None,
+        parent_team_id: ID | None = None,
+        is_quest_team: bool = False,
+        allow_empty_teams: bool = True,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Create a team. For more information,
+        Execute a mutation to create a team. For more information,
         visit https://developer.monday.com/api-reference/reference/teams#create-team
 
         Args:
@@ -59,14 +70,19 @@ class TeamsResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = create_team_query(name=name, subscriber_ids=subscriber_ids, parent_team_id=parent_team_id,
-                                  is_quest_team=is_quest_team, allow_empty_teams=allow_empty_teams,
-                                  with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_team_mutation(
+            name=name,
+            subscriber_ids=subscriber_ids,
+            parent_team_id=parent_team_id,
+            is_quest_team=is_quest_team,
+            allow_empty_teams=allow_empty_teams,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def delete_team(self, team_id: Union[int, str], with_complexity: bool = False) -> dict:
+    async def delete_team(self, team_id: int | str, with_complexity: bool = False) -> dict:
         """
-        Delete a team. For more information, visit
+        Execute a mutation to delete a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#delete-team
 
         Args:
@@ -76,13 +92,14 @@ class TeamsResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = delete_team_query(team_id=team_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_team_mutation(team_id=team_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def add_users_to_team(self, team_id: Union[int, str], user_ids: Union[int, str, List[Union[int, str]]],
-                                with_complexity: bool = False) -> dict:
+    async def add_users_to_team(
+        self, team_id: int | str, user_ids: int | str | list[int | str], with_complexity: bool = False
+    ) -> dict:
         """
-        Add users to a team. For more information, visit
+        Execute a mutation to add users to a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#add-users-to-a-team
 
         Args:
@@ -93,13 +110,14 @@ class TeamsResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = add_users_to_team_query(team_id=team_id, user_ids=user_ids, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = add_users_to_team_mutation(team_id=team_id, user_ids=user_ids, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def remove_users_from_team(self, team_id: Union[int, str], user_ids: Union[int, str, List[Union[int, str]]],
-                                     with_complexity: bool = False) -> dict:
+    async def remove_users_from_team(
+        self, team_id: int | str, user_ids: int | str | list[int | str], with_complexity: bool = False
+    ) -> dict:
         """
-        Remove users from a team. For more information, visit
+        Execute a mutation to remove users from a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#remove-users-from-a-team
 
         Args:
@@ -110,12 +128,12 @@ class TeamsResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = remove_users_from_team_query(user_ids=user_ids, team_id=team_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = remove_users_from_team_mutation(user_ids=user_ids, team_id=team_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def assign_team_owners(self, user_ids: Union[ID, List[ID]], team_id: ID, with_complexity: bool = False):
+    async def assign_team_owners(self, user_ids: ID | list[ID], team_id: ID, with_complexity: bool = False):
         """
-        Assign team owners to a team. For more information, visit
+        Execute a mutation to assign team owners to a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#assign-team-owners
 
         Args:
@@ -125,12 +143,12 @@ class TeamsResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = assign_team_owners_query(user_ids=user_ids, team_id=team_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = assign_team_owners_mutation(user_ids=user_ids, team_id=team_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def remove_team_owners(self, user_ids: Union[ID, List[ID]], team_id: ID, with_complexity: bool = False):
+    async def remove_team_owners(self, user_ids: ID | list[ID], team_id: ID, with_complexity: bool = False):
         """
-        Remove owners from a team. For more information, visit
+        Execute a mutation to remove owners from a team. For more information, visit
         https://developer.monday.com/api-reference/reference/teams#remove-team-owners
 
         Args:
@@ -140,5 +158,5 @@ class TeamsResource(AsyncBaseResource):
         Returns:
             dict: The response from the API.
         """
-        query = remove_team_owners_query(user_ids=user_ids, team_id=team_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = remove_team_owners_mutation(user_ids=user_ids, team_id=team_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)

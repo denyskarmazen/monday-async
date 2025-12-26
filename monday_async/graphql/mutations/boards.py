@@ -13,89 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
 
-from monday_async.types import (State, SubscriberKind, BoardKind, BoardAttributes, DuplicateBoardType,
-                                BoardsOrderBy, ID)
-from monday_async.utils.queries.query_addons import add_complexity, add_columns, add_groups
-from monday_async.utils.utils import format_param_value, graphql_parse
+from typing import Optional
+
+from monday_async.core.helpers import format_param_value, graphql_parse
+from monday_async.graphql.addons import add_columns, add_complexity, add_groups
+from monday_async.types import ID, BoardAttributes, BoardKind, DuplicateBoardType, SubscriberKind
 
 
-def get_boards_query(ids: Union[ID, List[ID]] = None, board_kind: Optional[BoardKind] = None,
-                     state: State = State.ACTIVE, workspace_ids: Union[ID, List[ID]] = None,
-                     order_by: Optional[BoardsOrderBy] = None, limit: int = 25, page: int = 1,
-                     with_columns: bool = True, with_groups: bool = True, with_complexity: bool = False) -> str:
+def create_board_mutation(
+    board_name: str,
+    board_kind: BoardKind,
+    description: str | None = None,
+    folder_id: ID | None = None,
+    workspace_id: ID | None = None,
+    template_id: ID | None = None,
+    board_owner_ids: Optional[list[ID]] = None,
+    board_owner_team_ids: Optional[list[ID]] = None,
+    board_subscriber_ids: Optional[list[ID]] = None,
+    board_subscriber_teams_ids: Optional[list[ID]] = None,
+    empty: bool = False,
+    with_columns: bool = False,
+    with_groups: bool = False,
+    with_complexity: bool = False,
+) -> str:
     """
-    This query retrieves boards, offering filtering by IDs, board kind, state, workspace, and ordering options.
-    For more information, visit https://developer.monday.com/api-reference/reference/boards#queries
-
-    Args:
-        ids (List[ID]): (Optional) A list of board IDs to retrieve specific boards.
-        board_kind (BoardKind): (Optional) The kind of boards to retrieve: public, private, or share.
-        state (State): (Optional) The state of the boards: all, active, archived, or deleted. Defaults to active.
-        workspace_ids (Union[ID, List[ID]]): (Optional) A list of workspace IDs or a single
-            workspace ID to filter boards by specific workspaces.
-        order_by (BoardsOrderBy): (Optional) The property to order the results by: created_at or used_at.
-        limit (int): (Optional) The maximum number of boards to return. Defaults to 25.
-        page (int): (Optional) The page number to return. Starts at 1.
-        with_columns (bool): (Optional) Set to True to include columns in the query results.
-        with_groups (bool): (Optional) Set to True to include groups in the query results.
-        with_complexity (bool): Set to True to return the query's complexity along with the results.
-    """
-
-    state_value = state.value if isinstance(state, State) else state
-
-    if ids and isinstance(ids, list):
-        limit = len(ids)
-    if board_kind:
-        board_kind_value = board_kind.value if isinstance(board_kind, BoardKind) else board_kind
-    else:
-        board_kind_value = "null"
-
-    if order_by:
-        order_by_value = order_by.value if isinstance(order_by, BoardsOrderBy) else order_by
-    else:
-        order_by_value = "null"
-
-    workspace_ids_value = f"workspace_ids: {format_param_value(workspace_ids)}" if workspace_ids else ""
-    query = f"""
-    query {{{add_complexity() if with_complexity else ""}
-        boards (
-            ids: {format_param_value(ids if ids else None)},
-            board_kind: {board_kind_value},
-            state: {state_value},
-            {workspace_ids_value}
-            order_by: {order_by_value},
-            limit: {limit},
-            page: {page}
-        ) {{
-            id
-            name
-            board_kind
-            state
-            workspace_id
-            description
-            {add_groups() if with_groups else ""}
-            {add_columns() if with_columns else ""}
-            item_terminology
-            subscribers {{
-                name
-                id
-            }}
-        }}
-    }}
-    """
-    return graphql_parse(query)
-
-
-def create_board_query(board_name: str, board_kind: BoardKind, description: Optional[str] = None,
-                       folder_id: Optional[ID] = None, workspace_id: Optional[ID] = None,
-                       template_id: Optional[ID] = None, board_owner_ids: List[ID] = None,
-                       board_owner_team_ids: List[ID] = None, board_subscriber_ids: List[ID] = None,
-                       board_subscriber_teams_ids: List[ID] = None, empty: bool = False,
-                       with_columns: bool = False, with_groups: bool = False, with_complexity: bool = False) -> str:
-    """
-    This query creates a new board with specified name, kind, and optional description, folder, workspace, template,
+    This mutation creates a new board with specified name, kind, and optional description, folder, workspace, template,
     and subscribers/owners.
     For more information, visit https://developer.monday.com/api-reference/reference/boards#create-a-board
 
@@ -116,7 +59,7 @@ def create_board_query(board_name: str, board_kind: BoardKind, description: Opti
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     board_kind_value = board_kind.value if isinstance(board_kind, BoardKind) else board_kind
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_board (
             board_name: {format_param_value(board_name)},
@@ -139,15 +82,22 @@ def create_board_query(board_name: str, board_kind: BoardKind, description: Opti
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def duplicate_board_query(board_id: ID, duplicate_type: DuplicateBoardType,
-                          board_name: Optional[str] = None, workspace_id: Optional[ID] = None,
-                          folder_id: Optional[ID] = None, keep_subscribers: bool = False,
-                          with_columns: bool = False, with_groups: bool = False, with_complexity: bool = False) -> str:
+def duplicate_board_mutation(
+    board_id: ID,
+    duplicate_type: DuplicateBoardType,
+    board_name: str | None = None,
+    workspace_id: ID | None = None,
+    folder_id: ID | None = None,
+    keep_subscribers: bool = False,
+    with_columns: bool = False,
+    with_groups: bool = False,
+    with_complexity: bool = False,
+) -> str:
     """
-    This query duplicates a board with options to include structure, items, updates, and subscribers.
+    This mutation duplicates a board with options to include structure, items, updates, and subscribers.
     For more information, visit https://developer.monday.com/api-reference/reference/boards#duplicate-a-board
 
     Args:
@@ -167,7 +117,7 @@ def duplicate_board_query(board_id: ID, duplicate_type: DuplicateBoardType,
     """
     duplicate_type_value = duplicate_type.value if isinstance(duplicate_type, DuplicateBoardType) else duplicate_type
 
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         duplicate_board (
             board_id: {format_param_value(board_id)},
@@ -186,13 +136,14 @@ def duplicate_board_query(board_id: ID, duplicate_type: DuplicateBoardType,
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def update_board_query(board_id: ID, board_attribute: BoardAttributes, new_value: str,
-                       with_complexity: bool = False) -> str:
+def update_board_mutation(
+    board_id: ID, board_attribute: BoardAttributes, new_value: str, with_complexity: bool = False
+) -> str:
     """
-    This query updates a board attribute. For more information, visit
+    This mutation updates a board attribute. For more information, visit
     https://developer.monday.com/api-reference/reference/boards#update-a-board
 
     Args:
@@ -205,7 +156,7 @@ def update_board_query(board_id: ID, board_attribute: BoardAttributes, new_value
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     board_attribute_value = board_attribute.value if isinstance(board_attribute, BoardAttributes) else board_attribute
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         update_board (
             board_id: {format_param_value(board_id)},
@@ -214,12 +165,12 @@ def update_board_query(board_id: ID, board_attribute: BoardAttributes, new_value
         )
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def archive_board_query(board_id: ID, with_complexity: bool = False) -> str:
+def archive_board_mutation(board_id: ID, with_complexity: bool = False) -> str:
     """
-    This query archives a board, making it no longer visible in the active board list. For more information, visit
+    This mutation archives a board, making it no longer visible in the active board list. For more information, visit
     https://developer.monday.com/api-reference/reference/boards#archive-a-board
 
     Args:
@@ -227,7 +178,7 @@ def archive_board_query(board_id: ID, with_complexity: bool = False) -> str:
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         archive_board (board_id: {format_param_value(board_id)}) {{
             id
@@ -235,12 +186,12 @@ def archive_board_query(board_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_board_query(board_id: ID, with_complexity: bool = False) -> str:
+def delete_board_mutation(board_id: ID, with_complexity: bool = False) -> str:
     """
-    This query permanently deletes a board. For more information, visit
+    This mutation permanently deletes a board. For more information, visit
     https://developer.monday.com/api-reference/reference/boards#delete-a-board
 
     Args:
@@ -248,7 +199,7 @@ def delete_board_query(board_id: ID, with_complexity: bool = False) -> str:
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_board (board_id: {format_param_value(board_id)}) {{
             id
@@ -256,13 +207,14 @@ def delete_board_query(board_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def add_users_to_board_query(board_id: ID, user_ids: Union[ID, List[ID]], kind: SubscriberKind,
-                             with_complexity: bool = False) -> str:
+def add_users_to_board_mutation(
+    board_id: ID, user_ids: ID | list[ID], kind: SubscriberKind, with_complexity: bool = False
+) -> str:
     """
-    This query adds users as subscribers or owners to a board. For more information, visit
+    This mutation adds users as subscribers or owners to a board. For more information, visit
     https://developer.monday.com/api-reference/reference/users#add-users-to-a-board
 
     Args:
@@ -276,7 +228,7 @@ def add_users_to_board_query(board_id: ID, user_ids: Union[ID, List[ID]], kind: 
     """
     kind_value = kind.value if isinstance(kind, SubscriberKind) else kind
 
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         add_users_to_board (
             board_id: {format_param_value(board_id)},
@@ -289,13 +241,12 @@ def add_users_to_board_query(board_id: ID, user_ids: Union[ID, List[ID]], kind: 
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def remove_users_from_board_query(board_id: ID, user_ids: Union[ID, List[ID]],
-                                  with_complexity: bool = False) -> str:
+def remove_users_from_board_mutation(board_id: ID, user_ids: ID | list[ID], with_complexity: bool = False) -> str:
     """
-    This query removes users from a board's subscribers or owners. For more information, visit
+    This mutation removes users from a board's subscribers or owners. For more information, visit
     https://developer.monday.com/api-reference/reference/users#delete-subscribers-from-a-board
 
     Args:
@@ -305,7 +256,7 @@ def remove_users_from_board_query(board_id: ID, user_ids: Union[ID, List[ID]],
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_subscribers_from_board (
             board_id: {format_param_value(board_id)},
@@ -317,13 +268,14 @@ def remove_users_from_board_query(board_id: ID, user_ids: Union[ID, List[ID]],
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def add_teams_to_board_query(board_id: ID, team_ids: Union[ID, List[ID]], kind: SubscriberKind,
-                             with_complexity: bool = False) -> str:
+def add_teams_to_board_mutation(
+    board_id: ID, team_ids: ID | list[ID], kind: SubscriberKind, with_complexity: bool = False
+) -> str:
     """
-    This query adds teams as subscribers or owners to a board. For more information, visit
+    This mutation adds teams as subscribers or owners to a board. For more information, visit
     https://developer.monday.com/api-reference/reference/teams#add-teams-to-a-board
 
     Args:
@@ -336,7 +288,7 @@ def add_teams_to_board_query(board_id: ID, team_ids: Union[ID, List[ID]], kind: 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
     kind_value = kind.value if isinstance(kind, SubscriberKind) else kind
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         add_teams_to_board (
             board_id: {format_param_value(board_id)},
@@ -348,13 +300,12 @@ def add_teams_to_board_query(board_id: ID, team_ids: Union[ID, List[ID]], kind: 
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_teams_from_board_query(board_id: ID, team_ids: Union[ID, List[ID]],
-                                  with_complexity: bool = False) -> str:
+def delete_teams_from_board_mutation(board_id: ID, team_ids: ID | list[ID], with_complexity: bool = False) -> str:
     """
-    This query removes teams from a board's subscribers or owners. For more information, visit
+    This mutation removes teams from a board's subscribers or owners. For more information, visit
     https://developer.monday.com/api-reference/reference/teams#delete-teams-from-a-board
 
     Args:
@@ -364,7 +315,7 @@ def delete_teams_from_board_query(board_id: ID, team_ids: Union[ID, List[ID]],
 
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_teams_from_board (
             board_id: {format_param_value(board_id)},
@@ -375,50 +326,17 @@ def delete_teams_from_board_query(board_id: ID, team_ids: Union[ID, List[ID]],
         }}
     }}
     """
-    return graphql_parse(query)
-
-
-def get_board_views_query(board_id: ID, ids: Union[ID, List[ID]] = None, view_type: Optional[str] = None,
-                          with_complexity: bool = False) -> str:
-    """
-    This query retrieves the views associated with a specific board. For more information, visit
-    https://developer.monday.com/api-reference/reference/board-views#queries
-
-    Args:
-        board_id (ID): The ID of the board to retrieve views from.
-
-        ids (Union[ID, List[ID]]): (Optional) A list of view IDs to retrieve specific views.
-
-        view_type (str): (Optional) The type of views to retrieve.
-
-        with_complexity (bool): Set to True to return the query's complexity along with the results.
-    """
-    query = f"""
-    query {{{add_complexity() if with_complexity else ""}
-        boards (ids: {format_param_value(board_id)}) {{
-            views (ids: {format_param_value(ids if ids else None)}, type: {format_param_value(view_type)}) {{
-                type
-                settings_str
-                view_specific_data_str
-                name
-                id
-            }}
-        }}
-    }}
-    """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
 __all__ = [
-    'get_boards_query',
-    'create_board_query',
-    'duplicate_board_query',
-    'update_board_query',
-    'archive_board_query',
-    'delete_board_query',
-    'add_users_to_board_query',
-    'remove_users_from_board_query',
-    'add_teams_to_board_query',
-    'delete_teams_from_board_query',
-    'get_board_views_query'
+    "add_teams_to_board_mutation",
+    "add_users_to_board_mutation",
+    "archive_board_mutation",
+    "create_board_mutation",
+    "delete_board_mutation",
+    "delete_teams_from_board_mutation",
+    "duplicate_board_mutation",
+    "remove_users_from_board_mutation",
+    "update_board_mutation",
 ]

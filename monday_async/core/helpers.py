@@ -35,7 +35,7 @@ def monday_json_stringify(value: dict) -> str:
         A double-encoded JSON string.
     """
     if value is not None:
-        return json.dumps(json.dumps(value, ensure_ascii=False, separators=(',', ':')), ensure_ascii=False)
+        return json.dumps(json.dumps(value, ensure_ascii=False, separators=(",", ":")), ensure_ascii=False)
     # If the value is None return null instead of "null"
     return json.dumps(value)
 
@@ -55,6 +55,8 @@ def graphql_parse(query: str) -> str:
     return print_ast(parsed)
 
 
+# FIXME I noticed that a " in the value of a parameter is not escaped,
+# need to check if the expected behavior was to escape it or not
 def format_param_value(value: Any) -> str:
     if isinstance(value, Enum):
         return str(value.value)

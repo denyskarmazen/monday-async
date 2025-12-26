@@ -19,12 +19,13 @@ import os
 import aiofiles
 import aiohttp
 
+from monday_async.core.response_parser import ResponseParser
 from monday_async.exceptions import MondayAPIError
-from monday_async.utils.response_parser import ResponseParser
 
-TOKEN_HEADER = 'Authorization'
+TOKEN_HEADER = "Authorization"
 
 
+# TODO: Add a timeout parameter
 class AsyncGraphQLClient:
     """
     A client for interacting with a monday.com GraphQL API asynchronously.
@@ -43,11 +44,11 @@ class AsyncGraphQLClient:
 
     def __init__(self, endpoint: str):
         """
-         Initializes a new instance of the GraphQLClient.
+        Initializes a new instance of the GraphQLClient.
 
-         Args:
-             endpoint (str): The URL of the GraphQL endpoint.
-         """
+        Args:
+            endpoint (str): The URL of the GraphQL endpoint.
+        """
         self.endpoint = endpoint
         self.token = None
         self.session = None
@@ -131,28 +132,28 @@ class AsyncGraphQLClient:
             headers[TOKEN_HEADER] = self.token
 
         if variables is None:
-            headers.setdefault('Content-Type', 'application/json')
+            headers.setdefault("Content-Type", "application/json")
 
-            payload = json.dumps({'query': query}).encode('utf-8')
+            payload = json.dumps({"query": query}).encode("utf-8")
 
         else:
-            if 'file' in variables:
-                filename = os.path.basename(variables['file'])
+            if "file" in variables:
+                filename = os.path.basename(variables["file"])
                 map_data = '{"0": ["variables.file"]}'
 
                 data = aiohttp.FormData()
-                data.add_field('query', query)
-                data.add_field('map', map_data)
+                data.add_field("query", query)
+                data.add_field("map", map_data)
 
-                async with aiofiles.open(variables['file'], 'rb') as file:
+                async with aiofiles.open(variables["file"], "rb") as file:
                     file_content = await file.read()
-                    data.add_field('0', file_content, filename=filename, content_type='application/octet-stream')
+                    data.add_field("0", file_content, filename=filename, content_type="application/octet-stream")
 
                 payload = data
             else:
-                headers.setdefault('Content-Type', 'application/json')
+                headers.setdefault("Content-Type", "application/json")
 
-                payload = json.dumps({'query': query, 'variables': variables}).encode('utf-8')
+                payload = json.dumps({"query": query, "variables": variables}).encode("utf-8")
 
         if not self.session:
             try:

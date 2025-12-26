@@ -13,20 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from typing import Optional
 
 from aiohttp import ClientSession
 
 from monday_async import __version__
 from monday_async.resources import (
-    APIResource, CustomResource, WebhooksResource, NotificationResource, UsersResource, WorkspaceResource,
-    FolderResource, BoardResource, TagResource, ColumnResource, GroupResource, ItemResource, UpdateResource,
-    ComplexityResource, AccountResource, TeamsResource
+    AccountResource,
+    APIResource,
+    BoardResource,
+    ColumnResource,
+    ComplexityResource,
+    CustomResource,
+    FolderResource,
+    GroupResource,
+    ItemResource,
+    NotificationResource,
+    TagResource,
+    TeamsResource,
+    UpdateResource,
+    UsersResource,
+    WebhooksResource,
+    WorkspaceResource,
 )
 
-_DEFAULT_HEADERS = {
-    "API-Version": "2025-01"
-}
+_DEFAULT_HEADERS = {"API-Version": "2025-01"}
 
 
 class AsyncMondayClient:
@@ -50,7 +62,7 @@ class AsyncMondayClient:
         updates (UpdateResource):
     """
 
-    def __init__(self, token: str, session: Optional[ClientSession] = None, headers: dict = None):
+    def __init__(self, token: str, session: ClientSession | None = None, headers: Optional[dict] = None):
         """
         Args:
             token (str): Your monday.com API access token.
@@ -82,7 +94,7 @@ class AsyncMondayClient:
         self.updates = UpdateResource(token=token, headers=headers, session=self._session)
 
     def __enter__(self):
-        raise RuntimeError('Use `async with AsyncMondayClient(...)` instead of `with AsyncMondayClient(...)`')
+        raise RuntimeError("Use `async with AsyncMondayClient(...)` instead of `with AsyncMondayClient(...)`")
 
     def __exit__(self, exc_type, exc, tb):
         pass
@@ -98,7 +110,7 @@ class AsyncMondayClient:
             await self._session.close()
 
     def __str__(self):
-        return f'AsyncMondayClient {__version__}'
+        return f"AsyncMondayClient {__version__}"
 
     def __repr__(self):
-        return f'AsyncMondayClient {__version__}'
+        return f"AsyncMondayClient {__version__}"

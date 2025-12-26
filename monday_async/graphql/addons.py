@@ -13,122 +13,127 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
 
+from monday_async.core.helpers import format_param_value
 from monday_async.types import ID
-from monday_async.utils.utils import format_param_value
 
 
 def add_complexity() -> str:
     """This can be added to any query to return its complexity with it"""
-    query = f"""
-        complexity {{
+    query = """
+        complexity {
             before
             query
             after
             reset_in_x_seconds
-        }}
+        }
     """
     return query
 
 
 def add_columns() -> str:
     """This can be added to any boards query to return its columns with it"""
-    columns = f"""
-    columns {{
+    columns = """
+    columns {
         id
         title
         type
         settings_str
-    }}
+    }
     """
     return columns
 
 
 def add_groups() -> str:
     """This can be added to any boards query to return its groups with it"""
-    groups = f"""
-    groups {{
+    groups = """
+    groups {
         id
         title
         color
         position
-    }}
+    }
     """
     return groups
 
 
 def add_column_values() -> str:
     """This can be added to any items query to return its column values with it"""
-    column_values = f"""
-    column_values {{
+    column_values = """
+    column_values {
         id
-        column {{
+        column {
             title
             settings_str
-        }}
+        }
         type
         text
         value
-        ... on BoardRelationValue {{
+        ... on BoardRelationValue {
             display_value
             linked_item_ids
-        }}
-        ... on CheckboxValue {{
+        }
+        ... on CheckboxValue {
             checked
-        }}
-        ... on CountryValue {{
-            country {{
-                name 
-            }}
-        }}
-        ... on DateValue {{
+        }
+        ... on CountryValue {
+            country {
+                name
+            }
+        }
+        ... on DateValue {
             date
             time
-        }}
-        ... on LocationValue {{
+        }
+        ... on LocationValue {
             lat
             lng
             address
-        }}
-        ... on MirrorValue {{
+        }
+        ... on MirrorValue {
             display_value
-            mirrored_items {{
-                linked_item {{
+            mirrored_items {
+                linked_item {
                     id
                     name
-                }}
-            }}
-        }}
-        ... on PeopleValue {{
-            persons_and_teams {{
+                }
+            }
+        }
+        ... on PeopleValue {
+            persons_and_teams {
                 id
                 kind
-            }}
-        }}
-        ... on FormulaValue {{
+            }
+        }
+        ... on FormulaValue {
             display_value
-        }}
-    }}   
+        }
+    }
     """
     return column_values
 
 
 def add_subitems() -> str:
     """This can be added to any items query to return its subitems with it"""
-    subitems = f"""
-    subitems {{
+    subitems = """
+    subitems {
         id
         name
         url
         state
-    }}
+    }
     """
     return subitems
 
 
-def add_updates(ids: Optional[Union[ID, List[ID]]] = None, limit: int = 100, page: int = 1,
-                with_pins: bool = False, with_likes: bool = False, with_viewers: bool = False) -> str:
+def add_updates(
+    ids: ID | list[ID] | None = None,
+    limit: int = 100,
+    page: int = 1,
+    with_pins: bool = False,
+    with_likes: bool = False,
+    with_viewers: bool = False,
+) -> str:
     """
     This can be added to any items query to return its updates with it
 
@@ -140,29 +145,29 @@ def add_updates(ids: Optional[Union[ID, List[ID]]] = None, limit: int = 100, pag
         with_likes (bool): Set to True to return the likes of the update.
         with_viewers (bool): Set to True to return the viewers of the update.
     """
-    viewers = f"""
-    viewers {{
+    viewers = """
+    viewers {
         medium
-        user {{
+        user {
             id
             name
             email
             title
-        }}
-    }}
+        }
+    }
     """
-    likes = f"""
-    likes {{
+    likes = """
+    likes {
         id
         reaction_type
         creator_id
         updated_at
-    }}
+    }
     """
-    pinned = f"""
-    pinned_to_top {{
+    pinned = """
+    pinned_to_top {
         item_id
-    }}
+    }
     """
     updates = f"""
     updates (ids: {format_param_value(ids if ids else None)}, limit: {limit}, page: {page}) {{
@@ -171,11 +176,11 @@ def add_updates(ids: Optional[Union[ID, List[ID]]] = None, limit: int = 100, pag
         body
         creator_id
         assets {{
-            id 
+            id
             name
             file_extension
             url
-            public_url 
+            public_url
         }}
         replies {{
             id
@@ -190,11 +195,4 @@ def add_updates(ids: Optional[Union[ID, List[ID]]] = None, limit: int = 100, pag
     return updates
 
 
-__all__ = [
-    'add_complexity',
-    'add_columns',
-    'add_groups',
-    'add_column_values',
-    'add_subitems',
-    'add_updates'
-]
+__all__ = ["add_column_values", "add_columns", "add_complexity", "add_groups", "add_subitems", "add_updates"]

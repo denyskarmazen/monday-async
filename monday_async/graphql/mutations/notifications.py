@@ -13,15 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from monday_async.types import NotificationTargetType, ID
-from monday_async.utils.queries.query_addons import add_complexity
-from monday_async.utils.utils import format_param_value, graphql_parse
+from monday_async.core.helpers import format_param_value, graphql_parse
+from monday_async.graphql.addons import add_complexity
+from monday_async.types import ID, NotificationTargetType
 
 
-def create_notification_query(user_id: ID, target_id: ID, text: str, target_type: NotificationTargetType,
-                              with_complexity: bool = False) -> str:
+def create_notification_mutation(
+    user_id: ID, target_id: ID, text: str, target_type: NotificationTargetType, with_complexity: bool = False
+) -> str:
     """
-    Construct a query to create a notification. For more information, visit
+    Construct a mutation to create a notification. For more information, visit
     https://developer.monday.com/api-reference/reference/notification
 
     Args:
@@ -39,21 +40,19 @@ def create_notification_query(user_id: ID, target_id: ID, text: str, target_type
         with_complexity (bool): returns the complexity of the query with the query if set to True.
     """
     target_type_value = target_type.value if isinstance(target_type, NotificationTargetType) else target_type
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_notification (
             user_id: {format_param_value(user_id)},
-             target_id: {format_param_value(target_id)},
-             text: {format_param_value(text)},
-             target_type: {target_type_value}
+            target_id: {format_param_value(target_id)},
+            text: {format_param_value(text)},
+            target_type: {target_type_value}
         ) {{
             text
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-__all__ = [
-    'create_notification_query'
-]
+__all__ = ["create_notification_mutation"]

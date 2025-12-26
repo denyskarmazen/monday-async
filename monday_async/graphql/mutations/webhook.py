@@ -13,44 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union, Optional
 
-from monday_async.types import WebhookEventType, ID
-from monday_async.utils.queries.query_addons import add_complexity
-from monday_async.utils.utils import monday_json_stringify, format_param_value, graphql_parse
+from monday_async.core.helpers import format_param_value, graphql_parse, monday_json_stringify
+from monday_async.graphql.addons import add_complexity
+from monday_async.types import ID, WebhookEventType
 
 
-def get_webhooks_by_board_id_query(board_id: ID, app_webhooks_only: bool = False, with_complexity: bool = False) -> str:
+def create_webhook_mutation(
+    board_id: ID, url: str, event: WebhookEventType, config: dict | None = None, with_complexity: bool = False
+) -> str:
     """
-    Construct a query to get all webhooks for a board. For more information, visit
-    https://developer.monday.com/api-reference/reference/webhooks#queries
-
-    Args:
-        board_id (Union[int, str]): a unique identifier of a board, can be an integer or
-            a string containing integers.
-        app_webhooks_only (bool): if set to Trues returns only the webhooks created by the app initiating the request.
-        with_complexity (bool): returns the complexity of the query with the query if set to True.
-    """
-    query = f"""
-    query {{{add_complexity() if with_complexity else ""}
-        webhooks(
-            app_webhooks_only: {format_param_value(app_webhooks_only)}, 
-            board_id: {format_param_value(board_id)}
-        ) {{
-            id
-            event
-            board_id
-            config
-        }}
-    }}
-    """
-    return graphql_parse(query)
-
-
-def create_webhook_query(board_id: ID, url: str, event: WebhookEventType, config: Optional[dict] = None,
-                         with_complexity: bool = False) -> str:
-    """
-    Construct a query to create a webhook. For more information, visit
+    Construct a mutation to create a webhook. For more information, visit
     https://developer.monday.com/api-reference/reference/webhooks#create-a-webhook
 
     Args:
@@ -62,7 +35,7 @@ def create_webhook_query(board_id: ID, url: str, event: WebhookEventType, config
         with_complexity (bool): returns the complexity of the query with the query if set to True.
     """
     event_value = event.value if isinstance(event, WebhookEventType) else event
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_webhook (
             board_id: {format_param_value(board_id)},
@@ -77,12 +50,12 @@ def create_webhook_query(board_id: ID, url: str, event: WebhookEventType, config
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-def delete_webhook_query(webhook_id: ID, with_complexity: bool = False) -> str:
+def delete_webhook_mutation(webhook_id: ID, with_complexity: bool = False) -> str:
     """
-    Construct a query to delete a webhook connection. For more information, visit
+    Construct a mutation to delete a webhook connection. For more information, visit
     https://developer.monday.com/api-reference/reference/webhooks#delete-a-webhook
 
     Args:
@@ -91,7 +64,7 @@ def delete_webhook_query(webhook_id: ID, with_complexity: bool = False) -> str:
 
         with_complexity (bool): returns the complexity of the query with the query if set to True.
     """
-    query = f"""
+    mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         delete_webhook (id: {format_param_value(webhook_id)}) {{
             id
@@ -99,11 +72,7 @@ def delete_webhook_query(webhook_id: ID, with_complexity: bool = False) -> str:
         }}
     }}
     """
-    return graphql_parse(query)
+    return graphql_parse(mutation)
 
 
-__all__ = [
-    'get_webhooks_by_board_id_query',
-    'create_webhook_query',
-    'delete_webhook_query'
-]
+__all__ = ["create_webhook_mutation", "delete_webhook_mutation"]

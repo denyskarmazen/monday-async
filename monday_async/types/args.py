@@ -16,16 +16,18 @@
 """
 These are the types that are used as arguments for queries
 """
-from typing import List, Union, Optional, Dict, Any
 
-from monday_async.types import ItemsQueryOperator, ID, ItemsQueryRuleOperator
-from monday_async.utils.utils import format_param_value, format_dict_value
+from typing import Any
+
+from monday_async.types.enum_values import ID, ItemsQueryOperator, ItemsQueryRuleOperator
+from monday_async.core.helpers import format_dict_value, format_param_value
 
 
 class Arg:
     """
     Base class for all query argument types.
     """
+
     pass
 
 
@@ -43,19 +45,23 @@ class QueryParams(Arg):
             https://developer.monday.com/api-reference/reference/other-types#itemsqueryorderby
     """
 
-    def __init__(self, ids: Optional[Union[ID, List[ID]]] = None,
-                 operator: ItemsQueryOperator = ItemsQueryOperator.AND.value, order_by: Optional[Dict] = None):
+    def __init__(
+        self,
+        ids: ID | list[ID] | None = None,
+        operator: ItemsQueryOperator = ItemsQueryOperator.AND.value,
+        order_by: dict | None = None,
+    ):
         self._ids = ids
         self._operator = operator
         self._order_by = order_by
         self._rules = []
-        self._value = {'rules': "[]", 'operator': self._operator}
+        self._value = {"rules": "[]", "operator": self._operator}
         if self._ids:
-            self._value['ids'] = format_param_value(self._ids)
+            self._value["ids"] = format_param_value(self._ids)
         if self._order_by:
-            if self._order_by.get('column_id'):
-                self._order_by['column_id'] = format_param_value(self._order_by.get('column_id'))
-                self._value['order_by'] = str(self._order_by).replace("'", "")
+            if self._order_by.get("column_id"):
+                self._order_by["column_id"] = format_param_value(self._order_by.get("column_id"))
+                self._value["order_by"] = str(self._order_by).replace("'", "")
 
     def __str__(self):
         return self.format_value()
@@ -64,9 +70,13 @@ class QueryParams(Arg):
         items = [f"{key}: {value}" for key, value in self._value.items()]
         return "{" + ", ".join(items) + "}"
 
-    def add_rule(self, column_id: str, compare_value: Any,
-                 operator: ItemsQueryRuleOperator = ItemsQueryRuleOperator.ANY_OF,
-                 compare_attribute: Optional[str] = None):
+    def add_rule(
+        self,
+        column_id: str,
+        compare_value: Any,
+        operator: ItemsQueryRuleOperator = ItemsQueryRuleOperator.ANY_OF,
+        compare_attribute: str | None = None,
+    ):
         """
         Adds a rule to the query parameters.
 
@@ -82,7 +92,7 @@ class QueryParams(Arg):
         rule += f", compare_attribute: {format_param_value(compare_attribute)}" if compare_attribute else ""
         rule += f", operator: {operator.value if isinstance(operator, ItemsQueryRuleOperator) else operator}}}"
         self._rules.append(rule)
-        self._value['rules'] = '[' + ', '.join(self._rules) + ']'
+        self._value["rules"] = "[" + ", ".join(self._rules) + "]"
 
 
 class ItemByColumnValuesParam(Arg):
@@ -94,19 +104,19 @@ class ItemByColumnValuesParam(Arg):
     """
 
     def __init__(self):
-        self.value: List[Dict] = []
+        self.value: list[dict] = []
 
     def __str__(self):
         return f"[{', '.join(format_dict_value(column) for column in self.value)}]"
 
-    def add_column(self, column_id: str, column_values: Union[str, List[str]]):
+    def add_column(self, column_id: str, column_values: str | list[str]):
         """
         Parameters:
             column_id (str): The IDs of the specific columns to return results for.
 
             column_values (Union[str, List[str]]): The column values to filter items by.
         """
-        column = {'column_id': column_id, 'column_values': column_values}
+        column = {"column_id": column_id, "column_values": column_values}
         self.value.append(column)
 
 
@@ -120,7 +130,7 @@ class ColumnsMappingInput(Arg):
     def __init__(self):
         self.value = []
 
-    def add_mapping(self, source: str, target: Optional[str] = None):
+    def add_mapping(self, source: str, target: str | None = None):
         """Adds a single mapping to the list with formatted source and target values."""
         self.value.append({"source": source, "target": target})
 
@@ -133,4 +143,4 @@ class ColumnsMappingInput(Arg):
         return f"ColumnsMappingInput(mappings={self.value})"
 
 
-__all__ = ["QueryParams", "ItemByColumnValuesParam", "ColumnsMappingInput"]
+__all__ = ["ColumnsMappingInput", "ItemByColumnValuesParam", "QueryParams"]

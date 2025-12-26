@@ -16,7 +16,7 @@
 import pytest
 from aiohttp import ClientSession
 
-from monday_async.utils.graphqlclient import AsyncGraphQLClient
+from monday_async.core.client import AsyncGraphQLClient
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +35,7 @@ def graphql_clients():
         "graph_ql_client": graph_ql_client,
         "file_graph_ql_client": file_graph_ql_client,
         "token": token,
-        "headers": headers
+        "headers": headers,
     }
 
 
@@ -84,4 +84,3 @@ async def test_close_session(graphql_clients):
 
     await client.close_session()
     assert client.session is None
-
