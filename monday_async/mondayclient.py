@@ -38,7 +38,7 @@ from monday_async.resources import (
     WorkspaceResource,
 )
 
-_DEFAULT_HEADERS = {"API-Version": "2025-01"}
+_DEFAULT_API_VERSION = "2025-04"
 
 
 class AsyncMondayClient:
@@ -62,19 +62,30 @@ class AsyncMondayClient:
         updates (UpdateResource):
     """
 
-    def __init__(self, token: str, session: ClientSession | None = None, headers: Optional[dict] = None):
+    def __init__(
+        self,
+        token: str,
+        session: ClientSession | None = None,
+        headers: Optional[dict] = None,
+        api_version: str = _DEFAULT_API_VERSION,
+    ):
         """
         Args:
             token (str): Your monday.com API access token.
             session (ClientSession): Optional, externally managed aiohttp session. Recommended to use the same session
                 for all the requests.
             headers (dict): Additional headers to send with each request.
+            api_version (str): monday.com API version to use. Defaults to "2025-01".
+                Available versions: "2025-01", "2025-04", "2025-07", "2025-10", "2026-01"
         """
         self._session = session
         self._external_session = True if session else False
+        self.api_version = api_version
 
         if not headers:
-            headers = _DEFAULT_HEADERS.copy()
+            headers = {"API-Version": api_version}
+        elif "API-Version" not in headers:
+            headers["API-Version"] = api_version
 
         self.complexity = ComplexityResource(token=token, headers=headers, session=self._session)
         self.custom = CustomResource(token=token, headers=headers, session=self._session)
