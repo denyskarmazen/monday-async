@@ -19,6 +19,7 @@ from typing import Optional
 from monday_async.graphql.mutations import (
     activate_users_mutation,
     deactivate_users_mutation,
+    invite_users_mutation,
     update_users_email_domain_mutation,
     update_users_role_mutation,
 )
@@ -176,15 +177,26 @@ class UsersResource(AsyncBaseResource):
         product: Product | str,
         user_role: BaseRoleName | str,
         with_complexity: bool = False,
-    ):
+    ) -> dict:
         """
+        Invite users to join a monday.com account. Invited users will be in a pending status until they accept.
+
+        For more information, visit
+        https://developer.monday.com/api-reference/reference/users#invite-users
 
         Args:
-            emails:
-            product:
-            user_role:
-            with_complexity:
+            emails (Union[str, List[str]]): The email addresses of users to invite.
+            product (Union[Product, str]): The product to invite users to.
+                Valid values: Product.CRM, Product.DEV, Product.FORMS, Product.KNOWLEDGE,
+                Product.SERVICE, Product.WHITEBOARD, Product.WORKFLOWS, Product.WORK_MANAGEMENT
+            user_role (Union[BaseRoleName, str]): The role to assign to invited users.
+                Valid values: BaseRoleName.ADMIN, BaseRoleName.MEMBER, BaseRoleName.VIEWER, BaseRoleName.GUEST
+            with_complexity (bool): Returns the complexity of the query with the query if set to True.
 
         Returns:
-
+            dict: The response from the API containing invited_users and any errors.
         """
+        mutation = invite_users_mutation(
+            emails=emails, product=product, user_role=user_role, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)

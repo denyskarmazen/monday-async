@@ -173,30 +173,34 @@ def invite_users_mutation(
 
     Args:
         emails (Union[str, List[str]]): The emails of the users to invite.
-        product (Product): The product to invite the users to.
+        product (Union[Product, str]): The product to invite the users to.
+            Valid values: crm, dev, forms, knowledge, service, whiteboard, workflows, work_management
         user_role (Union[BaseRoleName, str]): The invited user's new role.
+            Valid values: ADMIN, GUEST, MEMBER, VIEW_ONLY
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
 
     Returns:
         str: The constructed Graph QL mutation.
     """
+    # Extract enum values (GraphQL enums are unquoted)
     if isinstance(user_role, BaseRoleName):
         role = user_role.value
     elif isinstance(user_role, str):
         role = user_role
     else:
-        raise ValueError("role must be of type BaseRoleName or str")
+        raise ValueError("user_role must be of type BaseRoleName or str")
 
     if isinstance(product, Product):
-        product = product.value
+        product_value = product.value
     elif isinstance(product, str):
-        product = product
+        product_value = product
     else:
         raise ValueError("product must be of type Product or str")
+
     mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         invite_users (
-            emails: {format_param_value(emails)}, product: {product}, user_role: {role}
+            emails: {format_param_value(emails)}, product: {product_value}, user_role: {role}
         ) {{
             errors {{
                 message
@@ -206,6 +210,7 @@ def invite_users_mutation(
             invited_users {{
                 id
                 name
+                email
             }}
         }}
     }}
