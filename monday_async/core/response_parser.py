@@ -85,6 +85,7 @@ ERROR_CODES_MAPPING = {
     "RecordValidException": RecordValidError,
     "ResourceNotFoundException": ResourceNotFoundError,
     "UserUnauthorizedException": UserUnauthorizedError,
+    "USER_UNAUTHORIZED": UserUnauthorizedError,
 }
 
 
