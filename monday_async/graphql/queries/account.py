@@ -48,4 +48,27 @@ def get_account_query(with_complexity: bool = False) -> str:
     return graphql_parse(query)
 
 
-__all__ = ["get_account_query"]
+def get_account_roles_query(with_complexity: bool = False) -> str:
+    """
+    Construct a query to get all account roles (default and custom).
+    For more information, visit https://developer.monday.com/api-reference/reference/account-roles
+
+    Args:
+        with_complexity: Returns the complexity of the query with the query if set to True.
+
+    Returns:
+        str: The constructed GraphQL query.
+    """
+    query = f"""
+    query {{{add_complexity() if with_complexity else ""}
+        account_roles {{
+            id
+            name
+            roleType
+        }}
+    }}
+    """
+    return graphql_parse(query)
+
+
+__all__ = ["get_account_query", "get_account_roles_query"]
