@@ -336,7 +336,6 @@ class ComplexityError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#complexityexception
 
     Attributes:
-        remaining_complexity (int or None): The remaining budget if available.
         reset_in (int or None): The time in seconds until the budget resets.
     """
 
@@ -351,9 +350,6 @@ class ComplexityError(MondayAPIError):
         partial_data: Optional[dict] = None,
     ):
         self.reset_in = extensions.get("retry_in_seconds") if extensions else None
-        self.remaining_complexity = extensions.get("complexity_budget_left") if extensions else None
-        self.complexity = extensions.get("complexity") if extensions else None
-        self.complexity_budget_limit = extensions.get("complexity_budget_limit") if extensions else None
         super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
