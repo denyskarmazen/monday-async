@@ -63,7 +63,12 @@ class WorkspaceResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def create_workspace(
-        self, name: str, kind: WorkspaceKind, description: str | None = None, with_complexity: bool = False
+        self,
+        name: str,
+        kind: WorkspaceKind,
+        description: str | None = None,
+        account_product_id: ID | None = None,
+        with_complexity: bool = False,
     ) -> dict:
         """
         Execute a mutation to create a workspace with a specified name, kind, and optional description.
@@ -74,10 +79,16 @@ class WorkspaceResource(AsyncBaseResource):
             name (str): The new workspace name.
             kind (WorkspaceKind): The new workspace kind: open or closed.
             description (Optional[str]): The new workspace description.
+            account_product_id (Optional[ID]): The unique identifier of the account's product
+                in which to create the new workspace.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
         mutation = create_workspace_mutation(
-            name=name, kind=kind, description=description, with_complexity=with_complexity
+            name=name,
+            kind=kind,
+            description=description,
+            account_product_id=account_product_id,
+            with_complexity=with_complexity,
         )
         return await self.client.execute(mutation)
 

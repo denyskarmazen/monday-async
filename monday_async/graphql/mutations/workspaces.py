@@ -21,7 +21,11 @@ from monday_async.types import ID, SubscriberKind, WorkspaceKind
 
 
 def create_workspace_mutation(
-    name: str, kind: WorkspaceKind, description: str | None = None, with_complexity: bool = False
+    name: str,
+    kind: WorkspaceKind,
+    description: str | None = None,
+    account_product_id: ID | None = None,
+    with_complexity: bool = False,
 ):
     """
     Construct a mutation to create a workspace. For more information, visit
@@ -34,15 +38,22 @@ def create_workspace_mutation(
 
         description (Optional[str]): The new workspace description.
 
+        account_product_id (Optional[ID]): The unique identifier of the account's product
+            in which to create the new workspace.
+
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
     """
     workspace_kind_value = kind.value if isinstance(kind, WorkspaceKind) else kind
+    account_product_id_param = (
+        f"account_product_id: {format_param_value(account_product_id)}," if account_product_id else ""
+    )
     mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_workspace (
             name:{format_param_value(name)},
-             kind: {workspace_kind_value},
-             description: {format_param_value(description)}
+            kind: {workspace_kind_value},
+            description: {format_param_value(description)},
+            {account_product_id_param}
         ) {{
             id
             name
