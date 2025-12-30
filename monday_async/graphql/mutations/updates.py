@@ -19,9 +19,7 @@ from monday_async.graphql.addons import add_complexity
 from monday_async.types import ID
 
 
-def create_update_mutation(
-    body: str, item_id: ID, parent_id: ID | None = None, with_complexity: bool = False
-) -> str:
+def create_update_mutation(body: str, item_id: ID, parent_id: ID | None = None, with_complexity: bool = False) -> str:
     """
     This mutation creates a new update on a specific item or as a reply to another update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#create-an-update

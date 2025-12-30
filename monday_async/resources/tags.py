@@ -49,9 +49,7 @@ class TagResource(AsyncBaseResource):
         query = get_tags_by_board_query(board_id=board_id, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def create_or_get_tag(
-        self, tag_name: str, board_id: ID | None = None, with_complexity: bool = False
-    ) -> dict:
+    async def create_or_get_tag(self, tag_name: str, board_id: ID | None = None, with_complexity: bool = False) -> dict:
         """
         Execute a mutation to create a new tag with the specified name or retrieve the existing tag
         if it already exists.
