@@ -3,7 +3,7 @@ name = "monday-async"
 dynamic = ["version"]
 description = "An asynchronous Python client library for monday.com GraphQL API"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 authors = [{ name = "denyskarmazen", email = "deniskarmazen@gmail.com" }]
@@ -30,7 +30,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -80,7 +79,7 @@ packages = ["monday_async"]
 [tool.ruff]
 fix = true
 line-length = 120
-target-version = "py39"
+target-version = "py310"
 extend-exclude = [
     "__pycache__",
     ".git",

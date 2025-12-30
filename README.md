@@ -5,7 +5,7 @@ Check out monday.com API [here](https://developer.monday.com/api-reference/).
 
 ### Install
 #### Python Requirements:
-- Python >= 3.9
+- Python >= 3.10
 
 To install the latest version run:
 ```bash
