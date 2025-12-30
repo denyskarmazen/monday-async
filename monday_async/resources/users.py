@@ -14,8 +14,6 @@
 # limitations under the License.
 
 
-from typing import Optional
-
 from monday_async.graphql.mutations import (
     activate_users_mutation,
     deactivate_users_mutation,
@@ -48,7 +46,7 @@ class UsersResource(AsyncBaseResource):
 
     async def get_users(
         self,
-        user_ids: Optional[int | str | list[int | str]] = None,
+        user_ids: int | str | list[int | str] | None = None,
         limit: int = 50,
         user_kind: UserKind = UserKind.ALL,
         newest_first: bool = False,

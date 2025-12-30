@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Optional, Union
+from typing import Any
 
 from monday_async.graphql.mutations import (
     archive_group_mutation,
@@ -24,14 +24,12 @@ from monday_async.graphql.mutations import (
 )
 from monday_async.graphql.queries import get_groups_by_board_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import GroupAttributes, GroupColors, GroupUpdateColors, PositionRelative
-
-ID = Union[int, str]
+from monday_async.types import ID, GroupAttributes, GroupColors, GroupUpdateColors, PositionRelative
 
 
 class GroupResource(AsyncBaseResource):
     async def get_groups_by_board(
-        self, board_id: ID, ids: Optional[str | list[str]] = None, with_complexity: bool = False
+        self, board_id: ID, ids: str | list[str] | None = None, with_complexity: bool = False
     ) -> dict:
         """
         Execute a query to retrieve groups associated with a specific board, with the option to filter by group IDs.

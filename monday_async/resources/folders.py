@@ -13,14 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union
 
 from monday_async.graphql.mutations import create_folder_mutation, delete_folder_mutation, update_folder_mutation
 from monday_async.graphql.queries import get_folders_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import FolderColor
-
-ID = Union[int, str]
+from monday_async.types import ID, FolderColor
 
 
 class FolderResource(AsyncBaseResource):

@@ -18,9 +18,8 @@ These are the enum values from the monday.com API documentation.
 """
 
 from enum import Enum
-from typing import Union
 
-ID = Union[int, str]
+ID = int | str
 
 
 class WebhookEventType(Enum):

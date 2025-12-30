@@ -14,8 +14,6 @@
 # limitations under the License.
 
 
-from typing import Optional
-
 from monday_async.graphql.mutations import (
     add_users_to_team_mutation,
     assign_team_owners_mutation,
@@ -31,7 +29,7 @@ from monday_async.types import ID
 
 class TeamsResource(AsyncBaseResource):
     async def get_teams(
-        self, team_ids: Optional[int | str | list[int | str]] = None, with_complexity: bool = False
+        self, team_ids: int | str | list[int | str] | None = None, with_complexity: bool = False
     ) -> dict:
         """
         Get all teams or get teams by ids if provided. For more information, visit

@@ -14,8 +14,6 @@
 # limitations under the License.
 
 
-from typing import Optional
-
 from aiohttp import ClientSession
 
 from monday_async import __version__
@@ -66,7 +64,7 @@ class AsyncMondayClient:
         self,
         token: str,
         session: ClientSession | None = None,
-        headers: Optional[dict] = None,
+        headers: dict | None = None,
         api_version: str = _DEFAULT_API_VERSION,
     ):
         """

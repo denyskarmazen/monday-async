@@ -13,13 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union
 
 from monday_async.graphql.mutations import create_or_get_tag_mutation
 from monday_async.graphql.queries import get_tags_by_board_query, get_tags_query
 from monday_async.resources.base_resource import AsyncBaseResource
-
-ID = Union[int, str]
+from monday_async.types import ID
 
 
 class TagResource(AsyncBaseResource):

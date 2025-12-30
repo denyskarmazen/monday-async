@@ -14,16 +14,12 @@
 # limitations under the License.
 
 
-from typing import Optional
-
 from monday_async.core.helpers import format_param_value, graphql_parse
 from monday_async.graphql.addons import add_complexity
 from monday_async.types import ID
 
 
-def get_groups_by_board_query(
-    board_id: ID, ids: Optional[str | list[str]] = None, with_complexity: bool = False
-) -> str:
+def get_groups_by_board_query(board_id: ID, ids: str | list[str] | None = None, with_complexity: bool = False) -> str:
     """
     This query retrieves groups associated with a specific board, with the option to filter by group IDs.
     For more information, visit https://developer.monday.com/api-reference/reference/groups#queries

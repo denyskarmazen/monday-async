@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union
 
 from monday_async.graphql.mutations import (
     add_file_to_update_mutation,
@@ -27,9 +26,7 @@ from monday_async.graphql.mutations import (
 )
 from monday_async.graphql.queries import get_updates_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types.args import MentionInput
-
-ID = Union[int, str]
+from monday_async.types import ID, MentionInput
 
 
 class UpdateResource(AsyncBaseResource):

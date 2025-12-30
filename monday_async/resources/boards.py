@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional, Union
 
 from monday_async.graphql.mutations import (
     add_teams_to_board_mutation,
@@ -28,9 +27,7 @@ from monday_async.graphql.mutations import (
 )
 from monday_async.graphql.queries import get_board_views_query, get_boards_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import BoardAttributes, BoardKind, BoardsOrderBy, DuplicateBoardType, State, SubscriberKind
-
-ID = Union[int, str]
+from monday_async.types import ID, BoardAttributes, BoardKind, BoardsOrderBy, DuplicateBoardType, State, SubscriberKind
 
 
 class BoardResource(AsyncBaseResource):
@@ -87,10 +84,10 @@ class BoardResource(AsyncBaseResource):
         folder_id: ID | None = None,
         workspace_id: ID | None = None,
         template_id: ID | None = None,
-        board_owner_ids: Optional[list[ID]] = None,
-        board_owner_team_ids: Optional[list[ID]] = None,
-        board_subscriber_ids: Optional[list[ID]] = None,
-        board_subscriber_teams_ids: Optional[list[ID]] = None,
+        board_owner_ids: list[ID] | None = None,
+        board_owner_team_ids: list[ID] | None = None,
+        board_subscriber_ids: list[ID] | None = None,
+        board_subscriber_teams_ids: list[ID] | None = None,
         empty: bool = False,
         with_columns: bool = False,
         with_groups: bool = False,

@@ -14,8 +14,6 @@
 # limitations under the License.
 
 
-from typing import Optional
-
 from monday_async.core.helpers import format_dict_value, format_param_value, graphql_parse
 from monday_async.graphql.addons import add_column_values, add_complexity, add_subitems, add_updates
 from monday_async.types import ID, ItemByColumnValuesParam, QueryParams
@@ -91,7 +89,7 @@ def get_items_by_board_query(
     board_ids: ID | list[ID],
     query_params: QueryParams | None = None,
     limit: int = 25,
-    cursor: Optional[str] = None,
+    cursor: str | None = None,
     with_complexity: bool = False,
     with_column_values: bool = True,
     with_subitems: bool = False,
@@ -169,7 +167,7 @@ def get_items_by_group_query(
     group_id: ID,
     query_params: QueryParams | None = None,
     limit: int = 25,
-    cursor: Optional[str] = None,
+    cursor: str | None = None,
     with_complexity: bool = False,
     with_column_values: bool = True,
     with_subitems: bool = False,
@@ -248,7 +246,7 @@ def get_items_by_column_value_query(
     column_id: str,
     column_values: str | list[str],
     limit: int = 25,
-    cursor: Optional[str] = None,
+    cursor: str | None = None,
     with_complexity: bool = False,
     with_column_values: bool = True,
     with_subitems: bool = False,
@@ -322,7 +320,7 @@ def get_items_by_multiple_column_values_query(
     board_id: ID,
     columns: ItemByColumnValuesParam | dict | list[dict],
     limit: int = 25,
-    cursor: Optional[str] = None,
+    cursor: str | None = None,
     with_complexity: bool = False,
     with_column_values: bool = True,
     with_subitems: bool = False,

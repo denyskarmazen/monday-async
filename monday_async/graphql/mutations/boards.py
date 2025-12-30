@@ -14,8 +14,6 @@
 # limitations under the License.
 
 
-from typing import Optional
-
 from monday_async.core.helpers import format_param_value, graphql_parse
 from monday_async.graphql.addons import add_columns, add_complexity, add_groups
 from monday_async.types import ID, BoardAttributes, BoardKind, DuplicateBoardType, SubscriberKind
@@ -28,10 +26,10 @@ def create_board_mutation(
     folder_id: ID | None = None,
     workspace_id: ID | None = None,
     template_id: ID | None = None,
-    board_owner_ids: Optional[list[ID]] = None,
-    board_owner_team_ids: Optional[list[ID]] = None,
-    board_subscriber_ids: Optional[list[ID]] = None,
-    board_subscriber_teams_ids: Optional[list[ID]] = None,
+    board_owner_ids: list[ID] | None = None,
+    board_owner_team_ids: list[ID] | None = None,
+    board_subscriber_ids: list[ID] | None = None,
+    board_subscriber_teams_ids: list[ID] | None = None,
     empty: bool = False,
     with_columns: bool = False,
     with_groups: bool = False,

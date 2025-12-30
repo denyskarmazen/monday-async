@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional, Union
 
 from monday_async.graphql.mutations import (
     archive_item_mutation,
@@ -40,9 +39,7 @@ from monday_async.graphql.queries import (
     next_items_page_query,
 )
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import ColumnsMappingInput, ItemByColumnValuesParam, QueryParams
-
-ID = Union[int, str]
+from monday_async.types import ID, ColumnsMappingInput, ItemByColumnValuesParam, QueryParams
 
 
 class ItemResource(AsyncBaseResource):
@@ -94,7 +91,7 @@ class ItemResource(AsyncBaseResource):
         board_ids: ID | list[ID],
         query_params: QueryParams | None = None,
         limit: int = 25,
-        cursor: Optional[str] = None,
+        cursor: str | None = None,
         with_complexity: bool = False,
         with_column_values: bool = True,
         with_subitems: bool = False,
@@ -140,7 +137,7 @@ class ItemResource(AsyncBaseResource):
         group_id: ID,
         query_params: QueryParams | None = None,
         limit: int = 25,
-        cursor: Optional[str] = None,
+        cursor: str | None = None,
         with_complexity: bool = False,
         with_column_values: bool = True,
         with_subitems: bool = False,
@@ -188,7 +185,7 @@ class ItemResource(AsyncBaseResource):
         column_id: str,
         column_values: str | list[str],
         limit: int = 25,
-        cursor: Optional[str] = None,
+        cursor: str | None = None,
         with_complexity: bool = False,
         with_column_values: bool = True,
         with_subitems: bool = False,
@@ -232,7 +229,7 @@ class ItemResource(AsyncBaseResource):
         board_id: ID,
         columns: ItemByColumnValuesParam | dict | list[dict],
         limit: int = 25,
-        cursor: Optional[str] = None,
+        cursor: str | None = None,
         with_complexity: bool = False,
         with_column_values: bool = True,
         with_subitems: bool = False,
@@ -609,7 +606,7 @@ class ItemResource(AsyncBaseResource):
         self,
         item_id: ID,
         board_id: ID,
-        group_id: Optional[str] = None,
+        group_id: str | None = None,
         columns_mapping: ColumnsMappingInput | list[dict] = None,
         subitems_columns_mapping: ColumnsMappingInput | list[dict] = None,
         with_complexity: bool = False,
