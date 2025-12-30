@@ -6,6 +6,7 @@ test.py
 .tox/
 monday_async.egg-info/
 dist/
+CLAUDE.md
 
 # Python cache
 __pycache__/
