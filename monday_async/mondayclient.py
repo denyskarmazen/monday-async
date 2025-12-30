@@ -75,8 +75,7 @@ class AsyncMondayClient:
             session (ClientSession): Optional, externally managed aiohttp session. Recommended to use the same session
                 for all the requests.
             headers (dict): Additional headers to send with each request.
-            api_version (str): monday.com API version to use. Defaults to "2025-01".
-                Available versions: "2025-01", "2025-04", "2025-07", "2025-10", "2026-01"
+            api_version (str): monday.com API version to use. Defaults to "2025-04"
         """
         self._session = session
         self._external_session = True if session else False

@@ -17,6 +17,7 @@
 from monday_async.core.helpers import format_param_value, graphql_parse
 from monday_async.graphql.addons import add_complexity
 from monday_async.types import ID, BaseRoleName, Product
+from monday_async.types.args import UserAttributesInput
 
 
 def update_users_role_mutation(
@@ -124,9 +125,7 @@ def activate_users_mutation(user_ids: ID | list[ID], with_complexity: bool = Fal
     return graphql_parse(mutation)
 
 
-def update_users_email_domain_mutation(
-    new_domain: str, user_ids: ID | list[ID], with_complexity: bool = False
-) -> str:
+def update_users_email_domain_mutation(new_domain: str, user_ids: ID | list[ID], with_complexity: bool = False) -> str:
     """
     Construct a mutation to update a user's email domain. For more information, visit
     https://developer.monday.com/api-reference/reference/users#update-a-users-email-domain
@@ -218,10 +217,59 @@ def invite_users_mutation(
     return graphql_parse(mutation)
 
 
+def update_multiple_users_mutation(
+    user_updates: list[tuple[ID, UserAttributesInput]],
+    with_complexity: bool = False,
+) -> str:
+    """
+    Construct a mutation to update multiple users' attributes.
+    For more information visit: https://developer.monday.com/api-reference/reference/users#update-multiple-users
+
+    Args:
+        user_updates: A list of tuples, each containing a user ID and a UserAttributesInput object
+            specifying the attributes to update. Example:
+            [(123, UserAttributesInput(name="New Name")), (456, UserAttributesInput(title="Manager"))]
+        with_complexity: Returns the complexity of the query with the query if set to True.
+
+    Returns:
+        str: The constructed GraphQL mutation.
+    """
+    # Build the user_updates array for GraphQL
+    updates_list = []
+    for user_id, attributes in user_updates:
+        updates_list.append(f"{{user_id: {format_param_value(user_id)}, user_attribute_updates: {attributes}}}")
+
+    user_updates_str = "[" + ", ".join(updates_list) + "]"
+
+    mutation = f"""
+    mutation {{{add_complexity() if with_complexity else ""}
+        update_multiple_users (
+            user_updates: {user_updates_str}
+        ) {{
+            updated_users {{
+                id
+                name
+                email
+                title
+                location
+                phone
+            }}
+            errors {{
+                message
+                code
+                user_id
+            }}
+        }}
+    }}
+    """
+    return graphql_parse(mutation)
+
+
 __all__ = [
     "activate_users_mutation",
     "deactivate_users_mutation",
     "invite_users_mutation",
+    "update_multiple_users_mutation",
     "update_users_email_domain_mutation",
     "update_users_role_mutation",
 ]

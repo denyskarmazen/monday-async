@@ -20,12 +20,14 @@ from monday_async.graphql.mutations import (
     activate_users_mutation,
     deactivate_users_mutation,
     invite_users_mutation,
+    update_multiple_users_mutation,
     update_users_email_domain_mutation,
     update_users_role_mutation,
 )
 from monday_async.graphql.queries import get_me_query, get_users_by_email_query, get_users_query
 from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.types import ID, BaseRoleName, Product, UserKind
+from monday_async.types.args import UserAttributesInput
 
 
 class UsersResource(AsyncBaseResource):
@@ -199,4 +201,25 @@ class UsersResource(AsyncBaseResource):
         mutation = invite_users_mutation(
             emails=emails, product=product, user_role=user_role, with_complexity=with_complexity
         )
+        return await self.client.execute(mutation)
+
+    async def update_multiple_users(
+        self,
+        user_updates: list[tuple[ID, UserAttributesInput]],
+        with_complexity: bool = False,
+    ) -> dict:
+        """
+        Update multiple users' attributes. For more information, visit
+        https://developer.monday.com/api-reference/reference/users#update-multiple-users
+
+        Args:
+            user_updates (List[Tuple[ID, UserAttributesInput]]): A list of tuples, each containing a user ID
+                and a UserAttributesInput object specifying the attributes to update.
+                Example: [(123, UserAttributesInput(name="New Name")), (456, UserAttributesInput(title="Manager"))]
+            with_complexity (bool): Returns the complexity of the query with the query if set to True.
+
+        Returns:
+            dict: The response from the API containing updated_users and any errors.
+        """
+        mutation = update_multiple_users_mutation(user_updates=user_updates, with_complexity=with_complexity)
         return await self.client.execute(mutation)

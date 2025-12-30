@@ -17,10 +17,14 @@
 These are the types that are used as arguments for queries
 """
 
+import re
 from typing import Any
 
-from monday_async.types.enum_values import ID, ItemsQueryOperator, ItemsQueryRuleOperator
 from monday_async.core.helpers import format_dict_value, format_param_value
+from monday_async.types.enum_values import ID, ItemsQueryOperator, ItemsQueryRuleOperator
+
+# Date format pattern for YYYY-MM-DD validation
+_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 class Arg:
@@ -143,4 +147,84 @@ class ColumnsMappingInput(Arg):
         return f"ColumnsMappingInput(mappings={self.value})"
 
 
-__all__ = ["ColumnsMappingInput", "ItemByColumnValuesParam", "QueryParams"]
+class UserAttributesInput(Arg):
+    """
+    Input type for the update_multiple_users mutation.
+
+    This class represents the user attributes that can be updated via the API.
+    All fields are optional - only specify the fields you want to update.
+
+    For more information visit:
+    https://developer.monday.com/api-reference/reference/users#update-multiple-users
+
+    Args:
+        birthday: The user's birthday in YYYY-MM-DD format.
+        department: The user's department.
+        email: The user's email address.
+        join_date: The user's join date in YYYY-MM-DD format.
+        location: The user's location.
+        mobile_phone: The user's mobile phone number.
+        name: The user's name.
+        phone: The user's phone number.
+        title: The user's title.
+
+    Raises:
+        ValueError: If birthday or join_date is not in YYYY-MM-DD format.
+    """
+
+    def __init__(
+        self,
+        birthday: str | None = None,
+        department: str | None = None,
+        email: str | None = None,
+        join_date: str | None = None,
+        location: str | None = None,
+        mobile_phone: str | None = None,
+        name: str | None = None,
+        phone: str | None = None,
+        title: str | None = None,
+    ):
+        # Validate date formats
+        if birthday is not None and not _DATE_PATTERN.match(birthday):
+            raise ValueError(f"birthday must be in YYYY-MM-DD format, got: {birthday}")
+        if join_date is not None and not _DATE_PATTERN.match(join_date):
+            raise ValueError(f"join_date must be in YYYY-MM-DD format, got: {join_date}")
+
+        self.birthday = birthday
+        self.department = department
+        self.email = email
+        self.join_date = join_date
+        self.location = location
+        self.mobile_phone = mobile_phone
+        self.name = name
+        self.phone = phone
+        self.title = title
+
+    def __str__(self):
+        return self.format_value()
+
+    def format_value(self) -> str:
+        """Formats the input as a GraphQL object string."""
+        items = []
+        if self.birthday is not None:
+            items.append(f"birthday: {format_param_value(self.birthday)}")
+        if self.department is not None:
+            items.append(f"department: {format_param_value(self.department)}")
+        if self.email is not None:
+            items.append(f"email: {format_param_value(self.email)}")
+        if self.join_date is not None:
+            items.append(f"join_date: {format_param_value(self.join_date)}")
+        if self.location is not None:
+            items.append(f"location: {format_param_value(self.location)}")
+        if self.mobile_phone is not None:
+            items.append(f"mobile_phone: {format_param_value(self.mobile_phone)}")
+        if self.name is not None:
+            items.append(f"name: {format_param_value(self.name)}")
+        if self.phone is not None:
+            items.append(f"phone: {format_param_value(self.phone)}")
+        if self.title is not None:
+            items.append(f"title: {format_param_value(self.title)}")
+        return "{" + ", ".join(items) + "}"
+
+
+__all__ = ["ColumnsMappingInput", "ItemByColumnValuesParam", "QueryParams", "UserAttributesInput"]
