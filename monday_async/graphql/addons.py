@@ -195,4 +195,41 @@ def add_updates(
     return updates
 
 
-__all__ = ["add_column_values", "add_columns", "add_complexity", "add_groups", "add_subitems", "add_updates"]
+def add_custom_field_metas() -> str:
+    """This can be added to any users query to return custom field metadata with it"""
+    custom_field_metas = """
+    custom_field_metas {
+        description
+        editable
+        field_type
+        flagged
+        icon
+        id
+        position
+        title
+    }
+    """
+    return custom_field_metas
+
+
+def add_custom_field_values() -> str:
+    """This can be added to any users query to return custom field values with it"""
+    custom_field_values = """
+    custom_field_values {
+        custom_field_meta_id
+        value
+    }
+    """
+    return custom_field_values
+
+
+__all__ = [
+    "add_column_values",
+    "add_columns",
+    "add_complexity",
+    "add_custom_field_metas",
+    "add_custom_field_values",
+    "add_groups",
+    "add_subitems",
+    "add_updates",
+]

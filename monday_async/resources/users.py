@@ -31,18 +31,19 @@ from monday_async.types.args import UserAttributesInput
 
 
 class UsersResource(AsyncBaseResource):
-    async def get_me(self, with_complexity: bool = False) -> dict:
+    async def get_me(self, with_complexity: bool = False, with_custom_fields: bool = False) -> dict:
         """
         Get information about the user whose API key is being used. For more information, visit
         https://developer.monday.com/api-reference/reference/me#queries
 
         Args:
-            with_complexity: Returns the complexity of the query with the query if set to True.
+            with_complexity (bool): Returns the complexity of the query with the query if set to True.
+            with_custom_fields (bool): Returns custom field metadata and values with the query if set to True.
 
         Returns:
             dict: The response from the API.
         """
-        query = get_me_query(with_complexity=with_complexity)
+        query = get_me_query(with_complexity=with_complexity, with_custom_fields=with_custom_fields)
         return await self.client.execute(query)
 
     async def get_users(
@@ -53,6 +54,7 @@ class UsersResource(AsyncBaseResource):
         newest_first: bool = False,
         page: int = 1,
         with_complexity: bool = False,
+        with_custom_fields: bool = False,
     ) -> dict:
         """
         Get all users or get users by ids if provided. For more information, visit
@@ -66,6 +68,7 @@ class UsersResource(AsyncBaseResource):
             newest_first (bool): Lists the most recently created users at the top.
             page (int): The page number to return. Starts at 1.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
+            with_custom_fields (bool): Returns custom field metadata and values with the query if set to True.
 
         Returns:
             dict: The response from the API.
@@ -77,6 +80,7 @@ class UsersResource(AsyncBaseResource):
             newest_first=newest_first,
             page=page,
             with_complexity=with_complexity,
+            with_custom_fields=with_custom_fields,
         )
         return await self.client.execute(query)
 
@@ -86,6 +90,7 @@ class UsersResource(AsyncBaseResource):
         user_kind: UserKind | None = UserKind.ALL,
         newest_first: bool = False,
         with_complexity: bool = False,
+        with_custom_fields: bool = False,
     ) -> dict:
         """
         Get users by emails. For more information, visit
@@ -96,12 +101,17 @@ class UsersResource(AsyncBaseResource):
             user_kind (UserKind): The kind of users you want to search by: all, non_guests, guests, or non_pending.
             newest_first (bool): Lists the most recently created users at the top.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
+            with_custom_fields (bool): Returns custom field metadata and values with the query if set to True.
 
         Returns:
             dict: The response from the API.
         """
         query = get_users_by_email_query(
-            user_emails=user_emails, user_kind=user_kind, newest_first=newest_first, with_complexity=with_complexity
+            user_emails=user_emails,
+            user_kind=user_kind,
+            newest_first=newest_first,
+            with_complexity=with_complexity,
+            with_custom_fields=with_custom_fields,
         )
         return await self.client.execute(query)
 

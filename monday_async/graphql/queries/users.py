@@ -15,17 +15,18 @@
 
 
 from monday_async.core.helpers import format_param_value, graphql_parse
-from monday_async.graphql.addons import add_complexity
+from monday_async.graphql.addons import add_complexity, add_custom_field_metas, add_custom_field_values
 from monday_async.types import ID, UserKind
 
 
-def get_me_query(with_complexity: bool = False) -> str:
+def get_me_query(with_complexity: bool = False, with_custom_fields: bool = False) -> str:
     """
     Construct a query to get data about the user connected to the API key that is used. For more information, visit
     https://developer.monday.com/api-reference/reference/me#queries
 
     Args:
-        with_complexity (bool): returns the complexity of the query with the query if set to True.
+        with_complexity: Returns the complexity of the query with the query if set to True.
+        with_custom_fields: Returns custom field metadata and values with the query if set to True.
 
     Returns:
         str: The constructed Graph QL query.
@@ -47,6 +48,8 @@ def get_me_query(with_complexity: bool = False) -> str:
             is_guest
             is_view_only
             is_pending
+            {add_custom_field_metas() if with_custom_fields else ""}
+            {add_custom_field_values() if with_custom_fields else ""}
         }}
     }}
     """
@@ -60,18 +63,20 @@ def get_users_query(
     newest_first: bool = False,
     page: int = 1,
     with_complexity: bool = False,
+    with_custom_fields: bool = False,
 ) -> str:
     """
     Construct a query to get all users or get users by ids if provided. For more information, visit
     https://developer.monday.com/api-reference/reference/users#queries
 
     Args:
-        user_ids (Union[ID, List[ID]): A single user ID, a list of user IDs, or None to get all users.
+        user_ids (Union[ID, List[ID]]): A single user ID, a list of user IDs, or None to get all users.
         limit (int): The number of users to return, 50 by default.
         user_kind (UserKind): The kind of users you want to search by: all, non_guests, guests, or non_pending.
         newest_first (bool): Lists the most recently created users at the top.
         page (int): The page number to return. Starts at 1.
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
+        with_custom_fields (bool): Returns custom field metadata and values with the query if set to True.
 
     Returns:
         str: The constructed Graph QL query.
@@ -104,6 +109,8 @@ def get_users_query(
             is_guest
             is_view_only
             is_pending
+            {add_custom_field_metas() if with_custom_fields else ""}
+            {add_custom_field_values() if with_custom_fields else ""}
         }}
     }}
     """
@@ -115,6 +122,7 @@ def get_users_by_email_query(
     user_kind: UserKind = UserKind.ALL,
     newest_first: bool = False,
     with_complexity: bool = False,
+    with_custom_fields: bool = False,
 ) -> str:
     """
     Construct a query to get users by emails. For more information, visit
@@ -125,6 +133,7 @@ def get_users_by_email_query(
         user_kind (UserKind): The kind of users you want to search by: all, non_guests, guests, or non_pending.
         newest_first (bool): Lists the most recently created users at the top.
         with_complexity (bool): Returns the complexity of the query with the query if set to True.
+        with_custom_fields (bool): Returns custom field metadata and values with the query if set to True.
 
     Returns:
         str: The constructed Graph QL query.
@@ -158,6 +167,8 @@ def get_users_by_email_query(
             is_guest
             is_view_only
             is_pending
+            {add_custom_field_metas() if with_custom_fields else ""}
+            {add_custom_field_values() if with_custom_fields else ""}
         }}
     }}
     """
