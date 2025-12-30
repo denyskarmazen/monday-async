@@ -27,6 +27,7 @@ from monday_async.graphql.mutations import (
 )
 from monday_async.graphql.queries import get_updates_query
 from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types.args import MentionInput
 
 ID = Union[int, str]
 
@@ -64,7 +65,12 @@ class UpdateResource(AsyncBaseResource):
         return await self.client.execute(query)
 
     async def create_update(
-        self, body: str, item_id: ID, parent_id: ID | None = None, with_complexity: bool = False
+        self,
+        body: str,
+        item_id: ID,
+        parent_id: ID | None = None,
+        mentions_list: MentionInput | None = None,
+        with_complexity: bool = False,
     ) -> dict:
         """
         Execute a mutation to create a new update on a specific item or as a reply to another update.
@@ -75,10 +81,15 @@ class UpdateResource(AsyncBaseResource):
             body (str): The text content of the update as a string or in HTML format.
             item_id (ID): The ID of the item to create the update on.
             parent_id (ID): (Optional) The ID of the parent update to reply to.
+            mentions_list (MentionInput): (Optional) A list of users or teams to mention in the update.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
         mutation = create_update_mutation(
-            body=body, item_id=item_id, parent_id=parent_id, with_complexity=with_complexity
+            body=body,
+            item_id=item_id,
+            parent_id=parent_id,
+            mentions_list=mentions_list,
+            with_complexity=with_complexity,
         )
         return await self.client.execute(mutation)
 

@@ -286,6 +286,15 @@ class Product(Enum):
     WORK_MANAGEMENT = "work_management"
 
 
+class MentionType(Enum):
+    """The type of mention in an update."""
+
+    BOARD = "Board"
+    PROJECT = "Project"
+    TEAM = "Team"
+    USER = "User"
+
+
 __all__ = [
     "ID",
     "BaseRoleName",
@@ -301,6 +310,7 @@ __all__ = [
     "ItemsOrderByDirection",
     "ItemsQueryOperator",
     "ItemsQueryRuleOperator",
+    "MentionType",
     "NotificationTargetType",
     "PositionRelative",
     "Product",

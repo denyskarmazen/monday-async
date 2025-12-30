@@ -21,7 +21,7 @@ import re
 from typing import Any
 
 from monday_async.core.helpers import format_dict_value, format_param_value
-from monday_async.types.enum_values import ID, ItemsQueryOperator, ItemsQueryRuleOperator
+from monday_async.types.enum_values import ID, ItemsQueryOperator, ItemsQueryRuleOperator, MentionType
 
 # Date format pattern for YYYY-MM-DD validation
 _DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -227,4 +227,41 @@ class UserAttributesInput(Arg):
         return "{" + ", ".join(items) + "}"
 
 
-__all__ = ["ColumnsMappingInput", "ItemByColumnValuesParam", "QueryParams", "UserAttributesInput"]
+class MentionInput(Arg):
+    """
+    Input type for specifying mentions in updates.
+
+    This class represents a list of mentions to include in an update.
+    For more information visit:
+    https://developer.monday.com/api-reference/reference/updates#create-an-update
+
+    Args:
+        id (ID): The unique identifier of the board, project, team, or user to mention.
+        type (MentionType): The type of entity to mention.
+    """
+
+    def __init__(self):
+        self.mentions: list[dict] = []
+
+    def add_mention(self, id: ID, type: MentionType = MentionType.USER):
+        """
+        Adds a mention to the list.
+
+        Args:
+            id (ID): The unique identifier of the board, project, team, or user to mention.
+            type (MentionType): The type of entity to mention.
+        """
+        mention_type_value = type.value if isinstance(type, MentionType) else type
+        self.mentions.append({"id": id, "type": mention_type_value})
+
+    def __str__(self):
+        """Returns the formatted mentions list string for GraphQL queries."""
+        if not self.mentions:
+            return "[]"
+        items = []
+        for mention in self.mentions:
+            items.append(f"{{id: {format_param_value(mention['id'])}, type: {mention['type']}}}")
+        return "[" + ", ".join(items) + "]"
+
+
+__all__ = ["ColumnsMappingInput", "ItemByColumnValuesParam", "MentionInput", "QueryParams", "UserAttributesInput"]

@@ -17,9 +17,16 @@
 from monday_async.core.helpers import format_param_value, graphql_parse
 from monday_async.graphql.addons import add_complexity
 from monday_async.types import ID
+from monday_async.types.args import MentionInput
 
 
-def create_update_mutation(body: str, item_id: ID, parent_id: ID | None = None, with_complexity: bool = False) -> str:
+def create_update_mutation(
+    body: str,
+    item_id: ID,
+    parent_id: ID | None = None,
+    mentions_list: MentionInput | None = None,
+    with_complexity: bool = False,
+) -> str:
     """
     This mutation creates a new update on a specific item or as a reply to another update. For more information, visit
     https://developer.monday.com/api-reference/reference/updates#create-an-update
@@ -28,14 +35,17 @@ def create_update_mutation(body: str, item_id: ID, parent_id: ID | None = None, 
         body (str): The text content of the update as a string or in HTML format.
         item_id (ID): The ID of the item to create the update on.
         parent_id (Optional[ID]): The ID of the parent update to reply to.
+        mentions_list (Optional[MentionInput]): A list of users or teams to mention in the update.
         with_complexity (bool): Set to True to return the query's complexity along with the results.
     """
+    mentions_param = f"mentions_list: {mentions_list}," if mentions_list else ""
     mutation = f"""
     mutation {{{add_complexity() if with_complexity else ""}
         create_update (
             body: {format_param_value(body)},
             item_id: {format_param_value(item_id)},
-            parent_id: {format_param_value(parent_id)}
+            parent_id: {format_param_value(parent_id)},
+            {mentions_param}
         ) {{
             id
             body
