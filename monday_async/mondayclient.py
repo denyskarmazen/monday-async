@@ -38,7 +38,7 @@ from monday_async.resources import (
     WorkspaceResource,
 )
 
-_DEFAULT_API_VERSION = "2025-04"
+_DEFAULT_API_VERSION = "2025-07"
 
 
 class AsyncMondayClient:
@@ -75,7 +75,7 @@ class AsyncMondayClient:
             session (ClientSession): Optional, externally managed aiohttp session. Recommended to use the same session
                 for all the requests.
             headers (dict): Additional headers to send with each request.
-            api_version (str): monday.com API version to use. Defaults to "2025-04"
+            api_version (str): monday.com API version to use. Defaults to "2025-07"
         """
         self._session = session
         self._external_session = True if session else False
