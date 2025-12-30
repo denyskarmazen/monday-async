@@ -1,0 +1,46 @@
+[changelog]
+header = """
+# Changelog\n
+All notable changes to this project will be documented in this file.\n
+"""
+body = """
+{% if version %}\
+    ## [{{ version | trim_start_matches(pat="v") }}]
+{% else %}\
+    ## [Unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group }}
+    {% for commit in commits %}
+        - {{ commit.message | upper_first }} ({{ commit.id | truncate(length=7, end="") }})\
+    {% endfor %}
+{% endfor %}\n
+"""
+trim = true
+
+[git]
+conventional_commits = true
+# IMPORTANT: This filters out commits that don't follow conventional commits format
+# If set to true, commits like "update stuff" or "wip" will be skipped
+filter_unconventional = true
+split_commits = false
+commit_parsers = [
+  { message = ".*breaking.*|.*BREAKING.*|.*\\!:", group = "💥 Breaking Changes" },
+  { message = "^feat", group = "✨ New Features" },
+  { message = "^fix", group = "🐛 Bug Fixes" },
+  { message = "^perf", group = "⚡ Performance" },
+  { message = "^other", group = "📌 Other Changes" },
+  # Skip these types (they won't appear in changelog)
+  { message = "^docs?", skip = true },
+  { message = "^style", skip = true },
+  { message = "^refactor", skip = true },
+  { message = "^test", skip = true },
+  { message = "^build", skip = true },
+  { message = "^ci", skip = true },
+  { message = "^revert", skip = true },
+  { message = "^chore", skip = true},
+]
+protect_breaking_commits = true
+filter_commits = false
+tag_pattern = "v[0-9].*"
+sort_commits = "oldest"

@@ -1,5 +1,4 @@
-# monday-async &middot; [![Tests](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml/badge.svg)](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml) [![PyPI Downloads](https://static.pepy.tech/badge/monday-async)](https://pepy.tech/projects/monday-async)
-
+# monday-async &middot; [![Tests](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml/badge.svg)](https://github.com/denyskarmazen/monday-async/actions/workflows/project-tests.yml) [![PyPI Downloads](https://static.pepy.tech/badge/monday-async)](https://pepy.tech/projects/monday-async) [![Monday.com API Version](https://img.shields.io/badge/Monday_API_Version-2025--04-green)](https://developer.monday.com/api-reference/docs/release-notes#2025-04)
 An asynchronous Python client library for monday.com
 
 Check out monday.com API [here](https://developer.monday.com/api-reference/).
@@ -28,6 +27,9 @@ async def main():
 
 asyncio.run(main())
 ```
+
+### Changelog
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes.
 
 ### License
 This project is licensed under the [Apache-2.0 license](LICENSE).
