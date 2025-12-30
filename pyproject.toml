@@ -1,50 +1,104 @@
 [project]
 name = "monday-async"
 dynamic = ["version"]
-description = "An asynchronous Python client library for monday.com"
+description = "An asynchronous Python client library for monday.com GraphQL API"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-authors = [{ name = "Denys", email = "deniskarmazen@gmail.com" }]
-keywords = ["monday.com", "async", "aiohttp", "graphql", "API", "wrapper", "python-client", "monday-api-client", "library", "monday"]
+authors = [{ name = "denyskarmazen", email = "deniskarmazen@gmail.com" }]
+maintainers = [{ name = "denyskarmazen", email = "deniskarmazen@gmail.com" }]
+keywords = [
+    "monday.com",
+    "async",
+    "aiohttp",
+    "graphql",
+    "API",
+    "wrapper",
+    "python-client",
+    "monday-api-client",
+    "library",
+    "monday",
+    "asyncio",
+    "project-management"
+]
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Framework :: AsyncIO",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Internet",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Office/Business",
+    "Typing :: Typed",
 ]
 
 dependencies = [
-    "aiofiles>=23.2.1",
-    "aiohttp>=3.11.11",
-    "graphql-core~=3.2.3",
+    "aiofiles>=25.1.0",
+    "aiohttp>=3.13.2",
+    "graphql-core~=3.2.7",
 ]
 
 [project.urls]
 Homepage = "https://github.com/denyskarmazen/monday-async"
 Repository = "https://github.com/denyskarmazen/monday-async"
 Issues = "https://github.com/denyskarmazen/monday-async/issues"
+Changelog = "https://github.com/denyskarmazen/monday-async/releases"
+Source = "https://github.com/denyskarmazen/monday-async"
 
 [tool.hatch.version]
 path = "monday_async/_version.py"
 
 [dependency-groups]
 dev = [
-    "pytest>=8.3.4",
-    "pytest-asyncio>=0.25.3",
-    "python-dotenv>=1.0.1",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "pytest-cov>=7.0.0",
+    "python-dotenv>=1.2.1",
+    "ruff",
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["monday_async"]
+
+# Ruff configuration
+[tool.ruff]
+fix = true
+line-length = 120
+target-version = "py310"
+extend-exclude = [
+    "__pycache__",
+    ".git",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+    "*.egg-info",
+]
+lint.select = [
+    "E", "F", "I", "UP", "N", "B", "C4", "RUF",
+    "PLC0415"
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F403", "F405"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true

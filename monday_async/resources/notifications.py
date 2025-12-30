@@ -13,18 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union
 
+from monday_async.graphql.mutations import create_notification_mutation
 from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.types import NotificationTargetType
-from monday_async.utils.queries import create_notification_query
 
 
 class NotificationResource(AsyncBaseResource):
-    async def create_notification(self, user_id: Union[int, str], target_id: Union[int, str], text: str,
-                                  target_type: NotificationTargetType, with_complexity: bool = False) -> dict:
+    async def create_notification(
+        self,
+        user_id: int | str,
+        target_id: int | str,
+        text: str,
+        target_type: NotificationTargetType,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Create a notification. For more information, visit
+        Execute a mutation to create a notification. For more information, visit
         https://developer.monday.com/api-reference/reference/notification
 
         Args:
@@ -38,6 +43,7 @@ class NotificationResource(AsyncBaseResource):
                 - Post : sends a notification referring to a specific item's update or reply
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
-        query = create_notification_query(user_id=user_id, target_id=target_id, text=text, target_type=target_type,
-                                          with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_notification_mutation(
+            user_id=user_id, target_id=target_id, text=text, target_type=target_type, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)

@@ -13,25 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
+from typing import Union
 
-from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import WorkspaceKind, State, SubscriberKind
-from monday_async.utils.queries import (
-    get_workspaces_query, create_workspace_query, update_workspace_query,
-    delete_workspace_query, add_users_to_workspace_query, delete_users_from_workspace_query,
-    add_teams_to_workspace_query, delete_teams_from_workspace_query,
+from monday_async.graphql.mutations import (
+    add_teams_to_workspace_mutation,
+    add_users_to_workspace_mutation,
+    create_workspace_mutation,
+    delete_teams_from_workspace_mutation,
+    delete_users_from_workspace_mutation,
+    delete_workspace_mutation,
+    update_workspace_mutation,
 )
+from monday_async.graphql.queries import get_workspaces_query
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import State, SubscriberKind, WorkspaceKind
 
 ID = Union[int, str]
 
 
 class WorkspaceResource(AsyncBaseResource):
-    async def get_workspaces(self, workspace_ids: Union[ID, List[ID]] = None,
-                             limit: int = 25, page: int = 1,
-                             kind: Optional[WorkspaceKind] = None,
-                             with_complexity: bool = False,
-                             state: State = State.ACTIVE) -> dict:
+    async def get_workspaces(
+        self,
+        workspace_ids: ID | list[ID] = None,
+        limit: int = 25,
+        page: int = 1,
+        kind: WorkspaceKind | None = None,
+        with_complexity: bool = False,
+        state: State = State.ACTIVE,
+    ) -> dict:
         """
         Execute a query to retrieve workspaces, offering filtering by IDs,
          kind, state, pagination, and optional complexity.
@@ -48,14 +57,16 @@ class WorkspaceResource(AsyncBaseResource):
                 The default is active.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
-        query = get_workspaces_query(workspace_ids=workspace_ids, limit=limit, page=page, kind=kind,
-                                     with_complexity=with_complexity, state=state)
+        query = get_workspaces_query(
+            workspace_ids=workspace_ids, limit=limit, page=page, kind=kind, with_complexity=with_complexity, state=state
+        )
         return await self.client.execute(query)
 
-    async def create_workspace(self, name: str, kind: WorkspaceKind, description: Optional[str] = None,
-                               with_complexity: bool = False) -> dict:
+    async def create_workspace(
+        self, name: str, kind: WorkspaceKind, description: str | None = None, with_complexity: bool = False
+    ) -> dict:
         """
-        Execute a query to create a workspace with a specified name, kind, and optional description.
+        Execute a mutation to create a workspace with a specified name, kind, and optional description.
 
         For more information, visit https://developer.monday.com/api-reference/reference/workspaces#create-a-workspace
 
@@ -65,16 +76,21 @@ class WorkspaceResource(AsyncBaseResource):
             description (Optional[str]): The new workspace description.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
-        query = create_workspace_query(name=name, kind=kind, description=description, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_workspace_mutation(
+            name=name, kind=kind, description=description, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)
 
-    async def update_workspace(self, workspace_id: ID,
-                               name: Optional[str] = None,
-                               kind: Optional[WorkspaceKind] = None,
-                               description: Optional[str] = None,
-                               with_complexity: bool = False) -> dict:
+    async def update_workspace(
+        self,
+        workspace_id: ID,
+        name: str | None = None,
+        kind: WorkspaceKind | None = None,
+        description: str | None = None,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to update a workspace's name, kind, or description.
+        Execute a mutation to update a workspace's name, kind, or description.
 
         For more information, visit https://developer.monday.com/api-reference/reference/workspaces#update-a-workspace
 
@@ -85,14 +101,14 @@ class WorkspaceResource(AsyncBaseResource):
             description (Optional[str]): The updated workspace description.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
-        query = update_workspace_query(workspace_id=workspace_id, name=name, kind=kind, description=description,
-                                       with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = update_workspace_mutation(
+            workspace_id=workspace_id, name=name, kind=kind, description=description, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)
 
-    async def delete_workspace(self, workspace_id: Union[int, str],
-                               with_complexity: bool = False) -> dict:
+    async def delete_workspace(self, workspace_id: int | str, with_complexity: bool = False) -> dict:
         """
-        Executes a query to delete a workspace.
+        Execute a mutation to delete a workspace.
 
         For more information, visit https://developer.monday.com/api-reference/reference/workspaces#delete-a-workspace
 
@@ -100,13 +116,14 @@ class WorkspaceResource(AsyncBaseResource):
             workspace_id (Union[int, str]): The unique identifier of the workspace to delete.
             with_complexity (bool): Returns the complexity of the query with the query if set to True.
         """
-        query = delete_workspace_query(workspace_id=workspace_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_workspace_mutation(workspace_id=workspace_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def add_users_to_workspace(self, workspace_id: ID, user_ids: Union[ID, List[ID]],
-                                     kind: SubscriberKind, with_complexity: bool = False) -> dict:
+    async def add_users_to_workspace(
+        self, workspace_id: ID, user_ids: ID | list[ID], kind: SubscriberKind, with_complexity: bool = False
+    ) -> dict:
         """
-        Execute a query to add users as subscribers or owners to a specific workspace.
+        Execute a mutation to add users as subscribers or owners to a specific workspace.
 
         For more information, visit
         https://developer.monday.com/api-reference/reference/workspaces#add-users-to-a-workspace
@@ -117,13 +134,14 @@ class WorkspaceResource(AsyncBaseResource):
             kind (SubscriberKind): The type of subscription to grant: subscriber or owner.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = add_users_to_workspace_query(workspace_id, user_ids, kind, with_complexity)
-        return await self.client.execute(query)
+        mutation = add_users_to_workspace_mutation(workspace_id, user_ids, kind, with_complexity)
+        return await self.client.execute(mutation)
 
-    async def delete_users_from_workspace(self, workspace_id: ID, user_ids: Union[ID, List[ID]],
-                                          with_complexity: bool = False) -> dict:
+    async def delete_users_from_workspace(
+        self, workspace_id: ID, user_ids: ID | list[ID], with_complexity: bool = False
+    ) -> dict:
         """
-        Execute a query to remove users from a specific workspace.
+        Execute a mutation to remove users from a specific workspace.
 
         For more information, visit
         https://developer.monday.com/api-reference/reference/workspaces#delete-users-from-a-workspace
@@ -133,14 +151,16 @@ class WorkspaceResource(AsyncBaseResource):
             user_ids (Union[ID, List[ID]]): A single user ID or a list of user IDs to remove from the workspace.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = delete_users_from_workspace_query(workspace_id=workspace_id, user_ids=user_ids,
-                                                  with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_users_from_workspace_mutation(
+            workspace_id=workspace_id, user_ids=user_ids, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)
 
-    async def add_teams_to_workspace(self, workspace_id: ID, team_ids: Union[ID, List[ID]],
-                                     kind: SubscriberKind, with_complexity: bool = False) -> dict:
+    async def add_teams_to_workspace(
+        self, workspace_id: ID, team_ids: ID | list[ID], kind: SubscriberKind, with_complexity: bool = False
+    ) -> dict:
         """
-        Execute a query to add teams as subscribers or owners to a specific workspace.
+        Execute a mutation to add teams as subscribers or owners to a specific workspace.
 
         For more information, visit
         https://developer.monday.com/api-reference/reference/workspaces#add-teams-to-a-workspace
@@ -151,14 +171,16 @@ class WorkspaceResource(AsyncBaseResource):
             kind (SubscriberKind): The type of subscription to grant: subscriber or owner.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = add_teams_to_workspace_query(workspace_id=workspace_id, team_ids=team_ids, kind=kind,
-                                             with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = add_teams_to_workspace_mutation(
+            workspace_id=workspace_id, team_ids=team_ids, kind=kind, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)
 
-    async def delete_teams_from_workspace(self, workspace_id: ID, team_ids: Union[ID, List[ID]],
-                                          with_complexity: bool = False) -> dict:
+    async def delete_teams_from_workspace(
+        self, workspace_id: ID, team_ids: ID | list[ID], with_complexity: bool = False
+    ) -> dict:
         """
-        Executes a query to remove teams from a specific workspace.
+        Execute a mutation to remove teams from a specific workspace.
 
         For more information, visit
         https://developer.monday.com/api-reference/reference/workspaces#delete-teams-from-a-workspace
@@ -168,6 +190,7 @@ class WorkspaceResource(AsyncBaseResource):
             team_ids (Union[ID, List[ID]]): A single team ID or a list of team IDs to remove from the workspace.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = delete_teams_from_workspace_query(workspace_id=workspace_id, team_ids=team_ids,
-                                                  with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_teams_from_workspace_mutation(
+            workspace_id=workspace_id, team_ids=team_ids, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)

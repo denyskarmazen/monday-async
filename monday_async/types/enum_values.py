@@ -54,9 +54,10 @@ class NotificationTargetType(Enum):
 
 class BaseRoleName(Enum):
     """The base role name."""
+
     ADMIN = "ADMIN"
     MEMBER = "MEMBER"
-    VIEWER = "VIEWER"
+    VIEWER = "VIEW_ONLY"
     GUEST = "GUEST"
 
 
@@ -74,6 +75,7 @@ class WorkspaceKind(Enum):
 
 class State(Enum):
     """The state of an item, board or workspace."""
+
     ALL = "all"
     ACTIVE = "active"
     ARCHIVED = "archived"
@@ -112,6 +114,7 @@ class BoardKind(Enum):
 
 class BoardAttributes(Enum):
     """Used in the update_board mutation to specify the attributes to update."""
+
     NAME = "name"
     DESCRIPTION = "description"
     COMMUNICATION = "communication"
@@ -119,6 +122,7 @@ class BoardAttributes(Enum):
 
 class DuplicateBoardType(Enum):
     """The duplication type."""
+
     WITH_STRUCTURE = "duplicate_board_with_structure"
     WITH_PULSES = "duplicate_board_with_pulses"
     WITH_PULSES_AND_UPDATES = "duplicate_board_with_pulses_and_updates"
@@ -127,6 +131,7 @@ class DuplicateBoardType(Enum):
 class PositionRelative(Enum):
     """You can use this argument to specify if you want to create the new group above or under
     the group specified in the relative_to argument."""
+
     BEFORE_AT = "before_at"
     AFTER_AT = "after_at"
 
@@ -172,6 +177,7 @@ class ColumnType(Enum):
 
 class GroupAttributes(Enum):
     """Used in the update_group mutation to specify the attributes to update."""
+
     TITLE = "title"
     COLOR = "color"
     POSITION = "position"
@@ -181,6 +187,7 @@ class GroupAttributes(Enum):
 
 class GroupUpdateColors(Enum):
     """The colors available for groups when updating them."""
+
     DARK_GREEN = "dark-green"
     ORANGE = "orange"
     BLUE = "blue"
@@ -203,6 +210,7 @@ class GroupUpdateColors(Enum):
 
 class GroupColors(Enum):
     """The colors available for groups when creating them."""
+
     DARK_GREEN = "#037f4c"
     ORANGE = "#fdab3d"
     BLUE = "#579bfc"
@@ -225,24 +233,28 @@ class GroupColors(Enum):
 
 class BoardsOrderBy(Enum):
     """The order in which to retrieve your boards."""
+
     CREATED_AT = "created_at"
     USED_AT = "used_at"
 
 
 class ItemsQueryOperator(Enum):
     """The conditions between query rules. The default is and."""
+
     AND = "and"
     OR = "or"
 
 
 class ItemsOrderByDirection(Enum):
     """The attributes to sort results by."""
+
     ASCENDING = "asc"
     DESCENDING = "desc"
 
 
 class ItemsQueryRuleOperator(Enum):
     """The rules to filter your queries."""
+
     ANY_OF = "any_of"
     NOT_ANY_OF = "not_any_of"
     IS_EMPTY = "is_empty"
@@ -261,9 +273,40 @@ class ItemsQueryRuleOperator(Enum):
     WITHIN_THE_LAST = "within_the_last"
 
 
+class Product(Enum):
+    """The product to invite the user to."""
+
+    CRM = "crm"
+    DEV = "dev"
+    FORMS = "forms"
+    KNOWLEDGE = "knowledge"
+    SERVICE = "service"
+    WHITEBOARD = "whiteboard"
+    WORKFLOWS = "workflows"
+    WORK_MANAGEMENT = "work_management"
+
+
 __all__ = [
-    "WebhookEventType", "NotificationTargetType", "UserKind", "WorkspaceKind", "State", "SubscriberKind", "FolderColor",
-    "BoardKind", "BoardAttributes", "DuplicateBoardType", "PositionRelative", "ColumnType", "GroupAttributes",
-    "GroupUpdateColors", "GroupColors", "BoardsOrderBy", "ItemsQueryOperator", "ItemsOrderByDirection",
-    "ItemsQueryRuleOperator", "ID", "BaseRoleName"
+    "ID",
+    "BaseRoleName",
+    "BoardAttributes",
+    "BoardKind",
+    "BoardsOrderBy",
+    "ColumnType",
+    "DuplicateBoardType",
+    "FolderColor",
+    "GroupAttributes",
+    "GroupColors",
+    "GroupUpdateColors",
+    "ItemsOrderByDirection",
+    "ItemsQueryOperator",
+    "ItemsQueryRuleOperator",
+    "NotificationTargetType",
+    "PositionRelative",
+    "Product",
+    "State",
+    "SubscriberKind",
+    "UserKind",
+    "WebhookEventType",
+    "WorkspaceKind",
 ]

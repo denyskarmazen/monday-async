@@ -13,5 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from monday_async._version import __version__
-from monday_async.mondayclient import AsyncMondayClient
+from monday_async._version import __version__ as __version__
+from monday_async.mondayclient import AsyncMondayClient as AsyncMondayClient

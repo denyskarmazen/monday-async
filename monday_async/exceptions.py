@@ -12,8 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from typing import Dict, List, Union
+from typing import Optional
 
 
 class MondayAPIError(Exception):
@@ -21,15 +20,23 @@ class MondayAPIError(Exception):
     Base class for all errors returned by monday.com API.
     """
 
-    def __init__(self, message: str, error_code: str = None, status_code: int = None, error_data: dict = None,
-                 extensions: dict = None, path: dict = None, partial_data: dict = None):
+    def __init__(
+        self,
+        message: str,
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
         super().__init__(message)
         self.error_code: str = error_code
         self.status_code: int = status_code
         self.error_data: dict = error_data if error_data is not None else {}
         self.extensions: dict = extensions if extensions is not None else {}
         self.path: dict = path if path is not None else {}
-        self.partial_data: Union[Dict, List] = partial_data if partial_data is not None else []
+        self.partial_data: dict | list = partial_data if partial_data is not None else []
 
 
 class GraphQLValidationError(MondayAPIError):
@@ -39,10 +46,17 @@ class GraphQLValidationError(MondayAPIError):
     To resolve, ensure your query is properly formatted and does not contain any syntax errors.
     """
 
-    def __init__(self, message="GraphQL query is invalid", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="GraphQL query is invalid",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class InternalServerError(MondayAPIError):
@@ -52,10 +66,17 @@ class InternalServerError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#internal-server-error
     """
 
-    def __init__(self, message: str = "Internal server error occurred", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message: str = "Internal server error occurred",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class APITemporarilyBlockedError(MondayAPIError):
@@ -65,10 +86,17 @@ class APITemporarilyBlockedError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#api-temporarily-blocked
     """
 
-    def __init__(self, message: str = "API temporarily blocked", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message: str = "API temporarily blocked",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class DailyLimitExceededError(MondayAPIError):
@@ -79,10 +107,17 @@ class DailyLimitExceededError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/rate-limits#daily-call-limit
     """
 
-    def __init__(self, message: str = "Daily limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message: str = "Daily limit exceeded",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class ConcurrencyLimitExceededError(MondayAPIError):
@@ -93,10 +128,17 @@ class ConcurrencyLimitExceededError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#concurrency-limit-exceeded
     """
 
-    def __init__(self, message: str = "Concurrency limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message: str = "Concurrency limit exceeded",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class DepthLimitExceededError(MondayAPIError):
@@ -106,10 +148,17 @@ class DepthLimitExceededError(MondayAPIError):
     To resolve, reduce the depth of your queries.
     """
 
-    def __init__(self, message="Depth limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Depth limit exceeded",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class FieldLimitExceededError(MondayAPIError):
@@ -118,10 +167,17 @@ class FieldLimitExceededError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#field-limit-exceeded
     """
 
-    def __init__(self, message="Field limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Field limit exceeded",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class RateLimitExceededError(MondayAPIError):
@@ -132,10 +188,17 @@ class RateLimitExceededError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#rate-limit-exceeded
     """
 
-    def __init__(self, message="Rate limit exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Rate limit exceeded",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class IpRestrictedError(MondayAPIError):
@@ -146,10 +209,17 @@ class IpRestrictedError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#your-ip-is-restricted
     """
 
-    def __init__(self, message="Your IP is restricted", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Your IP is restricted",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class UnauthorizedError(MondayAPIError):
@@ -160,10 +230,17 @@ class UnauthorizedError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#unauthorized
     """
 
-    def __init__(self, message="Unauthorized access", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Unauthorized access",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class BadRequestError(MondayAPIError):
@@ -175,10 +252,17 @@ class BadRequestError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#bad-request
     """
 
-    def __init__(self, message="Bad request", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Bad request",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class MissingRequiredPermissionsError(MondayAPIError):
@@ -189,10 +273,17 @@ class MissingRequiredPermissionsError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#missing-required-permissions
     """
 
-    def __init__(self, message="Missing required permissions", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Missing required permissions",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class ParseError(MondayAPIError):
@@ -203,24 +294,38 @@ class ParseError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#parse-error-on
     """
 
-    def __init__(self, message="Parse error in the query", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Parse error in the query",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class ColumnValueError(MondayAPIError):
     """
     Raised when there is an error with the column value formatting (HTTP 200).
     This indicates that the column value you are attempting to send in your query is of the incorrect formatting.
-    To resolve, ensure the value conforms with each column’s data structure.
+    To resolve, ensure the value conforms with each column's data structure.
     For more information, visit https://developer.monday.com/api-reference/docs/errors#columnvalueexception
     """
 
-    def __init__(self, message="Column value formatting error", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Column value formatting error",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class ComplexityError(MondayAPIError):
@@ -235,14 +340,21 @@ class ComplexityError(MondayAPIError):
         reset_in (int or None): The time in seconds until the budget resets.
     """
 
-    def __init__(self, message="Complexity budget exhausted", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
+    def __init__(
+        self,
+        message="Complexity budget exhausted",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
         self.reset_in = extensions.get("retry_in_seconds") if extensions else None
         self.remaining_complexity = extensions.get("complexity_budget_left") if extensions else None
         self.complexity = extensions.get("complexity") if extensions else None
         self.complexity_budget_limit = extensions.get("complexity_budget_limit") if extensions else None
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class MaxComplexityExceededError(MondayAPIError):
@@ -250,10 +362,17 @@ class MaxComplexityExceededError(MondayAPIError):
     Raised when a single query exceeds the maximum complexity limit (HTTP 200).
     """
 
-    def __init__(self, message="Max complexity exceeded", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Max complexity exceeded",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class CorrectedValueError(MondayAPIError):
@@ -264,10 +383,17 @@ class CorrectedValueError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#correctedvalueexception
     """
 
-    def __init__(self, message="Incorrect value type", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Incorrect value type",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class CreateBoardError(MondayAPIError):
@@ -277,10 +403,17 @@ class CreateBoardError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#createboardexception
     """
 
-    def __init__(self, message="Error creating board", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Error creating board",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class DeleteLastGroupError(MondayAPIError):
@@ -291,8 +424,9 @@ class DeleteLastGroupError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#deletelastgroupexception
     """
 
-    def __init__(self, message="Cannot delete the last group on the board", error_code=None, status_code=None,
-                 error_data=None):
+    def __init__(
+        self, message="Cannot delete the last group on the board", error_code=None, status_code=None, error_data=None
+    ):
         super().__init__(message, error_code, status_code, error_data)
 
 
@@ -305,10 +439,17 @@ class InvalidArgumentError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidargumentexception
     """
 
-    def __init__(self, message="Invalid argument in the query", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Invalid argument in the query",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class InvalidItemIdError(MondayAPIError):
@@ -319,10 +460,17 @@ class InvalidItemIdError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invaliditemidexception
     """
 
-    def __init__(self, message="Invalid item ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Invalid item ID",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class InvalidBoardIdError(MondayAPIError):
@@ -333,10 +481,17 @@ class InvalidBoardIdError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidboardidexception
     """
 
-    def __init__(self, message="Invalid board ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Invalid board ID",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class InvalidColumnIdError(MondayAPIError):
@@ -347,10 +502,17 @@ class InvalidColumnIdError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidcolumnidexception
     """
 
-    def __init__(self, message="Invalid column ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Invalid column ID",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class InvalidUserIdError(MondayAPIError):
@@ -361,10 +523,17 @@ class InvalidUserIdError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invaliduseridexception
     """
 
-    def __init__(self, message="Invalid user ID", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Invalid user ID",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class InvalidInputError(MondayAPIError):
@@ -374,10 +543,17 @@ class InvalidInputError(MondayAPIError):
     To resolve, ensure the input is in the correct format and follows the API documentation.
     """
 
-    def __init__(self, message="Invalid input provided", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Invalid input provided",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class InvalidVersionError(MondayAPIError):
@@ -388,10 +564,17 @@ class InvalidVersionError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#invalidversionexception
     """
 
-    def __init__(self, message="Invalid API version", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Invalid API version",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class ItemNameTooLongError(MondayAPIError):
@@ -402,11 +585,17 @@ class ItemNameTooLongError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#itemnametoolongexception
     """
 
-    def __init__(self, message="Item name exceeds the allowed character limit",
-                 error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Item name exceeds the allowed character limit",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class ItemsLimitationError(MondayAPIError):
@@ -417,11 +606,17 @@ class ItemsLimitationError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#itemslimitationexception
     """
 
-    def __init__(self, message="Exceeded the limit of items on the board",
-                 error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Exceeded the limit of items on the board",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class JsonParseError(MondayAPIError):
@@ -431,10 +626,17 @@ class JsonParseError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#jsonparseexception
     """
 
-    def __init__(self, message="JSON parse error", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="JSON parse error",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class RecordValidError(MondayAPIError):
@@ -445,24 +647,38 @@ class RecordValidError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#recordvalidexception
     """
 
-    def __init__(self, message="Record validation error", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Record validation error",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class ResourceNotFoundError(MondayAPIError):
     """
     Raised when the requested resource is not found (HTTP 200 or 404).
     This indicates that the ID you are attempting to pass in your query is invalid.
-    To resolve, ensure the ID of the item, group, or board you’re querying exists.
+    To resolve, ensure the ID of the item, group, or board you're querying exists.
     For more information, visit https://developer.monday.com/api-reference/docs/errors#resourcenotfoundexception
     """
 
-    def __init__(self, message="Resource not found", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="Resource not found",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
 class UserUnauthorizedError(MondayAPIError):
@@ -473,31 +689,64 @@ class UserUnauthorizedError(MondayAPIError):
     For more information, visit https://developer.monday.com/api-reference/docs/errors#userunauthorizedexception
     """
 
-    def __init__(self, message="User unauthorized", error_code: str = None, status_code: int = None,
-                 error_data: dict = None, extensions: dict = None, path: dict = None, partial_data: dict = None):
-        super().__init__(message, error_code, status_code, error_data,
-                         extensions, path, partial_data)
+    def __init__(
+        self,
+        message="User unauthorized",
+        error_code: Optional[str] = None,
+        status_code: Optional[int] = None,
+        error_data: Optional[dict] = None,
+        extensions: Optional[dict] = None,
+        path: Optional[dict] = None,
+        partial_data: Optional[dict] = None,
+    ):
+        super().__init__(message, error_code, status_code, error_data, extensions, path, partial_data)
 
 
-class MultipleErrors(MondayAPIError):
+class MultipleErrors(MondayAPIError):  # noqa: N818
     """
     Special exception for handling multiple API errors in a single response.
     Contains full collection of parsed errors.
     """
 
-    def __init__(self, message: str, errors: List[MondayAPIError], partial_data: dict = None):
+    def __init__(self, message: str, errors: list[MondayAPIError], partial_data: Optional[dict] = None):
         super().__init__(message=message, partial_data=partial_data)
         self.errors = errors
         self.partial_data = partial_data
 
 
 __all__ = [
-    "MondayAPIError", "APITemporarilyBlockedError", "ColumnValueError", "GraphQLValidationError",
-    "InternalServerError", "ConcurrencyLimitExceededError", "FieldLimitExceededError", "RateLimitExceededError",
-    "IpRestrictedError", "UnauthorizedError", "BadRequestError", "MissingRequiredPermissionsError", "ParseError",
-    "ComplexityError", "MaxComplexityExceededError", "CorrectedValueError", "CreateBoardError", "DeleteLastGroupError",
-    "InvalidArgumentError", "InvalidItemIdError", "InvalidBoardIdError", "InvalidColumnIdError", "InvalidUserIdError",
-    "InvalidVersionError", "ItemNameTooLongError", "ItemsLimitationError", "JsonParseError", "RecordValidError",
-    "ResourceNotFoundError", "UserUnauthorizedError", "DailyLimitExceededError", "MultipleErrors", "InvalidInputError",
-    "DepthLimitExceededError"
+    "APITemporarilyBlockedError",
+    "BadRequestError",
+    "ColumnValueError",
+    "ComplexityError",
+    "ConcurrencyLimitExceededError",
+    "CorrectedValueError",
+    "CreateBoardError",
+    "DailyLimitExceededError",
+    "DeleteLastGroupError",
+    "DepthLimitExceededError",
+    "FieldLimitExceededError",
+    "GraphQLValidationError",
+    "InternalServerError",
+    "InvalidArgumentError",
+    "InvalidBoardIdError",
+    "InvalidColumnIdError",
+    "InvalidInputError",
+    "InvalidItemIdError",
+    "InvalidUserIdError",
+    "InvalidVersionError",
+    "IpRestrictedError",
+    "ItemNameTooLongError",
+    "ItemsLimitationError",
+    "JsonParseError",
+    "MaxComplexityExceededError",
+    "MissingRequiredPermissionsError",
+    "MondayAPIError",
+    "MultipleErrors",
+    "ParseError",
+    "RateLimitExceededError",
+    "RecordValidError",
+    "ResourceNotFoundError",
+    "UnauthorizedError",
+    "UserUnauthorizedError",
 ]

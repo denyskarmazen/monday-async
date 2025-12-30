@@ -13,22 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import aiohttp
-from typing import Optional
-from monday_async.utils.graphqlclient import AsyncGraphQLClient
 
+from monday_async.core.client import AsyncGraphQLClient
 
-_URLS = {
-    'prod': 'https://api.monday.com/v2',
-    'file': 'https://api.monday.com/v2/file'
-}
+_URLS = {"prod": "https://api.monday.com/v2", "file": "https://api.monday.com/v2/file"}
 
 
 class AsyncBaseResource:
-    def __init__(self, token: str, headers: dict, session: Optional[aiohttp.ClientSession] = None):
+    def __init__(self, token: str, headers: dict, session: aiohttp.ClientSession | None = None):
         self._token = token
-        self.client = AsyncGraphQLClient(_URLS['prod'])
-        self.file_upload_client = AsyncGraphQLClient(_URLS['file'])
+        self.client = AsyncGraphQLClient(_URLS["prod"])
+        self.file_upload_client = AsyncGraphQLClient(_URLS["file"])
         self.client.inject_token(token)
         self.client.inject_headers(headers)
         self.client.set_session(session)

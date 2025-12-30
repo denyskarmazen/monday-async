@@ -13,5 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from monday_async.types.enum_values import *
 from monday_async.types.args import *
+from monday_async.types.enum_values import *
