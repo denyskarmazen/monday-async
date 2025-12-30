@@ -6,3 +6,12 @@ test.py
 .tox/
 monday_async.egg-info/
 dist/
+CLAUDE.md
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS
+.DS_Store

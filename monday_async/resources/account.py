@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from monday_async.graphql.queries import get_account_query, get_account_roles_query
 from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.utils.queries import get_account_query
 
 
 class AccountResource(AsyncBaseResource):
@@ -30,4 +30,18 @@ class AccountResource(AsyncBaseResource):
             dict: The JSON response from the GraphQL server.
         """
         query = get_account_query(with_complexity=with_complexity)
+        return await self.client.execute(query)
+
+    async def get_account_roles(self, with_complexity: bool = False) -> dict:
+        """
+        Get all account roles (default and custom). For more information, visit
+        https://developer.monday.com/api-reference/reference/account-roles
+
+        Args:
+            with_complexity (bool): Returns the complexity of the query with the query if set to True.
+
+        Returns:
+            dict: The JSON response from the GraphQL server containing account roles.
+        """
+        query = get_account_roles_query(with_complexity=with_complexity)
         return await self.client.execute(query)

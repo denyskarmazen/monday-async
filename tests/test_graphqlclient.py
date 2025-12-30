@@ -13,10 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
 from aiohttp import ClientSession
 
-from monday_async.utils.graphqlclient import AsyncGraphQLClient
+from monday_async.core.client import AsyncGraphQLClient
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +38,7 @@ def graphql_clients():
         "graph_ql_client": graph_ql_client,
         "file_graph_ql_client": file_graph_ql_client,
         "token": token,
-        "headers": headers
+        "headers": headers,
     }
 
 
@@ -85,3 +88,53 @@ async def test_close_session(graphql_clients):
     await client.close_session()
     assert client.session is None
 
+
+@pytest.mark.asyncio
+async def test_variables_sent_as_json_object_not_string():
+    """
+    Test that variables are sent as JSON objects, not JSON strings.
+    This is required for API version 2025-04+ compliance.
+    """
+    client = AsyncGraphQLClient("https://api.monday.com/v2")
+    client.inject_token("test_token")
+
+    query = "query { boards { id } }"
+    variables = {"board_id": 123, "name": "Test Board"}
+
+    # Mock the response
+    mock_response = Mock()
+    mock_response.json = AsyncMock(return_value={"data": {"boards": [{"id": "123"}]}})
+
+    # Mock the session.post context manager
+    mock_post_cm = AsyncMock()
+    mock_post_cm.__aenter__ = AsyncMock(return_value=mock_response)
+    mock_post_cm.__aexit__ = AsyncMock(return_value=None)
+
+    # Mock the session
+    mock_session = Mock()
+    mock_session.post = Mock(return_value=mock_post_cm)
+
+    # Mock the ClientSession context manager
+    mock_client_session_cm = AsyncMock()
+    mock_client_session_cm.__aenter__ = AsyncMock(return_value=mock_session)
+    mock_client_session_cm.__aexit__ = AsyncMock(return_value=None)
+
+    with patch("aiohttp.ClientSession", return_value=mock_client_session_cm):
+        await client.execute(query, variables)
+
+        # Verify the post method was called
+        assert mock_session.post.called
+
+        # Get the call arguments
+        call_args = mock_session.post.call_args
+        data_param = call_args.kwargs.get("data") or call_args.args[0] if call_args.args else None
+
+        # Decode and parse the payload
+        payload = json.loads(data_param.decode("utf-8"))
+
+        # Verify that variables are a dict in the payload, not a JSON string
+        assert "variables" in payload
+        assert isinstance(payload["variables"], dict)
+        assert payload["variables"] == variables
+        assert payload["variables"]["board_id"] == 123
+        assert payload["variables"]["name"] == "Test Board"

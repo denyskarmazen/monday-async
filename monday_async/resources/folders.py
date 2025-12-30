@@ -13,23 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional
+from typing import Union
 
+from monday_async.graphql.mutations import create_folder_mutation, delete_folder_mutation, update_folder_mutation
+from monday_async.graphql.queries import get_folders_query
 from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.types import FolderColor
-from monday_async.utils.queries import (
-    get_folders_query, create_folder_query, update_folder_query,
-    delete_folder_query
-)
 
 ID = Union[int, str]
 
 
 class FolderResource(AsyncBaseResource):
-    async def get_folders(self, ids: Union[ID, List[ID]] = None,
-                          workspace_ids: Union[ID, List[ID]] = None,
-                          limit: int = 25, page: int = 1,
-                          with_complexity: bool = False) -> dict:
+    async def get_folders(
+        self,
+        ids: ID | list[ID] = None,
+        workspace_ids: ID | list[ID] = None,
+        limit: int = 25,
+        page: int = 1,
+        with_complexity: bool = False,
+    ) -> dict:
         """
         Execute a query to retrieve folders, allowing you to specify specific folders,
          workspaces, limits, and pagination.
@@ -44,16 +46,21 @@ class FolderResource(AsyncBaseResource):
             page (int): (Optional) The page number to return. Starts at 1.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = get_folders_query(ids=ids, workspace_ids=workspace_ids, limit=limit, page=page,
-                                  with_complexity=with_complexity)
+        query = get_folders_query(
+            ids=ids, workspace_ids=workspace_ids, limit=limit, page=page, with_complexity=with_complexity
+        )
         return await self.client.execute(query)
 
-    async def create_folder(self, workspace_id: ID, name: str,
-                            color: Optional[FolderColor] = FolderColor.NULL,
-                            parent_folder_id: Optional[ID] = None,
-                            with_complexity: bool = False) -> dict:
+    async def create_folder(
+        self,
+        workspace_id: ID,
+        name: str,
+        color: FolderColor | None = FolderColor.NULL,
+        parent_folder_id: ID | None = None,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to create a new folder within a specified workspace and parent folder (optional).
+        Execute a mutation to create a new folder within a specified workspace and parent folder (optional).
 
         For more information, visit https://developer.monday.com/api-reference/reference/folders#create-a-folder
 
@@ -64,16 +71,25 @@ class FolderResource(AsyncBaseResource):
             parent_folder_id (ID): (Optional) The ID of the parent folder within the workspace.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = create_folder_query(workspace_id=workspace_id, name=name, color=color,
-                                    parent_folder_id=parent_folder_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_folder_mutation(
+            workspace_id=workspace_id,
+            name=name,
+            color=color,
+            parent_folder_id=parent_folder_id,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def update_folder(self, folder_id: ID, name: Optional[str] = None,
-                            color: Optional[FolderColor] = None,
-                            parent_folder_id: Optional[ID] = None,
-                            with_complexity: bool = False) -> dict:
+    async def update_folder(
+        self,
+        folder_id: ID,
+        name: str | None = None,
+        color: FolderColor | None = None,
+        parent_folder_id: ID | None = None,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to modify an existing folder's name, color, or parent folder.
+        Execute a mutation to modify an existing folder's name, color, or parent folder.
 
         Args:
             folder_id (ID): The unique identifier of the folder to update.
@@ -82,17 +98,22 @@ class FolderResource(AsyncBaseResource):
             parent_folder_id (ID): (Optional) The ID of the new parent folder for the folder.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = update_folder_query(folder_id=folder_id, name=name, color=color,
-                                    parent_folder_id=parent_folder_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = update_folder_mutation(
+            folder_id=folder_id,
+            name=name,
+            color=color,
+            parent_folder_id=parent_folder_id,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
     async def delete_folder(self, folder_id: ID, with_complexity: bool = False) -> dict:
         """
-        Execute a query to permanently remove a folder from a workspace.
+        Execute a mutation to permanently remove a folder from a workspace.
 
         Args:
             folder_id (ID): The unique identifier of the folder to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = delete_folder_query(folder_id=folder_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_folder_mutation(folder_id=folder_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)

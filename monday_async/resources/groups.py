@@ -13,21 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Optional, Any
+from typing import Any, Optional, Union
 
-from monday_async.resources.base_resource import AsyncBaseResource
-from monday_async.types import PositionRelative, GroupAttributes, GroupUpdateColors, GroupColors
-from monday_async.utils.queries import (
-    get_groups_by_board_query, create_group_query, update_group_query,
-    duplicate_group_query, archive_group_query, delete_group_query
+from monday_async.graphql.mutations import (
+    archive_group_mutation,
+    create_group_mutation,
+    delete_group_mutation,
+    duplicate_group_mutation,
+    update_group_mutation,
 )
+from monday_async.graphql.queries import get_groups_by_board_query
+from monday_async.resources.base_resource import AsyncBaseResource
+from monday_async.types import GroupAttributes, GroupColors, GroupUpdateColors, PositionRelative
 
 ID = Union[int, str]
 
 
 class GroupResource(AsyncBaseResource):
-    async def get_groups_by_board(self, board_id: ID, ids: Union[str, List[str]] = None,
-                                  with_complexity: bool = False) -> dict:
+    async def get_groups_by_board(
+        self, board_id: ID, ids: Optional[str | list[str]] = None, with_complexity: bool = False
+    ) -> dict:
         """
         Execute a query to retrieve groups associated with a specific board, with the option to filter by group IDs.
 
@@ -41,12 +46,17 @@ class GroupResource(AsyncBaseResource):
         query = get_groups_by_board_query(board_id=board_id, ids=ids, with_complexity=with_complexity)
         return await self.client.execute(query)
 
-    async def create_group(self, board_id: ID, group_name: str, group_color: Optional[Union[GroupColors, str]] = None,
-                           relative_to: Optional[str] = None,
-                           position_relative_method: Optional[PositionRelative] = None,
-                           with_complexity: bool = False) -> dict:
+    async def create_group(
+        self,
+        board_id: ID,
+        group_name: str,
+        group_color: GroupColors | str | None = None,
+        relative_to: str | None = None,
+        position_relative_method: PositionRelative | None = None,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to create a new group on a specific board with a specified name and positioning
+        Execute a mutation to create a new group on a specific board with a specified name and positioning
          relative to other groups.
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#create-a-group
@@ -61,17 +71,26 @@ class GroupResource(AsyncBaseResource):
                 before_at or after_at.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = create_group_query(board_id=board_id, group_name=group_name, group_color=group_color,
-                                   relative_to=relative_to, position_relative_method=position_relative_method,
-                                   with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_group_mutation(
+            board_id=board_id,
+            group_name=group_name,
+            group_color=group_color,
+            relative_to=relative_to,
+            position_relative_method=position_relative_method,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def update_group(self, board_id: ID, group_id: str,
-                           group_attribute: GroupAttributes,
-                           new_value: Union[Any, GroupUpdateColors],
-                           with_complexity: bool = False) -> dict:
+    async def update_group(
+        self,
+        board_id: ID,
+        group_id: str,
+        group_attribute: GroupAttributes,
+        new_value: Any | GroupUpdateColors,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to modify an existing group's title, color, or position on the board.
+        Execute a mutation to modify an existing group's title, color, or position on the board.
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#update-a-group
 
@@ -83,15 +102,25 @@ class GroupResource(AsyncBaseResource):
             new_value (str): The new value for the specified group attribute.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = update_group_query(board_id=board_id, group_id=group_id, group_attribute=group_attribute,
-                                   new_value=new_value, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = update_group_mutation(
+            board_id=board_id,
+            group_id=group_id,
+            group_attribute=group_attribute,
+            new_value=new_value,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def duplicate_group(self, board_id: ID, group_id: str,
-                              add_to_top: Optional[bool] = None, group_title: Optional[str] = None,
-                              with_complexity: bool = False) -> dict:
+    async def duplicate_group(
+        self,
+        board_id: ID,
+        group_id: str,
+        add_to_top: bool | None = None,
+        group_title: str | None = None,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Execute a query to create a copy of a group within the same board,
+        Execute a mutation to create a copy of a group within the same board,
          with options to position the new group and set its title.
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#duplicate-group
@@ -103,14 +132,18 @@ class GroupResource(AsyncBaseResource):
             group_title (str): (Optional) The title for the new duplicated group.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = duplicate_group_query(board_id=board_id, group_id=group_id, add_to_top=add_to_top,
-                                      group_title=group_title, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = duplicate_group_mutation(
+            board_id=board_id,
+            group_id=group_id,
+            add_to_top=add_to_top,
+            group_title=group_title,
+            with_complexity=with_complexity,
+        )
+        return await self.client.execute(mutation)
 
-    async def archive_group(self, board_id: ID, group_id: str,
-                            with_complexity: bool = False) -> dict:
+    async def archive_group(self, board_id: ID, group_id: str, with_complexity: bool = False) -> dict:
         """
-        Execute a query to archive a group on a specific board, removing it from the active view.
+        Execute a mutation to archive a group on a specific board, removing it from the active view.
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#archive-a-group
 
@@ -119,13 +152,12 @@ class GroupResource(AsyncBaseResource):
             group_id (str): The unique identifier of the group to archive.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = archive_group_query(board_id=board_id, group_id=group_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = archive_group_mutation(board_id=board_id, group_id=group_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
 
-    async def delete_group(self, board_id: ID, group_id: str,
-                           with_complexity: bool = False) -> dict:
+    async def delete_group(self, board_id: ID, group_id: str, with_complexity: bool = False) -> dict:
         """
-        Execute a query to permanently remove a group from a board.
+        Execute a mutation to permanently remove a group from a board.
 
         For more information, visit https://developer.monday.com/api-reference/reference/groups#delete-a-group
 
@@ -134,5 +166,5 @@ class GroupResource(AsyncBaseResource):
             group_id (str): The unique identifier of the group to delete.
             with_complexity (bool): Set to True to return the query's complexity along with the results.
         """
-        query = delete_group_query(board_id=board_id, group_id=group_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_group_mutation(board_id=board_id, group_id=group_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)

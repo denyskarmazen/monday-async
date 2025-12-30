@@ -13,16 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union, Optional
 
+from monday_async.graphql.mutations import create_webhook_mutation, delete_webhook_mutation
+from monday_async.graphql.queries import get_webhooks_by_board_id_query
 from monday_async.resources.base_resource import AsyncBaseResource
 from monday_async.types import WebhookEventType
-from monday_async.utils.queries import get_webhooks_by_board_id_query, create_webhook_query, delete_webhook_query
 
 
 class WebhooksResource(AsyncBaseResource):
-    async def get_webhooks_by_board_id(self, board_id: Union[int, str], app_webhooks_only: bool = False,
-                                       with_complexity: bool = False) -> dict:
+    async def get_webhooks_by_board_id(
+        self, board_id: int | str, app_webhooks_only: bool = False, with_complexity: bool = False
+    ) -> dict:
         """
         Get all webhooks for a board. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#queries
@@ -34,14 +35,21 @@ class WebhooksResource(AsyncBaseResource):
                 the app initiating the request.
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
-        query = get_webhooks_by_board_id_query(board_id=board_id, app_webhooks_only=app_webhooks_only,
-                                               with_complexity=with_complexity)
+        query = get_webhooks_by_board_id_query(
+            board_id=board_id, app_webhooks_only=app_webhooks_only, with_complexity=with_complexity
+        )
         return await self.client.execute(query)
 
-    async def create_webhook(self, board_id: Union[int, str], url: str, event: WebhookEventType,
-                             config: Optional[dict] = None, with_complexity: bool = False) -> dict:
+    async def create_webhook(
+        self,
+        board_id: int | str,
+        url: str,
+        event: WebhookEventType,
+        config: dict | None = None,
+        with_complexity: bool = False,
+    ) -> dict:
         """
-        Create a webhook. For more information, visit
+        Execute a mutation to create a webhook. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#create-a-webhook
 
         Args:
@@ -54,13 +62,14 @@ class WebhooksResource(AsyncBaseResource):
             for more info.
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
-        query = create_webhook_query(board_id=board_id, url=url, event=event, config=config,
-                                     with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = create_webhook_mutation(
+            board_id=board_id, url=url, event=event, config=config, with_complexity=with_complexity
+        )
+        return await self.client.execute(mutation)
 
-    async def delete_webhook(self, webhook_id: Union[int, str], with_complexity: bool = False) -> dict:
+    async def delete_webhook(self, webhook_id: int | str, with_complexity: bool = False) -> dict:
         """
-        Delete a webhook connection. For more information, visit
+        Execute a mutation to delete a webhook connection. For more information, visit
         https://developer.monday.com/api-reference/reference/webhooks#delete-a-webhook
 
         Args:
@@ -69,5 +78,5 @@ class WebhooksResource(AsyncBaseResource):
             with_complexity (bool): returns the complexity of the query with the query if set to True.
         """
 
-        query = delete_webhook_query(webhook_id=webhook_id, with_complexity=with_complexity)
-        return await self.client.execute(query)
+        mutation = delete_webhook_mutation(webhook_id=webhook_id, with_complexity=with_complexity)
+        return await self.client.execute(mutation)
